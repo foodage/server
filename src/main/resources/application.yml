@@ -1,0 +1,9 @@
+server:
+  servlet:
+    contextPath: /api
+  error:
+    whitelabel:
+      enabled: false
+
+application:
+  version: ${ext.appVersion}
