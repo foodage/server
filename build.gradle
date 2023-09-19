@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.foodage'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
     sourceCompatibility = '17'
@@ -22,6 +22,7 @@ repositories {
 }
 
 dependencies {
+    // base dependencies
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     compileOnly 'org.projectlombok:lombok'
