@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fourdays.foodage.common.enums.BadRequestCode;
+import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.common.exception.UserException;
 import com.fourdays.foodage.user.domain.User;
 import com.fourdays.foodage.user.domain.repository.UserRepository;
@@ -25,7 +25,7 @@ public class UserQueryService {
 	public UserInfo getUserInfo(Long id) {
 		Optional<User> findUser = userRepository.findById(id);
 		if (findUser.isEmpty()) {
-			throw new UserException(BadRequestCode.ERR_USER_NOT_FOUND);
+			throw new UserException(ResultCode.ERR_USER_NOT_FOUND);
 		}
 		return new UserInfo(findUser.get());
 	}

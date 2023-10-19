@@ -1,6 +1,6 @@
 package com.fourdays.foodage.common.exception;
 
-import com.fourdays.foodage.common.enums.BadRequestCode;
+import com.fourdays.foodage.common.enums.ResultCode;
 
 import lombok.Getter;
 
@@ -12,15 +12,10 @@ import lombok.Getter;
 @Getter
 public class UserException extends RuntimeException {
 
-	private BadRequestCode errCode;
+	private ResultCode errCode;
 
-	public UserException(BadRequestCode errCode) {
-		super(errCode.getResultMsg());
-		this.errCode = errCode;
-	}
-
-	public UserException(BadRequestCode errCode, String errMessage) {
-		super(errCode.customResultMsg(errMessage));
+	public UserException(ResultCode errCode) {
+		super(errCode.getMessage());
 		this.errCode = errCode;
 	}
 }
