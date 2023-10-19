@@ -1,9 +1,10 @@
 server:
   servlet:
-    contextPath: /api
+    context-path: /api
   error:
     whitelabel:
       enabled: false
+  port: 12816
 
 application:
   version: ${ext.appVersion}
