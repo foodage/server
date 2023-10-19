@@ -22,14 +22,25 @@ repositories {
 }
 
 dependencies {
-    // base dependencies
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    compileOnly 'org.projectlombok:lombok'
+    // spring boot
+    implementation 'org.springframework.boot:spring-boot-starter'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation "org.springframework.boot:spring-boot-starter-web"
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // swagger doc (spring docs + swagger)
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
+
+    // mariadb
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
 }
 
 tasks.named('test') {
