@@ -19,8 +19,7 @@ public class User extends BaseTimeEntity {
 	@Id
 	@Column(name = "id")
 	private Long id;
-
-	@Id
+	
 	@Column(name = "oauth_id")
 	private Long oauthId;
 
