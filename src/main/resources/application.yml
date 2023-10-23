@@ -23,3 +23,7 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create # 개발 환경에서만 사용
+
+logging:
+  level:
+    com.fourdays.foodage: DEBUG
