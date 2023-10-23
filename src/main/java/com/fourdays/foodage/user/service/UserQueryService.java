@@ -2,7 +2,7 @@ package com.fourdays.foodage.user.service;
 
 import java.util.Optional;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.common.exception.UserException;
@@ -12,7 +12,7 @@ import com.fourdays.foodage.user.service.dto.UserInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
+@Service
 @Slf4j
 public class UserQueryService {
 
@@ -24,6 +24,7 @@ public class UserQueryService {
 
 	public UserInfo getUserInfo(Long id) {
 		Optional<User> findUser = userRepository.findById(id);
+		log.debug("getUserInfo() findUser : {}", findUser.get());
 		if (findUser.isEmpty()) {
 			throw new UserException(ResultCode.ERR_USER_NOT_FOUND);
 		}

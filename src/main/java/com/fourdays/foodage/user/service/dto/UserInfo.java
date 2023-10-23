@@ -1,20 +1,24 @@
 package com.fourdays.foodage.user.service.dto;
 
-import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.user.domain.User;
 
-import jakarta.persistence.Column;
+import lombok.Getter;
 
-public class UserInfo extends BaseTimeEntity {
+@Getter
+public class UserInfo {
 
-	@Column(name = "nickname", nullable = false, length = 64)
 	private String nickname;
 
-	@Column(name = "profile_url")
 	private String profileUrl;
+
+	private String createdAt;
+
+	private String updatedAt;
 
 	public UserInfo(User user) {
 		this.nickname = user.getNickname();
 		this.profileUrl = user.getProfileUrl();
+		this.createdAt = user.getCreatedAt().toString();
+		this.updatedAt = user.getUpdatedAt().toString();
 	}
 }

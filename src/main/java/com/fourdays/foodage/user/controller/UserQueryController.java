@@ -30,7 +30,7 @@ public class UserQueryController {
 		this.userQueryService = userQueryService;
 	}
 
-	@GetMapping("/info/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<UserInfo> getUserInfo(
 		@PathVariable Long id) {
 
