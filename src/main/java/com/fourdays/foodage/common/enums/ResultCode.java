@@ -18,6 +18,7 @@ public enum ResultCode {
 
 	// USER /////////////////////////////////////////////////////////////////////////////////////////
 	ERR_USER_NOT_FOUND(-10000, "일치하는 유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+	ERR_USER_ALREADY_LEAVED(-10001, "이미 탈퇴한 회원입니다.", HttpStatus.NOT_FOUND),
 
 	;
 
