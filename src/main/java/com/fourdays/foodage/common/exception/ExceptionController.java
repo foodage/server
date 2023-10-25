@@ -58,7 +58,7 @@ public class ExceptionController {
 	public ResponseEntity<ErrorResponseDto<?>> handleException(UserException e) {
 
 		log.error("handleException : {}", e);
-		ErrorResponseDto<?> res = ErrorResponseDto.error(ResultCode.ERR_REQUIRED_FIELD, e.getMessage());
+		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
 
 		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
 	}
