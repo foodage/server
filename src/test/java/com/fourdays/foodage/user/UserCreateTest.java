@@ -14,8 +14,10 @@ import com.fourdays.foodage.user.service.UserCommandService;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
+@Slf4j
 public class UserCreateTest {
 
 	@Autowired
@@ -125,7 +127,8 @@ public class UserCreateTest {
 
 	private void validate(UserCreateRequest userCreateRequest) {
 		Set<ConstraintViolation<UserCreateRequest>> errorMessage = validator.validate(userCreateRequest);
-		System.out.println(" ----- errorMessage : " + errorMessage);
+
+		log.debug("\n\n### errorMessage : {}", errorMessage);
 
 		Assertions.assertTrue(errorMessage.isEmpty()); // 비어있으면 정상 요청
 	}
