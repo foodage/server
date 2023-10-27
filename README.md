@@ -5,15 +5,17 @@
 
 ![Java 17](https://img.shields.io/badge/Java_17-007396?style=for-the-badge&logo=OpenJDK&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot__3.1.3-6DB33F?style=for-the-badge&logo=html5&logoColor=white)
-![Swagger](https://img.shields.io/badge/Swagger__3.0.0-85EA2D?style=for-the-badge&logo=html5&logoColor=white) <br/>
+![Swagger](https://img.shields.io/badge/Swagger_|_Spring_Doc-85EA2D?style=for-the-badge&logo=html5&logoColor=white) <br/>
 ![Jasypt](https://img.shields.io/badge/Jasypt__3.0.4-00bfb3?style=for-the-badge&logo=html5&logoColor=white)
 ![AWS S3](https://img.shields.io/badge/AWS_S3-527FFF?style=for-the-badge&logo=amazons3&logoColor=white) <br/>
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=html5&logoColor=white)
 
 </div> <br/>
-👋🏻! Foodage 메인 서버 매뉴얼입니다. <br/>
-Java 17, Spring Boot를 메인 스택으로 사용합니다. <br/>
-브랜치 전략으로는 Git-flow를 사용하고 있습니다.
+👋🏻 Foodage 메인 서버 매뉴얼입니다. <br/>
+- 메인 스택: Java 17, Spring Boot, JPA <br/>
+- API 문서: Spring Docs <br/>
+- 브랜치 전략: Git-flow <br/>
+- 패키지 구조: CQRS 기반, 도메인 지향 패키지 구조
 
 
 
@@ -105,13 +107,13 @@ ex2) java -jar ./build/libs/foodage-1.0.0.jar # 생략시 local 환경으로 실
 #### 1) 현재 실행중인 서버 중지
 
 ```
-./stop.sh
+./docker_stop.sh
 ```
 
 #### 2) 최신 버전의 서버 jar 파일을 docker로 실행
 
 ```
-./start.sh
+./docker_start.sh
 ```
 
 <br/><br/>
@@ -133,7 +135,14 @@ ex2) java -jar ./build/libs/foodage-1.0.0.jar # 생략시 local 환경으로 실
 
 ## Version History
 
-> _Last Updated: 23-08-30_
+> _Last Updated: 23-10-27_
+
+#### v.1.0.1 23-10-27 📍
+
+- JPA 추가
+- 유저 도메인 클래스 및 CR(U)D API 추가
+- Exception 처리 관련 클래스 추가
+- CQRS 기반 패키지 구조 정의
 
 #### v.1.0.0 23-08-30 📍
 
