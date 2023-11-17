@@ -42,7 +42,7 @@ server -> db: 사용자 정보 DB 존재 여부 확인
 db -> db: 사용자 정보 확인
 db --> server: DB에 존재하는 사용자 정보
 
-'로그인
+'서비스 로그인
 group 로그인*
     server -> server: 서버 Access Token(이하 A・T) 발급
     server -> server: 서버 Refresh Token(이하 R・T) 발급

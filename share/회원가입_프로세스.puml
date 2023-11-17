@@ -2,7 +2,7 @@
 header last updated: 2023.11.06.
 footer Page %page% of %lastpage%
 title
-    <size:18> 로그인 프로세스 </size>
+    <size:18> 회원가입 프로세스 </size>
 end title
 
 '''''''
@@ -22,7 +22,7 @@ autonumber
 
 
 |||
-== 로그인 ==
+== 회원가입 ==
 
 '로그인
 client -> server: 서비스 로그인 요청
