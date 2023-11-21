@@ -102,18 +102,48 @@ ex2) java -jar ./build/libs/foodage-1.0.0.jar # 생략시 local 환경으로 실
 
 ## 🚪 Docker 배포
 
-- 23-08-30 임시 작성
+#### 0) 원격 서버에 파일 업로드
 
-#### 1) 현재 실행중인 서버 중지
+```
+[업로드 파일 리스트]
+- ./build/lib/foodage-버전.jar
+- ./src/main/resources/application-배포환경.yml
+
+(원격서버에 최초 1회 업로드가 필요한 파일, 이후 수정 필요 X)
+- ./Dockerfile
+- ./share/docker-start.sh
+- ./share/docker-stop.sh
+```
+
+#### 1) (실행되고 있다면) 현재 실행중인 서버 중지
 
 ```
 ./docker_stop.sh
 ```
 
-#### 2) 최신 버전의 서버 jar 파일을 docker로 실행
+#### 2) Dockerfile에서 버전 확인
+
+```
+vi Dockerfile
+...
+WORKDIR /builder
+COPY . .
+
+COPY foodage-1.0.0.jar /app.jar
+# ⬆️ 이 부분의 버전 확인후, 현재 실행하려는 jar 파일의 버전으로 수정
+# ex. COPY foodage-1.0.8.jar /app.jar
+
+COPY application-local.yml /application.yml
+# ⬆️ 이 부분의 버전 확인후, 현재 실행하려는 원격 서버의 환경으로 수정
+# ex. COPY application-dev.yml /application.yml
+...
+```
+
+#### 3) 최신 버전의 서버 jar 파일을 docker로 실행
 
 ```
 ./docker_start.sh
+jasypt key는 서버 담당자(@jjh, @keb)에게 요청
 ```
 
 <br/><br/>
@@ -147,4 +177,3 @@ ex2) java -jar ./build/libs/foodage-1.0.0.jar # 생략시 local 환경으로 실
 #### v.1.0.0 23-08-30 📍
 
 - 히스토리 최초 등록
-
