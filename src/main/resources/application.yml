@@ -26,6 +26,13 @@ spring:
     hibernate:
       ddl-auto: create # 개발 환경에서만 사용
 
+jwt:
+  header: Authorization
+  #HS512 알고리즘을 사용할 것이기 때문에 512bit, 64byte 이상의 secret key를 사용해야 한다.
+  secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
+  #토큰 만료 시간 설정
+  token-validity-in-seconds: 86400
+
 logging:
   level:
     com.fourdays.foodage: DEBUG
