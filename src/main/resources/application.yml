@@ -1,3 +1,5 @@
+# default
+
 server:
   servlet:
     context-path: /api
@@ -18,7 +20,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/foodage_test
     username: root
-    password: qjrtmfmfqkrtmfh@1!
+    password: ENC(xkFnya3z7VNC6ZB6uP40727FrkbtsOfbq43XPqNdrTL85ODRthMD+NrSNBG808wcksJSZsVFm+jJBLOisQCblg==)
   jpa:
     show-sql: true
     hibernate:
