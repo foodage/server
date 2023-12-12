@@ -1,0 +1,74 @@
+@startuml
+!theme mars
+header last updated: 2023.11.28.
+footer Page %page% of %lastpage%
+title
+    <size:18> 로그인 프로세스 </size>
+end title
+
+''''''''
+' skin '
+''''''''
+skinparam backgroundColor #edf0f6
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam defaultFontColor #1f2024
+skinparam sequenceGroupBackgroundColor transparent
+skinparam sequenceGroupBorderColor gray
+skinparam noteBackgroundColor #efefce
+skinparam noteBorderColor transparent
+
+'''''''
+'actor User as user
+box Foodage Client #e6f5d9
+    participant "Client" as client #cceab3
+end box
+'''''''
+    participant "Auth Server" as a_server #efd6e4
+'''''''
+box Foodage Server #d9e1f5
+    participant "Server" as server #b3c2ea
+    database db #c3c6d1
+end box
+'''''''
+autonumber
+
+
+|||
+== 로그인==
+
+'로그인
+client -> server: 서비스 로그인 요청
+server -> a_server: GET /oauth/authorize 요청
+  note right: Auth Server\n> 카카오, 네이버, 구글 등의 써드파티
+a_server -> client: OAuth 계정으로 로그인 요청
+
+'서비스 회원가입 & 로그인
+client --> a_server: OAuth 계정 로그인 완료
+a_server --> server: 인가 코드 전달
+
+group 토큰 발급*
+    ''' at 발급
+    server -> a_server: OAuth Access Token 발급 요청 (w. 인가 코드)
+      note right: > 이하 A・T
+    a_server --> server: OAuth A・T 발급
+end
+
+''' at로 사용자 정보 확인
+server -> a_server: OAuth A・T로 사용자 정보 요청
+a_server --> server: 사용자 정보 응답
+server -> db: 사용자 정보 DB 존재 여부 확인
+db -> db: 사용자 정보 확인
+db --> server: DB에 존재하는 사용자 정보일 경우
+
+'서비스 로그인
+group 로그인* [JWT 발급]
+    server -> server: 서버 Access Token(이하 A・T) 발급
+    server -> server: 서버 Refresh Token(이하 R・T) 발급
+    server -> client: A・T, R・T 반환
+    client --> client: 로그인 성공
+end
+
+|||
+
+@enduml

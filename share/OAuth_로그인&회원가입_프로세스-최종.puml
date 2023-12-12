@@ -1,0 +1,96 @@
+@startuml
+!theme mars
+header last updated: 2023.12.15.
+footer Page %page% of %lastpage%
+title
+    <size:18> OAuth 회원가입 & 로그인 프로세스 </size>
+end title
+
+''''''''
+' skin '
+''''''''
+skinparam backgroundColor #edf0f6
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam defaultFontColor #1f2024
+skinparam sequenceGroupBackgroundColor transparent
+skinparam sequenceGroupBorderColor gray
+skinparam noteBackgroundColor #efefce
+skinparam noteBorderColor transparent
+
+'''''''
+'actor User as user
+box Foodage Client #e6f5d9
+    participant "Client" as client #cceab3
+end box
+'''''''
+participant "OAuth App/Web" as a_client #f8f0ca
+participant "OAuth Auth Server" as a_server #f8f0ca
+'''''''
+box Foodage Server #d9e1f5
+    participant "Server" as server #b3c2ea
+    database db #c3c6d1
+end box
+'''''''
+autonumber
+
+
+|||
+== 회원가입 & 로그인==
+
+client -> a_client: OAuth 로그인 페이지 실행
+
+'서비스 회원가입
+group 회원가입* [기존 가입자면 필요 X]
+    a_client -> a_server: 약관 동의 화면 요청
+    a_server --> a_client: 약관 동의 화면 출력
+    a_client -> a_server: 약관 동의 완료
+end
+
+a_client -> a_server: OAuth 계정으로 로그인 완료
+
+a_server -> server: Redirect URI로 인가코드 전달
+server -> server: Redirect URI와 매핑되는 get api로\n인가코드 receive
+
+group 토큰 발급*
+''' at 발급
+server -> a_server: OAuth Token 발급 요청 (param. 인가코드)
+a_server --> server: OAuth Token 발급
+end
+
+''' at로 사용자 정보 확인
+server -> a_server: OAuth Token으로 사용자 정보 요청
+a_server --> server: 사용자 정보 응답 (이메일, 이름 등)
+server -> db: 해당 사용자의 기존 가입 여부 확인
+db --> db: 이메일 존재 여부 확인
+
+'서비스 로그인
+group 로그인* [case 1]
+    db --> server: 이미 존재하는 이메일(기존 가입자)일 경우
+    server -> server: 서버 Access Token(이하 A・T) 발급
+    server -> server: 서버 Refresh Token(이하 R・T) 발급
+    server --> client: A・T, R・T와 200 OK 반환
+    client -> client: 로그인 성공
+end
+
+'서비스 회원가입
+group 회원가입* [case 2]
+    db --> server: 존재하지 않는 이메일(신규 회원)일 경우
+    server --> client: 사용자 이메일, UNREGISTERED(미가입자) 상태를 response로 전달
+    client --> client: 추가 정보 입력 화면 노출
+      note right: ex. 마지막으로, 회원가입에 필요한 추가 정보를 입력해주세요. 등
+    client -> server: 사용자 이메일, 추가 정보를 body에 담아 회원가입 요청
+    server -> db: 요청 사용자의 기존 가입 여부 확인
+    db --> server: 미가입자가 맞을 경우
+    server -> db: 사용자 정보 db에 저장
+    db --> db: 사용자 이메일, 추가 정보, 가입 일시 등 insert
+    db --> server: 정보 저장 완료
+    server -> server: 서버 Access Token(이하 A・T) 발급
+    server -> server: 서버 Refresh Token(이하 R・T) 발급
+    server -> client: A・T, R・T와 201 Created 반환
+    client -> client: 회원가입 완료 및 로그인 처리
+end
+
+|||
+
+@enduml
