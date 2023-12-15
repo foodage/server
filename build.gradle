@@ -49,6 +49,12 @@ dependencies {
 
     // jasypt (yml 설정파일 암호화)
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    // configuration
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // http interface
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
