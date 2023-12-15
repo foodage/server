@@ -14,10 +14,10 @@ import com.fourdays.foodage.oauth.domain.OauthMember;
 @Component
 public class OauthTokenProviderImpl {
 
-	private final Map<OauthServerType, OauthTokenProvider> mapping;
+	private final Map<OauthServerType, OauthTokenProvider> oauthInfo;
 
 	public OauthTokenProviderImpl(Set<OauthTokenProvider> clients) {
-		mapping = clients.stream()
+		oauthInfo = clients.stream()
 			.collect(toMap(
 				OauthTokenProvider::getSupportedServerType,
 				identity()
@@ -29,7 +29,7 @@ public class OauthTokenProviderImpl {
 	}
 
 	private OauthTokenProvider getClient(OauthServerType oauthServerType) {
-		return Optional.ofNullable(mapping.get(oauthServerType))
+		return Optional.ofNullable(oauthInfo.get(oauthServerType))
 			.orElseThrow(() -> new RuntimeException("지원하지 않는 소셜 로그인 종류입니다."));
 	}
 }

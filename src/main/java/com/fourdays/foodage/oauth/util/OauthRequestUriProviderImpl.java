@@ -23,7 +23,7 @@ public class OauthRequestUriProviderImpl {
 	}
 
 	public String getRequestUri(OauthServerType oauthServerType) {
-		return getServerTypeProvider(oauthServerType).buildRequestUri(); // 요청한 서버의 provider 구현체를 가져옴
+		return getServerTypeProvider(oauthServerType).buildRequestUri();
 	}
 
 	private OauthRequestUriProvider getServerTypeProvider(OauthServerType oauthServerType) {
