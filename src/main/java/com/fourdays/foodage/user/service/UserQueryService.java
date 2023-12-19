@@ -12,6 +12,11 @@ import com.fourdays.foodage.user.service.dto.UserInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * author         : ebkim, jhjung
+ * date           : 2023/10/19
+ * description    : db의 변경이 일어나지 않는 단순 조회 작업을 여기에 작성합니다.
+ */
 @Service
 @Slf4j
 public class UserQueryService {
