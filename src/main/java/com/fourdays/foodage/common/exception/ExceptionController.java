@@ -54,8 +54,8 @@ public class ExceptionController {
 		return new ResponseEntity<>(res, res.getHttpStatus());
 	}
 
-	@ExceptionHandler(UserException.class)
-	public ResponseEntity<ErrorResponseDto<?>> handleException(UserException e) {
+	@ExceptionHandler(MemberException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberException e) {
 
 		log.error("handleException : {}", e);
 		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());

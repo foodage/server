@@ -7,14 +7,14 @@ import lombok.Getter;
 /**
  * author         : ebkim <br/>
  * date           : 2023/10/19 <br/>
- * description    : User와 관련된 Exception  <br/>
+ * description    : Member와 관련된 Exception  <br/>
  */
 @Getter
-public class UserException extends RuntimeException {
+public class MemberException extends RuntimeException {
 
 	private ResultCode errCode;
 
-	public UserException(ResultCode errCode) {
+	public MemberException(ResultCode errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}
