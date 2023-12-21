@@ -9,9 +9,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.common.enums.UserState;
 import com.fourdays.foodage.common.exception.UserException;
-import com.fourdays.foodage.user.controller.command.UserCreateRequest;
+import com.fourdays.foodage.oauth.domain.OauthId;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -19,11 +20,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(name = "tb_user")
 @Entity
+@Builder
 @EntityListeners(value = {AuditingEntityListener.class})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -34,8 +37,12 @@ public class User {
 	@Column(name = "id")
 	private Long id;
 
+	@Embedded
 	@Column(name = "oauth_id")
-	private Long oauthId;
+	private OauthId oauthId;
+
+	@Column(name = "account_email")
+	private String accountEmail;
 
 	@Column(name = "nickname", nullable = false, length = 64)
 	private String nickname;
@@ -54,12 +61,15 @@ public class User {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-	public User(UserCreateRequest userCreateRequest) {
+	public User(Long id, OauthId oauthId, String accountEmail, String nickname, String profileUrl, int state,
+		LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
 		this.oauthId = oauthId;
-		this.nickname = userCreateRequest.getNickname();
-		this.profileUrl = userCreateRequest.getProfileUrl();
+		this.accountEmail = accountEmail;
+		this.nickname = nickname;
+		this.profileUrl = profileUrl;
 		this.state = UserState.NORMAL.getCode();
+		;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}

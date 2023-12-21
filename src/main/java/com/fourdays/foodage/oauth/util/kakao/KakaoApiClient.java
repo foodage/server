@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
-import com.fourdays.foodage.oauth.controller.response.KakaoMemberResponse;
-import com.fourdays.foodage.oauth.controller.response.KakaoToken;
+import com.fourdays.foodage.oauth.dto.response.KakaoMember;
+import com.fourdays.foodage.oauth.dto.response.KakaoToken;
 
 public interface KakaoApiClient {
 
@@ -18,5 +18,5 @@ public interface KakaoApiClient {
 	KakaoToken fetchToken(@RequestParam MultiValueMap<String, String> params);
 
 	@GetExchange("https://kapi.kakao.com/v2/user/me")
-	KakaoMemberResponse fetchMember(@RequestHeader(name = AUTHORIZATION) String bearerToken);
+	KakaoMember fetchMemberInfo(@RequestHeader(name = AUTHORIZATION) String bearerToken);
 }

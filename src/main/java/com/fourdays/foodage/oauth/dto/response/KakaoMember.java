@@ -1,4 +1,4 @@
-package com.fourdays.foodage.oauth.controller.response;
+package com.fourdays.foodage.oauth.dto.response;
 
 import static com.fourdays.foodage.oauth.util.OauthServerType.*;
 
@@ -10,14 +10,14 @@ import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
 
 @JsonNaming(SnakeCaseStrategy.class)
-public record KakaoMemberResponse(
+public record KakaoMember(
 	Long id,
 	boolean hasSignedUp,
 	LocalDateTime connectedAt,
 	KakaoAccount kakaoAccount
 ) {
 
-	public OauthMember toDomain() {
+	public OauthMember toOauthMember() {
 		return OauthMember.builder()
 			.oauthId(new OauthId(String.valueOf(id), KAKAO))
 			.accountEmail(kakaoAccount.email)

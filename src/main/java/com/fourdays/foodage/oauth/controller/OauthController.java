@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.oauth.dto.response.OauthLoginResponse;
 import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
@@ -22,7 +23,7 @@ public class OauthController {
 		this.oauthService = oauthService;
 	}
 
-	@Operation(summary = "OAuth 서비스 연동 URI 조회")
+	@Operation(summary = "Oauth 서비스 연동 URI 조회")
 	@GetMapping("/oauth/{oauthServerType}")
 	ResponseEntity<String> getRequestUrl(@PathVariable OauthServerType oauthServerType
 		// HttpServletResponse response
@@ -33,23 +34,17 @@ public class OauthController {
 		return ResponseEntity.ok().body(redirectUrl);
 	}
 
-	// oauth server -> (backend) redirect url로 auth code를 파라미터에 담아 request
-	// 위 로직을 처리하기 위한 api
+	// oauth -> (backend) redirect url로 전달하는 auth code를 receive할 api
 	@Operation(hidden = true)
-	@GetMapping("/oauth/{oauthServerType}/auth-code")
-	ResponseEntity<String> receiveAuthCode(@RequestParam String code) {
+	@GetMapping("/oauth/{oauthServerName}/auth-code")
+	ResponseEntity<OauthLoginResponse> receiveAuthCode(@PathVariable String oauthServerName,
+		@RequestParam String code) {
 
 		log.debug("received auth code : {}", code);
-		return ResponseEntity.ok().body(code);
-	}
 
-	@Operation(summary = "로그인")
-	@GetMapping("/login/{oauthServerType}")
-	ResponseEntity<Long> login(
-		@PathVariable OauthServerType oauthServerType,
-		@RequestParam("code") String code
-	) {
-		Long login = oauthService.login(oauthServerType, code);
-		return ResponseEntity.ok(login);
+		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
+		OauthLoginResponse result = oauthService.login(oauthServerType, code);
+
+		return ResponseEntity.ok().body(result);
 	}
 }

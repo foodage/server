@@ -1,4 +1,4 @@
-package com.fourdays.foodage.oauth.controller.response;
+package com.fourdays.foodage.oauth.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
