@@ -39,8 +39,7 @@ public class OauthController {
 
 	// oauth -> (backend) redirect url로 전달하는 auth code를 receive & 사용자 정보 받아 login
 	@Operation(hidden = true)
-	@GetMapping("/oauth/{oauthServerName}/auth-code")
-	// todo : login으로 url 변경
+	@GetMapping("/oauth/{oauthServerName}/login")
 	ResponseEntity<OauthLoginResponse> login(@PathVariable String oauthServerName,
 		@RequestParam String code, HttpServletResponse response) throws IOException {
 
