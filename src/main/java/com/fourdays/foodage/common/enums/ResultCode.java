@@ -20,6 +20,11 @@ public enum ResultCode {
 	ERR_USER_NOT_FOUND(-10000, "일치하는 유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	ERR_USER_ALREADY_LEAVED(-10001, "이미 탈퇴한 회원입니다.", HttpStatus.NOT_FOUND),
 
+	// Oauth ////////////////////////////////////////////////////////////////////////////////////////
+	ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE(-11000, "지원하지 않는 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST),
+
+	ERR_KAKAO_AUTH_CODE_REDIRECT(-11030, "인가 코드 발급 중 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+
 	;
 
 	private final int code; // 에러 코드

@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.common.exception.UserException;
-import com.fourdays.foodage.user.controller.command.UserCreateRequest;
 import com.fourdays.foodage.user.domain.User;
 import com.fourdays.foodage.user.domain.repository.UserRepository;
 
@@ -28,13 +27,13 @@ public class UserCommandService {
 		this.userRepository = userRepository;
 	}
 
-	public void save(UserCreateRequest userCreateRequest) {
-		User user = new User(userCreateRequest);
-		userRepository.save(user);
-
-		log.debug("\n#--- saved user ---#\nid : {}\nnickname : {}\ncreatedAt : {}\n#------------------#",
-			user.getId(), user.getNickname(), user.getCreatedAt());
-	}
+	// public void save(UserCreateRequest userCreateRequest) {
+	// 	User user = new User(userCreateRequest);
+	// 	userRepository.save(user);
+	//
+	// 	log.debug("\n#--- saved user ---#\nid : {}\nnickname : {}\ncreatedAt : {}\n#------------------#",
+	// 		user.getId(), user.getNickname(), user.getCreatedAt());
+	// }
 
 	@Transactional
 	public void leave(long userId) {

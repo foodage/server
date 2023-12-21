@@ -6,15 +6,15 @@ import lombok.Getter;
 
 /**
  * author         : ebkim <br/>
- * date           : 2023/09 <br/>
- * description    : 처리 불가능한 파라미터  <br/>
+ * date           : 2023/12/13 <br/>
+ * description    : Kakao 로그인과 관련된 Exception  <br/>
  */
 @Getter
-public class IIllegalArgumentException extends Exception {
+public class OauthException extends RuntimeException {
 
 	private ResultCode errCode;
 
-	public IIllegalArgumentException(ResultCode errCode) {
+	public OauthException(ResultCode errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}
