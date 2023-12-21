@@ -6,7 +6,7 @@ import lombok.Getter;
 
 /**
  * author         : ebkim <br/>
- * date           : 2023. 09 <br/>
+ * date           : 2023/09 <br/>
  * description    : 처리 불가능한 파라미터  <br/>
  */
 @Getter
