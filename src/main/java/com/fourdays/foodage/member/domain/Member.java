@@ -69,7 +69,6 @@ public class Member {
 		this.nickname = nickname;
 		this.profileUrl = profileUrl;
 		this.state = MemberState.NORMAL.getCode();
-		;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}

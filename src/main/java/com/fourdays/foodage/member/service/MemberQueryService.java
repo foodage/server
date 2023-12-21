@@ -8,7 +8,6 @@ import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.common.exception.MemberException;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.repository.MemberRepository;
-import com.fourdays.foodage.member.service.dto.MemberInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,12 +26,21 @@ public class MemberQueryService {
 		this.memberRepository = memberRepository;
 	}
 
-	public MemberInfo getMemberInfo(Long id) {
+	public Member getMemberById(Long id) {
 		Optional<Member> findMember = memberRepository.findById(id);
 		log.debug("getMemberInfo() findMember : {}", findMember.get());
 		if (findMember.isEmpty()) {
 			throw new MemberException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
-		return new MemberInfo(findMember.get());
+		return findMember.get();
+	}
+
+	public Member getMemberByAccountEmail(String accountEmail) {
+		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
+		if (findMember.isEmpty()) {
+			throw new MemberException(ResultCode.ERR_MEMBER_NOT_FOUND);
+		}
+		log.debug("getMemberInfo() findMember : {}", findMember.get());
+		return findMember.get();
 	}
 }

@@ -4,9 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.member.controller.command.MemberCreateRequest;
+import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.member.service.MemberQueryService;
 import com.fourdays.foodage.member.service.dto.MemberInfo;
@@ -29,10 +33,20 @@ public class MemberController {
 	}
 
 	@GetMapping("/member/{id}")
-	public ResponseEntity<MemberInfo> getMemberInfo(
+	public ResponseEntity<Member> getMemberInfo(
 		@PathVariable Long id) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMemberInfo(id));
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMemberById(id));
+	}
+
+	@PostMapping("/member/join")
+	public ResponseEntity<MemberInfo> join(
+		@RequestBody MemberCreateRequest memberCreateRequest) {
+
+		memberCommandService.join(memberCreateRequest.getOauthId(), memberCreateRequest.getAccountEmail(),
+			memberCreateRequest.getNickname(), memberCreateRequest.getProfileUrl());
+
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@PutMapping("/member/{id}")

@@ -11,7 +11,10 @@ import com.fourdays.foodage.oauth.dto.response.KakaoToken;
 import com.fourdays.foodage.oauth.util.OauthLoginProvider;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class KakaoLoginProvider implements OauthLoginProvider {
 
 	private final KakaoApiClient kakaoApiClient;
@@ -30,6 +33,7 @@ public class KakaoLoginProvider implements OauthLoginProvider {
 	@Override
 	public OauthMember getTokenAndMemberInfo(String authCode) {
 		KakaoToken kakaoToken = kakaoApiClient.fetchToken(tokenRequestParams(authCode));
+		log.debug("received access token : {}", kakaoToken.accessToken());
 		KakaoMember kakaoMember = kakaoApiClient.fetchMemberInfo("Bearer " + kakaoToken.accessToken());
 
 		return kakaoMember.toOauthMember();

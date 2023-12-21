@@ -11,5 +11,7 @@ import com.fourdays.foodage.oauth.domain.OauthId;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+	Optional<Member> findByAccountEmail(String accountEmail);
+
 	Optional<Member> findByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail);
 }

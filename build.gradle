@@ -61,6 +61,9 @@ dependencies {
 
     // http interface
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // mac os 개발 시, front 연동 간 exception 발생하여 사용 (23-12-21)
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 }
 
 tasks.named('test') {
