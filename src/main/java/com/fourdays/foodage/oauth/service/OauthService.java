@@ -37,17 +37,20 @@ public class OauthService {
 	}
 
 	public OauthLoginResponse login(OauthServerType oauthServerType, String authCode) {
+		// 매핑되는 server의 api로 token, 사용자 정보(member info) 요청
 		OauthMember oauthMemberInfo = oauthClient.fetch(oauthServerType,
-			authCode); // 매핑되는 server의 api로 token, 사용자 정보(member info) 요청
+			authCode);
 
+		// 해당 사용자 정보가 db에 존재하는지(기존 가입 여부) 확인
 		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthMemberInfo.getOauthId(),
 			oauthMemberInfo.getAccountEmail());
 		if (!findMember.isPresent()) {
-			log.debug("존재하지 않는 사용자입니다.");
-			return new OauthLoginResponse(oauthMemberInfo.getAccountEmail(), LoginResult.FAILED);
+			return new OauthLoginResponse(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
+				LoginResult.FAILED);
 		}
 
 		// jwt 발급
-		return new OauthLoginResponse(findMember.get().getAccountEmail(), LoginResult.SUCCEEDED);
+		return new OauthLoginResponse(oauthMemberInfo.getOauthId(), findMember.get().getAccountEmail(),
+			LoginResult.SUCCEEDED);
 	}
 }

@@ -17,8 +17,9 @@ public enum ResultCode {
 	ERR_ACCESS_DENIED(-1002, "해당 컨텐츠에 접근할 수 있는 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
 
 	// MEMBER /////////////////////////////////////////////////////////////////////////////////////////
-	ERR_MEMBER_NOT_FOUND(-10000, "일치하는 유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-	ERR_MEMBER_ALREADY_LEAVED(-10001, "이미 탈퇴한 회원입니다.", HttpStatus.NOT_FOUND),
+	ERR_MEMBER_NOT_FOUND(-10000, "일치하는 회원 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+	ERR_MEMBER_ALREADY_JOINED(-10001, "이미 가입한 회원입니다.", HttpStatus.CONFLICT),
+	ERR_MEMBER_ALREADY_LEAVED(-10002, "이미 탈퇴한 회원입니다.", HttpStatus.NOT_FOUND),
 
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE(-11000, "지원하지 않는 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST),

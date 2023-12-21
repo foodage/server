@@ -9,6 +9,7 @@ import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.common.exception.MemberException;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.repository.MemberRepository;
+import com.fourdays.foodage.oauth.domain.OauthId;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,10 +22,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MemberCommandService {
 
+	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
 
-	public MemberCommandService(MemberRepository memberRepository) {
+	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository) {
+		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
+	}
+
+	@Transactional
+	public void join(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
+
+		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
+		if (findMember.isPresent())
+			throw new MemberException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+
+		Member member = Member.builder()
+			.oauthId(oauthId)
+			.accountEmail(accountEmail)
+			.nickname(nickname)
+			.profileUrl(profileUrl)
+			.build();
+		Long id = memberRepository.save(member).getId();
+
+		log.debug("\n#--- saved member ---#\nid : {}\naccountEmail : {}\n#--------------------#",
+			id,
+			accountEmail
+		);
 	}
 
 	@Transactional
