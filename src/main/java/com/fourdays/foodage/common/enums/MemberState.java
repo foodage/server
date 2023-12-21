@@ -1,6 +1,6 @@
 package com.fourdays.foodage.common.enums;
 
-public enum UserState {
+public enum MemberState {
 
 	NORMAL(0),
 	BLOCK(1),
@@ -8,7 +8,7 @@ public enum UserState {
 
 	private final int code;
 
-	UserState(int code) {
+	MemberState(int code) {
 		this.code = code;
 	}
 
