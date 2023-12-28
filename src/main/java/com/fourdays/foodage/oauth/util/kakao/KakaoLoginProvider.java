@@ -6,8 +6,8 @@ import org.springframework.util.MultiValueMap;
 
 import com.fourdays.foodage.oauth.config.KakaoConfig;
 import com.fourdays.foodage.oauth.domain.OauthMember;
-import com.fourdays.foodage.oauth.dto.response.KakaoMember;
-import com.fourdays.foodage.oauth.dto.response.KakaoToken;
+import com.fourdays.foodage.oauth.dto.KakaoMember;
+import com.fourdays.foodage.oauth.dto.KakaoToken;
 import com.fourdays.foodage.oauth.util.OauthLoginProvider;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fourdays.foodage.common.dto.ErrorResponseDto;
 import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.member.exception.MemberException;
 
 import lombok.extern.slf4j.Slf4j;
 

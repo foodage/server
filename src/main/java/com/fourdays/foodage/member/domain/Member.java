@@ -6,9 +6,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
-import com.fourdays.foodage.common.exception.MemberException;
+import com.fourdays.foodage.member.exception.MemberException;
+import com.fourdays.foodage.member.exception.MemberStateException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
 import jakarta.persistence.Column;
@@ -51,7 +53,7 @@ public class Member {
 	private String profileUrl;
 
 	@Column(name = "state")
-	private int state;
+	private String state;
 
 	@CreatedDate
 	@Column(name = "created_at", updatable = false)
@@ -61,25 +63,42 @@ public class Member {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-	public Member(Long id, OauthId oauthId, String accountEmail, String nickname, String profileUrl, int state,
-		LocalDateTime createdAt, LocalDateTime updatedAt) {
+	@Column(name = "last_login_at")
+	private LocalDateTime lastLoginAt;
+
+	public Member(Long id, OauthId oauthId, String accountEmail, String nickname, String profileUrl, String state,
+		LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime lastLoginAt) {
 		this.id = id;
 		this.oauthId = oauthId;
 		this.accountEmail = accountEmail;
 		this.nickname = nickname;
 		this.profileUrl = profileUrl;
-		this.state = MemberState.NORMAL.getCode();
+		this.state = MemberState.NORMAL.name();
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.lastLoginAt = lastLoginAt;
 	}
 
-	public void leaved(Member member) {
-		if (this.state == MemberState.LEAVE.getCode()) {
+	public void validateState() {
+		if (state == MemberState.BLOCK.name()) {
+			throw new MemberStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.BLOCKED);
+		}
+		if (state == MemberState.LEAVE.name()) {
+			throw new MemberStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.LEAVED);
+		}
+	}
+
+	public void updateLastLoginAt() {
+		lastLoginAt = LocalDateTime.now();
+	}
+
+	public void leaved() {
+		if (state == MemberState.LEAVE.name()) {
 			throw new MemberException(ResultCode.ERR_MEMBER_ALREADY_LEAVED);
 		}
-		this.oauthId = null;
-		this.nickname = "탈퇴한 사용자";
-		this.profileUrl = null;
-		this.state = MemberState.LEAVE.getCode();
+		oauthId = null;
+		nickname = "탈퇴한 사용자";
+		profileUrl = null;
+		state = MemberState.LEAVE.name();
 	}
 }

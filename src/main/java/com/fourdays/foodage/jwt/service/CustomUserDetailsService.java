@@ -1,7 +1,8 @@
 package com.fourdays.foodage.jwt.service;
 
-import com.fourdays.foodage.jwt.repository.UserTokenRepository;
-import com.fourdays.foodage.jwt.domain.UserToken;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.fourdays.foodage.jwt.domain.UserToken;
+import com.fourdays.foodage.jwt.domain.UserTokenRepository;
 
 @Component("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {

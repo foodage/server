@@ -1,4 +1,4 @@
-package com.fourdays.foodage.member.controller.command;
+package com.fourdays.foodage.member.dto;
 
 import com.fourdays.foodage.oauth.domain.OauthId;
 
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberCreateRequest {
+public class MemberCreateRequestDto {
 
 	@NotBlank(message = "간편 로그인 서비스 종류를 입력해주세요.")
 	private OauthId oauthId;
@@ -26,13 +26,13 @@ public class MemberCreateRequest {
 
 	private String profileUrl = "default";
 
-	public MemberCreateRequest(OauthId oauthId, String accountEmail, String nickname) {
+	public MemberCreateRequestDto(OauthId oauthId, String accountEmail, String nickname) {
 		this.oauthId = oauthId;
 		this.accountEmail = accountEmail;
 		this.nickname = nickname;
 	}
 
-	public MemberCreateRequest(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
+	public MemberCreateRequestDto(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
 		this.oauthId = oauthId;
 		this.accountEmail = accountEmail;
 		this.nickname = nickname;

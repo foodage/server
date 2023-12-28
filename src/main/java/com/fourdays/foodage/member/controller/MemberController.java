@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fourdays.foodage.member.controller.command.MemberCreateRequest;
 import com.fourdays.foodage.member.domain.Member;
+import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
+import com.fourdays.foodage.member.dto.MemberInfoDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.member.service.MemberQueryService;
-import com.fourdays.foodage.member.service.dto.MemberInfo;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +40,8 @@ public class MemberController {
 	}
 
 	@PostMapping("/member/join")
-	public ResponseEntity<MemberInfo> join(
-		@RequestBody MemberCreateRequest memberCreateRequest) {
+	public ResponseEntity<MemberInfoDto> join(
+		@RequestBody MemberCreateRequestDto memberCreateRequest) {
 
 		memberCommandService.join(memberCreateRequest.getOauthId(), memberCreateRequest.getAccountEmail(),
 			memberCreateRequest.getNickname(), memberCreateRequest.getProfileUrl());

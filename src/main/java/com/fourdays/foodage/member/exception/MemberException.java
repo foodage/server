@@ -1,4 +1,4 @@
-package com.fourdays.foodage.common.exception;
+package com.fourdays.foodage.member.exception;
 
 import com.fourdays.foodage.common.enums.ResultCode;
 
