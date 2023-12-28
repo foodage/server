@@ -52,13 +52,35 @@ public class MemberCommandService {
 	}
 
 	@Transactional
+	public void login(OauthId oauthId, String accountEmail) {
+		log.debug("# oauthServerId : {}, oauthServerType : {}, accountEmail : {}", oauthId.getOauthServerId(),
+			oauthId.getOauthServerType(), accountEmail);
+		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
+		if (!findMember.isPresent()) {
+			throw new MemberException(ResultCode.ERR_MEMBER_NOT_FOUND);
+		}
+
+		// 블락, 휴면, 탈퇴 상태인지 확인
+		findMember.get().validateState();
+
+		// 약관 동의 여부 확인
+
+		// 로그인 히스토리 추가
+
+		// 마지막 로그인 일시 업데이트
+		findMember.get().updateLastLoginAt();
+
+		// jwt 발행 및 반환
+	}
+
+	@Transactional
 	public void leave(long memberId) {
 		Optional<Member> findMember = memberRepository.findById(memberId);
 		if (findMember.isEmpty()) {
 			throw new MemberException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
 
-		findMember.get().leaved(findMember.get());
+		findMember.get().leaved();
 
 		log.debug("\n#--- leaved member ---#\nid : {}\nnickname : {}\n#--------------------#",
 			findMember.get().getId(),

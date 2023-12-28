@@ -15,15 +15,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
-import com.fourdays.foodage.jwt.handler.TokenProvider;
-import com.fourdays.foodage.jwt.handler.JwtAuthenticationEntryPoint;
 import com.fourdays.foodage.jwt.handler.JwtAccessDeniedHandler;
-
+import com.fourdays.foodage.jwt.handler.JwtAuthenticationEntryPoint;
+import com.fourdays.foodage.jwt.handler.TokenProvider;
 
 @EnableWebSecurity
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
+
 	private final TokenProvider tokenProvider;
 	private final CorsFilter corsFilter;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -66,7 +66,8 @@ public class SecurityConfig {
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(
 					new AntPathRequestMatcher("/api/authenticate"),
-					new AntPathRequestMatcher("/api/signup")
+					new AntPathRequestMatcher("/api/signup"),
+					new AntPathRequestMatcher("/oauth/**")
 				).permitAll()
 				.anyRequest().authenticated()
 			)

@@ -2,12 +2,14 @@ package com.fourdays.foodage.oauth.controller;
 
 import java.io.IOException;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.oauth.dto.response.OauthLoginResponse;
 import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
@@ -50,8 +52,13 @@ public class OauthController {
 
 		log.debug("login result : {}", result.getResult().getDetailMessage());
 
-		String redirectUrl = "http://localhost:3000/tutorial";
-		response.sendRedirect(redirectUrl);
-		return ResponseEntity.ok().body(result);
+		HttpHeaders httpHeaders = null;
+		if (result.getResult().equals(LoginResult.SUCCEEDED)) {
+			httpHeaders = oauthService.provideToken(result.getOauthId(), result.getAccountEmail());
+		}
+
+		// String redirectUrl = "http://localhost:3000/tutorial";
+		// response.sendRedirect(redirectUrl);
+		return ResponseEntity.ok().headers(httpHeaders).body(result);
 	}
 }
