@@ -8,15 +8,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.common.enums.LoginResult;
-import com.fourdays.foodage.common.exception.MemberException;
-import com.fourdays.foodage.common.exception.MemberStateException;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
-import com.fourdays.foodage.member.domain.repository.MemberRepository;
+import com.fourdays.foodage.member.domain.MemberRepository;
+import com.fourdays.foodage.member.exception.MemberException;
+import com.fourdays.foodage.member.exception.MemberStateException;
 import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
-import com.fourdays.foodage.oauth.dto.response.OauthLoginResponse;
+import com.fourdays.foodage.oauth.dto.OauthLoginResponseDto;
 import com.fourdays.foodage.oauth.util.OauthLoginProviderImpl;
 import com.fourdays.foodage.oauth.util.OauthRequestUriProviderImpl;
 import com.fourdays.foodage.oauth.util.OauthServerType;
@@ -51,7 +51,7 @@ public class OauthService {
 		return requestUri;
 	}
 
-	public OauthLoginResponse login(OauthServerType oauthServerType, String authCode) {
+	public OauthLoginResponseDto login(OauthServerType oauthServerType, String authCode) {
 		// 매핑되는 server의 api로 token, 사용자 정보(member info) 요청
 		OauthMember oauthMemberInfo = oauthClient.fetch(oauthServerType,
 			authCode);
@@ -61,15 +61,15 @@ public class OauthService {
 			memberCommandService.login(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
 		} catch (MemberException e) {
 			log.debug(e.getMessage());
-			return new OauthLoginResponse(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
+			return new OauthLoginResponseDto(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
 				LoginResult.FAILED);
 		} catch (MemberStateException e) {
 			log.debug(e.getMessage());
-			return new OauthLoginResponse(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
+			return new OauthLoginResponseDto(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
 				e.getLoginResult()); // state와 관련된 LoginResult
 		}
 
-		return new OauthLoginResponse(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
+		return new OauthLoginResponseDto(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
 			LoginResult.SUCCEEDED);
 	}
 

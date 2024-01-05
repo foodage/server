@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.fourdays.foodage.member.controller.command.MemberCreateRequest;
+import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
 
 import jakarta.validation.ConstraintViolation;
@@ -42,7 +42,7 @@ public class MemberCreateTest {
 				String profileUrl = "https://";
 
 				// when - then
-				MemberCreateRequest memberCreateRequest = new MemberCreateRequest(정상_닉네임, profileUrl);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(정상_닉네임, profileUrl);
 				validate(memberCreateRequest);
 			}
 		}
@@ -59,7 +59,7 @@ public class MemberCreateTest {
 				String profileUrl = "https://";
 
 				// when - then
-				MemberCreateRequest memberCreateRequest = new MemberCreateRequest(닉네임_공백, profileUrl);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_공백, profileUrl);
 				validate(memberCreateRequest);
 			}
 
@@ -71,7 +71,7 @@ public class MemberCreateTest {
 				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequest memberCreateRequest = new MemberCreateRequest(닉네임_공백포함, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_공백포함, 프로필_주소);
 				validate(memberCreateRequest);
 			}
 
@@ -83,7 +83,7 @@ public class MemberCreateTest {
 				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequest memberCreateRequest = new MemberCreateRequest(닉네임_특수문자, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_특수문자, 프로필_주소);
 				validate(memberCreateRequest);
 			}
 
@@ -95,7 +95,7 @@ public class MemberCreateTest {
 				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequest memberCreateRequest = new MemberCreateRequest(닉네임_자음, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_자음, 프로필_주소);
 				validate(memberCreateRequest);
 			}
 
@@ -107,7 +107,7 @@ public class MemberCreateTest {
 				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequest memberCreateRequest = new MemberCreateRequest(닉네임_2글자_미만, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_2글자_미만, 프로필_주소);
 				validate(memberCreateRequest);
 			}
 
@@ -119,14 +119,14 @@ public class MemberCreateTest {
 				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequest memberCreateRequest = new MemberCreateRequest(닉네임_12글자_초과, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_12글자_초과, 프로필_주소);
 				validate(memberCreateRequest);
 			}
 		}
 	}
 
-	private void validate(MemberCreateRequest memberCreateRequest) {
-		Set<ConstraintViolation<MemberCreateRequest>> errorMessage = validator.validate(memberCreateRequest);
+	private void validate(MemberCreateRequestDto memberCreateRequest) {
+		Set<ConstraintViolation<MemberCreateRequestDto>> errorMessage = validator.validate(memberCreateRequest);
 
 		log.debug("\n\n### errorMessage : {}", errorMessage);
 

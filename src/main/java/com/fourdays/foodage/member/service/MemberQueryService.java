@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.common.enums.ResultCode;
-import com.fourdays.foodage.common.exception.MemberException;
 import com.fourdays.foodage.member.domain.Member;
-import com.fourdays.foodage.member.domain.repository.MemberRepository;
+import com.fourdays.foodage.member.domain.MemberRepository;
+import com.fourdays.foodage.member.exception.MemberException;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package com.fourdays.foodage.oauth.dto.response;
+package com.fourdays.foodage.oauth.dto;
 
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.oauth.domain.OauthId;
@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class OauthLoginResponse {
+public class OauthLoginResponseDto {
 
 	@Schema(description = "간편 로그인 종류")
 	private OauthId oauthId;

@@ -1,4 +1,4 @@
-package com.fourdays.foodage.oauth.dto.response;
+package com.fourdays.foodage.oauth.dto;
 
 import static com.fourdays.foodage.oauth.util.OauthServerType.*;
 

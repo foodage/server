@@ -1,4 +1,4 @@
-package com.fourdays.foodage.member.domain.vo;
+package com.fourdays.foodage.member.vo;
 
 import lombok.Getter;
 

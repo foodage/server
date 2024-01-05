@@ -9,8 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
-import com.fourdays.foodage.common.exception.MemberException;
-import com.fourdays.foodage.common.exception.MemberStateException;
+import com.fourdays.foodage.member.exception.MemberException;
+import com.fourdays.foodage.member.exception.MemberStateException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
 import jakarta.persistence.Column;

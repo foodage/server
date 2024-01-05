@@ -1,11 +1,11 @@
-package com.fourdays.foodage.member.service.dto;
+package com.fourdays.foodage.member.dto;
 
 import com.fourdays.foodage.member.domain.Member;
 
 import lombok.Getter;
 
 @Getter
-public class MemberInfo {
+public class MemberInfoDto {
 
 	private String nickname;
 
@@ -15,7 +15,7 @@ public class MemberInfo {
 
 	private String updatedAt;
 
-	public MemberInfo(Member member) {
+	public MemberInfoDto(Member member) {
 		this.nickname = member.getNickname();
 		this.profileUrl = member.getProfileUrl();
 		this.createdAt = member.getCreatedAt().toString();

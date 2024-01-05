@@ -1,11 +1,10 @@
-package com.fourdays.foodage.member.domain.repository;
+package com.fourdays.foodage.member.domain;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
 @Repository
