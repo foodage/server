@@ -1,0 +1,10 @@
+
+${AnsiColor.BRIGHT_YELLOW}   ____                       _            _____
+${AnsiColor.BRIGHT_YELLOW}  | ___|  _____   _____   ___| |   _____  /  _` \  ____
+${AnsiColor.BRIGHT_YELLOW}  | ___| /  _  \ /  _  \ /  _` |  /  _` | \__,  | /  -_)     ${AnsiColor.BRIGHT_BLACK}⩘_⩘       _
+${AnsiColor.BRIGHT_YELLOW}  |_|    \_____/ \_____/ \__,__|  \__,__| |____/  \____|   ${AnsiColor.BRIGHT_RED}⚬${AnsiColor.BRIGHT_BLACK} •• )}____//
+${AnsiColor.BRIGHT_WHITE}_| """ |_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    ${AnsiColor.BRIGHT_BLACK}`⦦/       )
+${AnsiColor.BRIGHT_WHITE}"`-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-'"`-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-'"`-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-'"`-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-'"`-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-'"`-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-'"`-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-${AnsiColor.BRIGHT_BLACK}0${AnsiColor.BRIGHT_WHITE}-'     ${AnsiColor.BRIGHT_BLACK}(_(_/-(_/
+
+${AnsiColor.BRIGHT_GREEN} :: Spring Boot ${spring-boot.version} ::
+${AnsiColor.BRIGHT_WHITE}
