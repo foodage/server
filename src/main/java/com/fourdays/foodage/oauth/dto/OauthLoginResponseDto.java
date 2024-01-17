@@ -1,12 +1,18 @@
-package com.fourdays.foodage.oauth.dto.response;
+package com.fourdays.foodage.oauth.dto;
 
 import com.fourdays.foodage.common.enums.LoginResult;
+import com.fourdays.foodage.oauth.domain.OauthId;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
-public class OauthLoginResponse {
+@Getter
+public class OauthLoginResponseDto {
+
+	@Schema(description = "간편 로그인 종류")
+	private OauthId oauthId;
 
 	@Schema(description = "간편 로그인한 계정의 ID (email)")
 	private String accountEmail;

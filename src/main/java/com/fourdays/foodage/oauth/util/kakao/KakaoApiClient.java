@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
-import com.fourdays.foodage.oauth.dto.response.KakaoMember;
-import com.fourdays.foodage.oauth.dto.response.KakaoToken;
+import com.fourdays.foodage.oauth.dto.KakaoMember;
+import com.fourdays.foodage.oauth.dto.KakaoToken;
 
 public interface KakaoApiClient {
 

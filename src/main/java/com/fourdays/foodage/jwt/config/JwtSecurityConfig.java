@@ -9,7 +9,9 @@ import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 
 public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+
 	private TokenProvider tokenProvider;
+
 	public JwtSecurityConfig(TokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
 	}

@@ -16,13 +16,14 @@ public enum ResultCode {
 	ERR_REQUIRED_FIELD(-1001, "입력 파라미터가 유효하지 않습니다. 파라미터를 다시 확인해주세요.", HttpStatus.BAD_REQUEST),
 	ERR_ACCESS_DENIED(-1002, "해당 컨텐츠에 접근할 수 있는 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
 
-	// USER /////////////////////////////////////////////////////////////////////////////////////////
-	ERR_USER_NOT_FOUND(-10000, "일치하는 유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-	ERR_USER_ALREADY_LEAVED(-10001, "이미 탈퇴한 회원입니다.", HttpStatus.NOT_FOUND),
+	// MEMBER /////////////////////////////////////////////////////////////////////////////////////////
+	ERR_MEMBER_NOT_FOUND(-10000, "일치하는 사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+	ERR_MEMBER_ALREADY_JOINED(-10001, "이미 가입한 사용자입니다.", HttpStatus.CONFLICT),
+	ERR_MEMBER_ALREADY_LEAVED(-10002, "이미 탈퇴한 사용자입니다.", HttpStatus.NOT_FOUND),
+	ERR_MEMBER_INVALID(-10002, "유효하지 않은 사용자입니다.", HttpStatus.NOT_FOUND),
 
-	// Oauth ////////////////////////////////////////////////////////////////////////////////////////
+	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE(-11000, "지원하지 않는 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST),
-
 	ERR_KAKAO_AUTH_CODE_REDIRECT(-11030, "인가 코드 발급 중 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
 	;

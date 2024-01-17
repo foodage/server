@@ -40,5 +40,5 @@ logging:
 oauth:
   kakao:
     client_id: ENC(L0yPdNFen+owiyjwGfChX0KtJ9dSK2SR30zALlUhqhD8rJp1aZFAd/6B+vWUlmBtb/Z976koXPZx54KfqlxVFnIM7oRWbOTZd/189+NlV5U=)
-    redirect_uri: http://localhost:12816/api/oauth/kakao/auth-code
+    redirect_uri: http://localhost:12816/api/oauth/kakao/login
     scope: account_email
