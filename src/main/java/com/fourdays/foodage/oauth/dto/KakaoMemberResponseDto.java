@@ -10,7 +10,7 @@ import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
 
 @JsonNaming(SnakeCaseStrategy.class)
-public record KakaoMember(
+public record KakaoMemberResponseDto(
 	Long id,
 	boolean hasSignedUp,
 	LocalDateTime connectedAt,

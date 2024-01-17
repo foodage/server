@@ -6,7 +6,7 @@ import org.springframework.util.MultiValueMap;
 
 import com.fourdays.foodage.oauth.config.KakaoConfig;
 import com.fourdays.foodage.oauth.domain.OauthMember;
-import com.fourdays.foodage.oauth.dto.KakaoMember;
+import com.fourdays.foodage.oauth.dto.KakaoMemberResponseDto;
 import com.fourdays.foodage.oauth.dto.KakaoToken;
 import com.fourdays.foodage.oauth.util.OauthLoginProvider;
 import com.fourdays.foodage.oauth.util.OauthServerType;
@@ -34,9 +34,10 @@ public class KakaoLoginProvider implements OauthLoginProvider {
 	public OauthMember getTokenAndMemberInfo(String authCode) {
 		KakaoToken kakaoToken = kakaoApiClient.fetchToken(tokenRequestParams(authCode));
 		log.debug("received access token : {}", kakaoToken.accessToken());
-		KakaoMember kakaoMember = kakaoApiClient.fetchMemberInfo("Bearer " + kakaoToken.accessToken());
+		KakaoMemberResponseDto kakaoMemberResponseDto = kakaoApiClient.fetchMemberInfo(
+			"Bearer " + kakaoToken.accessToken());
 
-		return kakaoMember.toOauthMember();
+		return kakaoMemberResponseDto.toOauthMember();
 	}
 
 	private MultiValueMap<String, String> tokenRequestParams(String authCode) {
