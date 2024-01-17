@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
+import com.fourdays.foodage.oauth.domain.OauthId;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -30,6 +32,10 @@ public class MemberCreateTest {
 	@DisplayName("닉네임 유효성 검사 로직이 정상 동작하는지 확인합니다.")
 	class ValidateNickname {
 
+		OauthId kakaoServerId = new OauthId("T4sNLNHqYuB897wtMvfLkCUtWw7Ctd6zxM6O-aofHFc",
+			OauthServerType.KAKAO);
+		String profileUrl = "https://";
+
 		@Nested
 		@DisplayName("🟢 성공 케이스")
 		class SuccessTest {
@@ -38,11 +44,11 @@ public class MemberCreateTest {
 			@DisplayName("<유효한 닉네임>으로 생성을 시도하면 성공")
 			public void valid_어노테이션_테스트() {
 				// given
-				String 정상_닉네임 = "foodage";
-				String profileUrl = "https://";
+				String 정상_닉네임 = "mammoth";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(정상_닉네임, profileUrl);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(kakaoServerId, 정상_닉네임,
+					profileUrl);
 				validate(memberCreateRequest);
 			}
 		}
@@ -56,10 +62,10 @@ public class MemberCreateTest {
 			public void 닉네임_공백_검증() {
 				// given
 				String 닉네임_공백 = "";
-				String profileUrl = "https://";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_공백, profileUrl);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(kakaoServerId, 닉네임_공백,
+					profileUrl);
 				validate(memberCreateRequest);
 			}
 
@@ -68,10 +74,10 @@ public class MemberCreateTest {
 			public void 닉네임_공백포함_검증() {
 				// given
 				String 닉네임_공백포함 = "가  나다";
-				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_공백포함, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(kakaoServerId, 닉네임_공백포함,
+					profileUrl);
 				validate(memberCreateRequest);
 			}
 
@@ -80,10 +86,10 @@ public class MemberCreateTest {
 			public void 닉네임_특수문자_검증() {
 				// given
 				String 닉네임_특수문자 = "@가나다";
-				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_특수문자, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(kakaoServerId, 닉네임_특수문자,
+					profileUrl);
 				validate(memberCreateRequest);
 			}
 
@@ -92,10 +98,10 @@ public class MemberCreateTest {
 			public void 닉네임_자음_검증() {
 				// given
 				String 닉네임_자음 = "ㄱㄴㄷ";
-				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_자음, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(kakaoServerId, 닉네임_자음,
+					profileUrl);
 				validate(memberCreateRequest);
 			}
 
@@ -104,10 +110,10 @@ public class MemberCreateTest {
 			public void 닉네임_최소글자수_검증() {
 				// given
 				String 닉네임_2글자_미만 = "가";
-				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_2글자_미만, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(kakaoServerId, 닉네임_2글자_미만,
+					profileUrl);
 				validate(memberCreateRequest);
 			}
 
@@ -116,10 +122,10 @@ public class MemberCreateTest {
 			public void 닉네임_최대글자수_검증() {
 				// given
 				String 닉네임_12글자_초과 = "가나다라abcd마바사아efgh초과";
-				String 프로필_주소 = "https://";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(닉네임_12글자_초과, 프로필_주소);
+				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(kakaoServerId, 닉네임_12글자_초과,
+					profileUrl);
 				validate(memberCreateRequest);
 			}
 		}
