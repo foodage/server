@@ -1,7 +1,6 @@
 <div align="center" style="margin-top: 1em; margin-bottom: 3em;">
   <h3>Server</h3>
-   -ㅤ◦ㅤ-
-  <br/><br/>
+  <br/>
 
 ![Java 17](https://img.shields.io/badge/Java_17-007396?style=for-the-badge&logo=OpenJDK&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot__3.1.3-6DB33F?style=for-the-badge&logo=html5&logoColor=white)
@@ -11,27 +10,33 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=html5&logoColor=white)
 
 </div> <br/>
-👋🏻 Foodage 메인 서버 매뉴얼입니다. <br/>
-- 메인 스택: Java 17, Spring Boot, JPA <br/>
+<b>Foodage 메인 서버 매뉴얼입니다.</b> <br/>
+- 메인 스택: Java 17, Spring Boot 3, Spring Security 6, JPA <br/>
 - API 문서: Spring Docs <br/>
 - 브랜치 전략: Git-flow <br/>
-- 패키지 구조: CQRS 기반, 도메인 지향 패키지 구조
-
-
+- 패키지 구조: <s>CQRS 기반</s>, 도메인 지향 패키지 구조
 
 <br/><br/>
+<div align="center" style="margin-top: 1em; margin-bottom: 3em;">
+ ✦ㅤㅤ-ㅤㅤ✦ㅤㅤ-ㅤㅤ✦<br/>
+</div><br/>
 
 ## 🕳 목차
 
-1. [🪟 **Convention (개발 세팅)**](#-convention--개발-세팅-)
-    - [코딩 컨벤션 ``#java``](#코딩-컨벤션-ㅤ-java)
-    - [커밋 컨벤션 ``#git_hooks``](#커밋-컨벤션-ㅤ-githooks)
-2. [📦 **Packaging (jar)**](#-packaging--jar-)
-3. [▶️ **Run (jar)**](#-run--jar-)
-4. [🚪 **Docker 배포**](#-docker-배포)
-5. [**Etc**](#-etc)
-    - [Versioning 규칙](#-versioning-규칙)
-6. [**Version History**](#version-history)
+1. [🪟 Convention (개발 세팅)](#-convention-개발-세팅)
+    * [**코딩 컨벤션**ㅤ``#java``](#코딩-컨벤션%E3%85%A4java)
+    * [**커밋 컨벤션**ㅤ``#git_hooks``](#커밋-컨벤션%E3%85%A4git_hooks)
+2. [📦 Packaging (jar)](#-packaging-jar)
+    + [common (shell)](#common-shell)
+    + [mac](#mac)
+    + [window](#window)
+3. [▶️ Run (jar)](#%EF%B8%8F-run-jar)
+    + [mac](#mac-1)
+4. [🗄 Database](#-database)
+5. [🚪 Docker 배포](#-docker-배포)
+5. [📝 Etc](#-etc)
+    + [❗️ Versioning 규칙](#%EF%B8%8F-versioning-규칙)
+6. [Version History](#version-history)
 
 <br/><br/>
 
@@ -70,7 +75,13 @@ $ chmod +x .git/hooks
 
 ## 📦 Packaging (jar)
 
-- 23-08-30 임시 작성
+#### common (shell)
+
+```
+프로젝트 루트 경로에서
+./build.sh
+실행 후 배포 환경에 맞는 jar 파일 생성
+```
 
 #### mac
 
@@ -100,7 +111,30 @@ ex2) java -jar ./build/libs/foodage-1.0.0.jar # 생략시 local 환경으로 실
 
 <br/><br/>
 
+## 🗄 Database
+
+``application.yml``의 datasource-url 설정 변경
+
+- local: 본인 local에서 실행중인 mariadb port와 연결하여 개발
+    ```
+    spring:
+      datasource:
+        driver-class-name: org.mariadb.jdbc.Driver
+        url: jdbc:mariadb://localhost:3306/foodage_test
+        username: root
+        password: ${USER_MARIA_DB_PASSWORD}
+    ```
+
+- develop: 원격 환경 개발 or 테스트 필요할 경우 <br/>
+  [서버 배포 정보 공유](https://watebin.notion.site/4f782d484eb8493d87fcb9762ac0b4fd?pvs=4) 내용 참조하여 ec2 인스턴스 <-> 로컬 터널링 후, <br/>
+  링크에 기재된 정보로 datasource 세팅
+
+<br/><br/>
+
 ## 🚪 Docker 배포
+
+- 원격 서버(ec2) 연결 <br/>
+  [서버 배포 정보 공유](https://watebin.notion.site/4f782d484eb8493d87fcb9762ac0b4fd?pvs=4) 내용 참조하여 세팅 진행
 
 #### 0) 원격 서버에 파일 업로드
 
