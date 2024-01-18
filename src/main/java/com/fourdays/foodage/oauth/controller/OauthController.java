@@ -49,7 +49,7 @@ public class OauthController implements OauthApi {
 
 		HttpHeaders httpHeaders = null;
 		if (result.getResult().equals(LoginResult.JOINED)) {
-			httpHeaders = oauthService.createToken(result.getOauthId(), result.getAccountEmail());
+			httpHeaders = oauthService.provideToken(result.getOauthId(), result.getAccountEmail());
 		}
 
 		// 회원가입 페이지로 이동시킴
