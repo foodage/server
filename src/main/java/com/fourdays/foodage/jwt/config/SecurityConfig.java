@@ -27,12 +27,14 @@ public class SecurityConfig {
 	private final CorsFilter corsFilter;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-	private final String[] WHITE_LIST_URL = {
+	private final String[] allowedUrls = {
 		"/swagger-ui/**",
 		"/swagger-resources/**",
 		"/v3/api-docs/**", // swagger
 		"/jwt/authenticate",
-		"/jwt/signup"
+		"/jwt/signup",
+		"/oauth/**",
+		"/member/join"
 	};
 
 	public SecurityConfig(
@@ -70,7 +72,7 @@ public class SecurityConfig {
 			)
 
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(WHITE_LIST_URL)
+				.requestMatchers(allowedUrls)
 				.permitAll()
 				.anyRequest()
 				.authenticated()

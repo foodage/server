@@ -12,16 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
-
 import com.fourdays.foodage.jwt.dto.LoginDto;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/jwt")
 public class AuthController {
+	
 	private final TokenProvider tokenProvider;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 

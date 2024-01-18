@@ -1,15 +1,10 @@
 package com.fourdays.foodage.jwt.domain;
 
-import java.util.Set;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,19 +32,11 @@ public class UserToken {
 	@Column(name = "activated")
 	private boolean activated;
 
-	@ManyToMany
-	@JoinTable(
-		name = "tb_usertoken_authority",
-		joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
-		inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
-	private Set<Authority> authorities;
-
 	@Builder
-	public UserToken(Long id, String username, String email, boolean activated, Set<Authority> authorities) {
+	public UserToken(Long id, String username, String email, boolean activated) {
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.activated = activated;
-		this.authorities = authorities;
 	}
 }

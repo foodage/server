@@ -1,13 +1,23 @@
 package com.fourdays.foodage.member.service;
 
+import java.util.Collections;
 import java.util.Optional;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.jwt.domain.Authority;
+import com.fourdays.foodage.jwt.dto.TokenDto;
+import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
+import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
@@ -24,35 +34,64 @@ public class MemberCommandService {
 
 	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
+	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+	private final TokenProvider tokenProvider;
+	private final PasswordEncoder passwordEncoder;
 
-	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository) {
+	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository,
+		AuthenticationManagerBuilder authenticationManagerBuilder, TokenProvider tokenProvider,
+		PasswordEncoder passwordEncoder) {
 		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
+		this.authenticationManagerBuilder = authenticationManagerBuilder;
+		this.tokenProvider = tokenProvider;
+		this.passwordEncoder = passwordEncoder;
 	}
 
-	@Transactional
-	public void join(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
+	// @Transactional
+	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
 
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
 		if (findMember.isPresent())
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 
+		// 권한 설정
+		Authority authority = Authority.builder()
+			.authorityName("ROLE_USER")
+			.build();
+
 		Member member = Member.builder()
 			.oauthId(oauthId)
-			.accountEmail(accountEmail)
+			.accountEmail(passwordEncoder.encode(accountEmail))
 			.nickname(nickname)
 			.profileUrl(profileUrl)
+			.authorities(Collections.singleton(authority))
 			.build();
+
 		Long id = memberRepository.save(member).getId();
 
-		log.debug("\n#--- saved member ---#\nid : {}\naccountEmail : {}\n#--------------------#",
+		log.debug(
+			"\n#--- saved member ---#\nid : {}\naccountEmail : {}\n#--------------------#",
 			id,
 			accountEmail
 		);
+
+		// todo : JwtProvider로 분리
+		UsernamePasswordAuthenticationToken authenticationToken =
+			new UsernamePasswordAuthenticationToken(nickname, accountEmail);
+
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		String jwt = tokenProvider.createToken(authentication);
+		log.debug("# jwt : {}", jwt);
+
+		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, new TokenDto(jwt));
+		return memberJoinResponseDto;
 	}
 
 	@Transactional
-	public void findMemberByIdentifier(OauthId oauthId, String accountEmail) {
+	public void login(OauthId oauthId, String accountEmail) {
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
 

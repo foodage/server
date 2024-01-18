@@ -1,7 +1,5 @@
 package com.fourdays.foodage.jwt.service;
 
-import java.util.Collections;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +37,7 @@ public class UserService {
 		UserToken userToken = UserToken.builder()
 			.username(userTokenDto.getUsername())
 			.email(passwordEncoder.encode(userTokenDto.getEmail()))
-			.authorities(Collections.singleton(authority))
+			// .authorities(Collections.singleton(authority))
 			.activated(true)
 			.build();
 

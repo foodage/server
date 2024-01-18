@@ -58,7 +58,7 @@ public class OauthService {
 
 		// 해당 사용자 정보가 db에 존재하는지(기존 가입 여부) 확인
 		try {
-			memberCommandService.findMemberByIdentifier(oauthMemberInfo.getOauthId(),
+			memberCommandService.login(oauthMemberInfo.getOauthId(),
 				oauthMemberInfo.getAccountEmail());
 		} catch (MemberNotJoinedException e) {
 			log.debug(e.getMessage());
