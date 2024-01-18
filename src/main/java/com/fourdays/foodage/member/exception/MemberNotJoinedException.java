@@ -10,11 +10,11 @@ import lombok.Getter;
  * description    : Member와 관련된 Exception  <br/>
  */
 @Getter
-public class MemberException extends RuntimeException {
+public class MemberNotJoinedException extends RuntimeException {
 
 	private ResultCode errCode;
 
-	public MemberException(ResultCode errCode) {
+	public MemberNotJoinedException(ResultCode errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
-import com.fourdays.foodage.member.exception.MemberException;
+import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +30,7 @@ public class MemberQueryService {
 		Optional<Member> findMember = memberRepository.findById(id);
 		log.debug("getMemberInfo() findMember : {}", findMember.get());
 		if (findMember.isEmpty()) {
-			throw new MemberException(ResultCode.ERR_MEMBER_NOT_FOUND);
+			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
 		return findMember.get();
 	}
@@ -38,7 +38,7 @@ public class MemberQueryService {
 	public Member getMemberByAccountEmail(String accountEmail) {
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
 		if (findMember.isEmpty()) {
-			throw new MemberException(ResultCode.ERR_MEMBER_NOT_FOUND);
+			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
 		log.debug("getMemberInfo() findMember : {}", findMember.get());
 		return findMember.get();

@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import com.fourdays.foodage.oauth.util.kakao.KakaoApiClient;
+import com.fourdays.foodage.oauth.util.naver.NaverApiClient;
 
 @Configuration
 public class HttpConfig {
@@ -14,6 +15,11 @@ public class HttpConfig {
 	@Bean
 	public KakaoApiClient kakaoApiClient() {
 		return createHttpInterface(KakaoApiClient.class);
+	}
+
+	@Bean
+	public NaverApiClient naverApiClient() {
+		return createHttpInterface(NaverApiClient.class);
 	}
 
 	private <T> T createHttpInterface(Class<T> clazz) {

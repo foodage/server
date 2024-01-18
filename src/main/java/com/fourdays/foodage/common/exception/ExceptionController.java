@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fourdays.foodage.common.dto.ErrorResponseDto;
 import com.fourdays.foodage.common.enums.ResultCode;
-import com.fourdays.foodage.member.exception.MemberException;
+import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,8 +55,8 @@ public class ExceptionController {
 		return new ResponseEntity<>(res, res.getHttpStatus());
 	}
 
-	@ExceptionHandler(MemberException.class)
-	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberException e) {
+	@ExceptionHandler(MemberNotJoinedException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberNotJoinedException e) {
 
 		log.error("handleException : {}", e);
 		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
