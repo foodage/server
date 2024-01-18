@@ -11,12 +11,12 @@ import lombok.Getter;
  * description    : Member의 상태와 관련된 Exception  <br/>
  */
 @Getter
-public class MemberStateException extends RuntimeException {
+public class MemberInvalidStateException extends RuntimeException {
 
 	private ResultCode errCode;
 	private LoginResult loginResult;
 
-	public MemberStateException(ResultCode errCode, LoginResult loginResult) {
+	public MemberInvalidStateException(ResultCode errCode, LoginResult loginResult) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 		this.loginResult = loginResult;

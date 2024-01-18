@@ -18,7 +18,7 @@ public enum ResultCode {
 
 	// MEMBER /////////////////////////////////////////////////////////////////////////////////////////
 	ERR_MEMBER_NOT_FOUND(-10000, "일치하는 사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-	ERR_MEMBER_ALREADY_JOINED(-10001, "이미 가입한 사용자입니다.", HttpStatus.CONFLICT),
+	ERR_MEMBER_ALREADY_JOINED(-10001, "이미 가입된 사용자입니다.", HttpStatus.CONFLICT),
 	ERR_MEMBER_ALREADY_LEAVED(-10002, "이미 탈퇴한 사용자입니다.", HttpStatus.NOT_FOUND),
 	ERR_MEMBER_INVALID(-10002, "유효하지 않은 사용자입니다.", HttpStatus.NOT_FOUND),
 

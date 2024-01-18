@@ -9,8 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
-import com.fourdays.foodage.member.exception.MemberException;
-import com.fourdays.foodage.member.exception.MemberStateException;
+import com.fourdays.foodage.member.exception.MemberInvalidStateException;
+import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
 import jakarta.persistence.Column;
@@ -81,10 +81,10 @@ public class Member {
 
 	public void validateState() {
 		if (state == MemberState.BLOCK.name()) {
-			throw new MemberStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.BLOCKED);
+			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.BLOCKED);
 		}
 		if (state == MemberState.LEAVE.name()) {
-			throw new MemberStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.LEAVED);
+			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.LEAVED);
 		}
 	}
 
@@ -94,7 +94,7 @@ public class Member {
 
 	public void leaved() {
 		if (state == MemberState.LEAVE.name()) {
-			throw new MemberException(ResultCode.ERR_MEMBER_ALREADY_LEAVED);
+			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_LEAVED);
 		}
 		oauthId = null;
 		nickname = "탈퇴한 사용자";

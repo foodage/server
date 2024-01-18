@@ -26,7 +26,7 @@ public class OauthController implements OauthApi {
 		this.oauthService = oauthService;
 	}
 
-	@Override
+	@Override // @GetMapping("/oauth/{oauthServerType}")
 	public ResponseEntity<String> getRequestUrl(@PathVariable OauthServerType oauthServerType
 		// HttpServletResponse response
 	) {
@@ -36,7 +36,7 @@ public class OauthController implements OauthApi {
 		return ResponseEntity.ok().body(redirectUrl);
 	}
 
-	@Override
+	@Override // @GetMapping("/oauth/{oauthServerName}/login")
 	public ResponseEntity<OauthLoginResponseDto> login(@PathVariable String oauthServerName,
 		@RequestParam String code, HttpServletResponse response) throws IOException {
 
@@ -45,13 +45,14 @@ public class OauthController implements OauthApi {
 		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
 		OauthLoginResponseDto result = oauthService.login(oauthServerType, code);
 
-		log.debug("login result : {}", result.getResult().getDetailMessage());
+		log.debug("{} : {}", result.getResult().name(), result.getResult().getDetailMessage());
 
 		HttpHeaders httpHeaders = null;
-		if (result.getResult().equals(LoginResult.SUCCEEDED)) {
-			httpHeaders = oauthService.provideToken(result.getOauthId(), result.getAccountEmail());
+		if (result.getResult().equals(LoginResult.JOINED)) {
+			httpHeaders = oauthService.createToken(result.getOauthId(), result.getAccountEmail());
 		}
 
+		// 회원가입 페이지로 이동시킴
 		// String redirectUrl = "http://localhost:3000/tutorial";
 		// response.sendRedirect(redirectUrl);
 		return ResponseEntity.ok().headers(httpHeaders).body(result);

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
-import com.fourdays.foodage.member.exception.MemberException;
+import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class MemberCommandService {
 
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
 		if (findMember.isPresent())
-			throw new MemberException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 
 		Member member = Member.builder()
 			.oauthId(oauthId)
@@ -52,12 +52,13 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public void login(OauthId oauthId, String accountEmail) {
-		log.debug("# oauthServerId : {}, oauthServerType : {}, accountEmail : {}", oauthId.getOauthServerId(),
+	public void findMemberByIdentifier(OauthId oauthId, String accountEmail) {
+		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
+
 		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
 		if (!findMember.isPresent()) {
-			throw new MemberException(ResultCode.ERR_MEMBER_NOT_FOUND);
+			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
 
 		// 블락, 휴면, 탈퇴 상태인지 확인
@@ -77,7 +78,7 @@ public class MemberCommandService {
 	public void leave(long memberId) {
 		Optional<Member> findMember = memberRepository.findById(memberId);
 		if (findMember.isEmpty()) {
-			throw new MemberException(ResultCode.ERR_MEMBER_NOT_FOUND);
+			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
 
 		findMember.get().leaved();
