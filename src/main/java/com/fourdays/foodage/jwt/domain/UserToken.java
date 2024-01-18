@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_usertoken")
+@Table(name = "member_token")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
