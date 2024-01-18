@@ -6,10 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Getter
-@Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginDto {
 
 	@NotNull
@@ -18,5 +16,11 @@ public class LoginDto {
 
 	@NotNull
 	@Size(min = 3, max = 100)
-	private String oauthToken;
+	private String email;
+
+	@Builder
+	public LoginDto(String username, String email) {
+		this.username = username;
+		this.email = email;
+	}
 }

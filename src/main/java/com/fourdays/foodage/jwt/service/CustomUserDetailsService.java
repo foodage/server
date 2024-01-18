@@ -40,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 			.collect(Collectors.toList());
 
 		return new org.springframework.security.core.userdetails.User(userToken.getUsername(),
-			userToken.getOauthToken(),
+			userToken.getEmail(),
 			grantedAuthorities);
 	}
 }

@@ -20,7 +20,7 @@ import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/jwt")
 public class AuthController {
 	private final TokenProvider tokenProvider;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -34,7 +34,7 @@ public class AuthController {
 	public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
 
 		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getOauthToken());
+			new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getEmail());
 
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);

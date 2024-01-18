@@ -12,20 +12,28 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
 import com.fourdays.foodage.jwt.handler.JwtAccessDeniedHandler;
-
+import com.fourdays.foodage.jwt.handler.JwtAuthenticationEntryPoint;
+import com.fourdays.foodage.jwt.handler.TokenProvider;
 
 @EnableWebSecurity
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
+
 	private final TokenProvider tokenProvider;
 	private final CorsFilter corsFilter;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final String[] WHITE_LIST_URL = {
+		"/swagger-ui/**",
+		"/swagger-resources/**",
+		"/v3/api-docs/**", // swagger
+		"/jwt/authenticate",
+		"/jwt/signup"
+	};
 
 	public SecurityConfig(
 		TokenProvider tokenProvider,
@@ -62,11 +70,10 @@ public class SecurityConfig {
 			)
 
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(
-					new AntPathRequestMatcher("/api/authenticate"),
-
-				).permitAll()
-				.anyRequest().authenticated()
+				.requestMatchers(WHITE_LIST_URL)
+				.permitAll()
+				.anyRequest()
+				.authenticated()
 			)
 
 			.apply(new JwtSecurityConfig(tokenProvider));

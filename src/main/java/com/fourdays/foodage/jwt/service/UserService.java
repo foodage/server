@@ -38,7 +38,7 @@ public class UserService {
 
 		UserToken userToken = UserToken.builder()
 			.username(userTokenDto.getUsername())
-			.oauthToken(passwordEncoder.encode(userTokenDto.getOauthToken()))
+			.email(passwordEncoder.encode(userTokenDto.getEmail()))
 			.authorities(Collections.singleton(authority))
 			.activated(true)
 			.build();
@@ -56,7 +56,7 @@ public class UserService {
 		return UserTokenDto.from(
 			SecurityUtil.getCurrentUsername()
 				.flatMap(userTokenRepository::findOneWithAuthoritiesByUsername)
-				.orElseThrow(() -> new NotFoundMemberException("Member not found"))
+				.orElseThrow(() -> new NotFoundMemberException("User not found"))
 		);
 	}
 }

@@ -8,15 +8,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "authority")
+@Table(name = "tb_authority")
 @Getter
-@Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Authority {
 
 	@Id
 	@Column(name = "authority_name", length = 50)
 	private String authorityName;
+
+	@Builder
+	public Authority(String authorityName) {
+		this.authorityName = authorityName;
+	}
 }

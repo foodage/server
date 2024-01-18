@@ -13,22 +13,12 @@ import com.fourdays.foodage.jwt.dto.UserTokenDto;
 import com.fourdays.foodage.jwt.service.UserService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/jwt")
 public class UserTokenController {
 	private final UserService userService;
 
 	public UserTokenController(UserService userService) {
 		this.userService = userService;
-	}
-
-	@GetMapping("/hello")
-	public ResponseEntity<String> hello() {
-		return ResponseEntity.ok("hello");
-	}
-
-	@PostMapping("/test-redirect")
-	public void testRedirect(HttpServletResponse response) throws IOException {
-		response.sendRedirect("/api/user");
 	}
 
 	@PostMapping("/signup")
