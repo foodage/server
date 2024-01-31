@@ -49,7 +49,7 @@ public class MemberController {
 			memberCreateRequest.getNickname(), memberCreateRequest.getProfileUrl());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + memberJoinResponseDto.getTokenDto().getJwt());
+		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + memberJoinResponseDto.getTokenDto().accessToken());
 
 		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
 	}

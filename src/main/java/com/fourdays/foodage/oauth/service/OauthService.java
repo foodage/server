@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.common.enums.LoginResult;
+import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.member.domain.MemberRepository;
@@ -81,7 +82,7 @@ public class OauthService {
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		String jwt = tokenProvider.createToken(authentication);
+		TokenDto jwt = tokenProvider.createToken(authentication);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);

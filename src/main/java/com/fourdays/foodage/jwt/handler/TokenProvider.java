@@ -12,8 +12,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+
+import com.fourdays.foodage.jwt.dto.TokenDto;
+import com.fourdays.foodage.jwt.enums.JwtClaim;
+import com.fourdays.foodage.jwt.enums.JwtType;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TokenProvider implements InitializingBean {
 
-	private static final String AUTHORITIES_KEY = "auth";
 	private final String secret;
 	private final long tokenValidityInMilliseconds;
 	private Key key;
@@ -47,20 +51,36 @@ public class TokenProvider implements InitializingBean {
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public String createToken(Authentication authentication) {
-		String authorities = authentication.getAuthorities().stream()
-			.map(GrantedAuthority::getAuthority)
-			.collect(Collectors.joining(","));
+	public TokenDto createToken(Authentication authentication) {
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 
+		String authorities = getAuthorities(authentication);
 		long now = (new Date()).getTime();
-		Date validity = new Date(now + this.tokenValidityInMilliseconds);
+		Date validity = new Date(now + tokenValidityInMilliseconds);
 
-		return Jwts.builder()
-			.setSubject(authentication.getName())
-			.claim(AUTHORITIES_KEY, authorities)
+		String accessToken = Jwts.builder()
+			.claim(JwtClaim.NICKNAME.name(), authentication.getName())
+			.claim(JwtClaim.TYPE.name(), JwtType.ACCESS_TOKEN)
+			.claim(JwtClaim.ROLE.name(), authorities)
 			.signWith(key, SignatureAlgorithm.HS512)
 			.setExpiration(validity)
 			.compact();
+
+		String refreshToken = Jwts.builder()
+			.claim(JwtClaim.ROLE.name(), authorities)
+			.claim(JwtClaim.TYPE.name(), JwtType.REFRESH_TOKEN)
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(validity)
+			.compact();
+
+		TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
+		return tokenDto;
+	}
+
+	private static String getAuthorities(Authentication authentication) {
+		return authentication.getAuthorities().stream()
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.joining(","));
 	}
 
 	public Authentication getAuthentication(String token) {
@@ -72,7 +92,7 @@ public class TokenProvider implements InitializingBean {
 			.getBody();
 
 		Collection<? extends GrantedAuthority> authorities =
-			Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+			Arrays.stream(claims.get(JwtClaim.ROLE.name()).toString().split(","))
 				.map(SimpleGrantedAuthority::new)
 				.collect(Collectors.toList());
 

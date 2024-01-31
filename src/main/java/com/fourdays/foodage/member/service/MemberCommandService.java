@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
+import com.fourdays.foodage.jwt.enums.Role;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
@@ -55,9 +56,9 @@ public class MemberCommandService {
 		if (findMember.isPresent())
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 
-		// 권한 설정
+		// create member
 		Authority authority = Authority.builder()
-			.authorityName("ROLE_USER")
+			.authorityName(Role.MEMBER.getRole())
 			.build();
 
 		Member member = Member.builder()
@@ -69,24 +70,23 @@ public class MemberCommandService {
 			.build();
 
 		Long id = memberRepository.save(member).getId();
-
 		log.debug(
 			"\n#--- saved member ---#\nid : {}\naccountEmail : {}\n#--------------------#",
 			id,
 			accountEmail
 		);
 
-		// todo : JwtProvider로 분리
+		// jwt 발행 (at & rt)
 		UsernamePasswordAuthenticationToken authenticationToken =
 			new UsernamePasswordAuthenticationToken(nickname, accountEmail);
 
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		String jwt = tokenProvider.createToken(authentication);
+		TokenDto jwt = tokenProvider.createToken(authentication);
 		log.debug("# jwt : {}", jwt);
 
-		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, new TokenDto(jwt));
+		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);
 		return memberJoinResponseDto;
 	}
 
