@@ -51,6 +51,9 @@ public class Member {
 	@Column(name = "account_email")
 	private String accountEmail;
 
+	@Column(name = "credential")
+	private String credential; // 사용자가 입력하지는 않음, 서버에서 생성-관리하는 비밀번호
+
 	@Column(name = "nickname", nullable = false, length = 64)
 	private String nickname;
 
@@ -78,11 +81,13 @@ public class Member {
 		inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
 	private Set<Authority> authorities;
 
-	public Member(Long id, OauthId oauthId, String accountEmail, String nickname, String profileUrl, String state,
+	public Member(Long id, OauthId oauthId, String accountEmail, String credential, String nickname, String profileUrl,
+		String state,
 		LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime lastLoginAt, Set<Authority> authorities) {
 		this.id = id;
 		this.oauthId = oauthId;
 		this.accountEmail = accountEmail;
+		this.credential = credential;
 		this.nickname = nickname;
 		this.profileUrl = profileUrl;
 		this.state = MemberState.NORMAL.name();

@@ -2,6 +2,7 @@ package com.fourdays.foodage.member.service;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -60,10 +61,11 @@ public class MemberCommandService {
 		Authority authority = Authority.builder()
 			.authorityName(Role.MEMBER.getRole())
 			.build();
-
+		String credential = UUID.randomUUID().toString();
 		Member member = Member.builder()
 			.oauthId(oauthId)
-			.accountEmail(passwordEncoder.encode(accountEmail))
+			.accountEmail(accountEmail)
+			.credential(passwordEncoder.encode(credential))
 			.nickname(nickname)
 			.profileUrl(profileUrl)
 			.authorities(Collections.singleton(authority))
@@ -71,14 +73,15 @@ public class MemberCommandService {
 
 		Long id = memberRepository.save(member).getId();
 		log.debug(
-			"\n#--- saved member ---#\nid : {}\naccountEmail : {}\n#--------------------#",
+			"\n#--------- saved member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#--------------------------------#",
 			id,
+			credential,
 			accountEmail
 		);
 
 		// jwt 발행 (at & rt)
 		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(nickname, accountEmail);
+			new UsernamePasswordAuthenticationToken(nickname, credential);
 
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);

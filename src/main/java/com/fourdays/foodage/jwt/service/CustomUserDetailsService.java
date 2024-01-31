@@ -48,7 +48,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 			.map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
 			.collect(Collectors.toList());
 
-		return new User(member.getNickname(), member.getAccountEmail(),
+		return new User(member.getNickname(), member.getCredential(),
 			grantedAuthorities);
 	}
 }
