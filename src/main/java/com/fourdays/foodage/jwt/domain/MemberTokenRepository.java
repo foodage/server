@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserTokenRepository extends JpaRepository<UserToken, Long> {
+public interface MemberTokenRepository extends JpaRepository<MemberToken, Long> {
 
 	@EntityGraph(attributePaths = "authorities")
-	Optional<UserToken> findOneWithAuthoritiesByUsername(String username);
+	Optional<MemberToken> findOneWithAuthoritiesByNickname(String username);
 }

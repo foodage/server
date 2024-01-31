@@ -2,7 +2,7 @@ package com.fourdays.foodage.jwt.dto;
 
 import java.util.Set;
 
-import com.fourdays.foodage.jwt.domain.UserToken;
+import com.fourdays.foodage.jwt.domain.MemberToken;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,11 +16,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserTokenDto {
+public class MemberTokenDto {
 
 	@NotNull
 	@Size(min = 3, max = 50)
-	private String username;
+	private String nickname;
 
 	@NotNull
 	@Size(min = 3, max = 100)
@@ -29,20 +29,20 @@ public class UserTokenDto {
 	// private Set<AuthorityDto> authorityDtoSet;
 
 	@Builder
-	public UserTokenDto(String username, String email, Set<AuthorityDto> authorityDtoSet) {
-		this.username = username;
+	public MemberTokenDto(String nickname, String email, Set<AuthorityDto> authorityDtoSet) {
+		this.nickname = nickname;
 		this.email = email;
 		// this.authorityDtoSet = authorityDtoSet;
 	}
 
-	public static UserTokenDto from(UserToken userToken) {
-		if (userToken == null)
+	public static MemberTokenDto from(MemberToken memberToken) {
+		if (memberToken == null)
 			return null;
 
-		return UserTokenDto.builder()
-			.username(userToken.getUsername())
-			.email(userToken.getEmail())
-			// .authorityDtoSet(userToken.getAuthorities().stream()
+		return MemberTokenDto.builder()
+			.nickname(memberToken.getNickname())
+			.email(memberToken.getEmail())
+			// .authorityDtoSet(memberToken.getAuthorities().stream()
 			// 	.map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
 			// 	.collect(Collectors.toSet()))
 			.build();

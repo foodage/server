@@ -16,15 +16,15 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserToken {
+public class MemberToken {
 
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "username", length = 50, unique = true)
-	private String username;
+	@Column(name = "nickname", length = 50, unique = true)
+	private String nickname;
 
 	@Column(name = "email")
 	private String email;
@@ -33,9 +33,9 @@ public class UserToken {
 	private boolean activated;
 
 	@Builder
-	public UserToken(Long id, String username, String email, boolean activated) {
+	public MemberToken(Long id, String nickname, String email, boolean activated) {
 		this.id = id;
-		this.username = username;
+		this.nickname = nickname;
 		this.email = email;
 		this.activated = activated;
 	}
