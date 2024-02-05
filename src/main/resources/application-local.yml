@@ -18,8 +18,9 @@ jwt:
   header: Authorization
   #HS512 알고리즘을 사용할 것이기 때문에 512bit, 64byte 이상의 secret key를 사용해야 한다.
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
-  #토큰 만료 시간 설정
-  token-validity-in-seconds: 86400
+  # 토큰 만료 시간
+  access-token-expiration-seconds: 3600 # 1h
+  refresh-token-expiration-seconds: 86400 #24h
 
 logging:
   level:

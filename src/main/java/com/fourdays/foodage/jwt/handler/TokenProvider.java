@@ -35,14 +35,17 @@ import lombok.extern.slf4j.Slf4j;
 public class TokenProvider implements InitializingBean {
 
 	private final String secret;
-	private final long tokenValidityInMilliseconds;
+	private final long accessTokenExpiration; // ms
+	private final long refreshTokenExpiration; // ms
 	private Key key;
 
 	public TokenProvider(
 		@Value("${jwt.secret}") String secret,
-		@Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+		@Value("${jwt.access-token-expiration-seconds}") long accessTokenExpiration,
+		@Value("${jwt.refresh-token-expiration-seconds}") long refreshTokenExpiration) {
 		this.secret = secret;
-		this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+		this.accessTokenExpiration = accessTokenExpiration * 1000;
+		this.refreshTokenExpiration = refreshTokenExpiration * 1000;
 	}
 
 	@Override
@@ -56,21 +59,22 @@ public class TokenProvider implements InitializingBean {
 
 		String authorities = getAuthorities(authentication);
 		long now = (new Date()).getTime();
-		Date validity = new Date(now + tokenValidityInMilliseconds);
+		Date accessTokenExpiration = new Date(now + this.accessTokenExpiration);
+		Date refreshTokenExpiration = new Date(now + this.refreshTokenExpiration);
 
 		String accessToken = Jwts.builder()
 			.claim(JwtClaim.NICKNAME.name(), authentication.getName())
 			.claim(JwtClaim.TYPE.name(), JwtType.ACCESS_TOKEN)
 			.claim(JwtClaim.ROLE.name(), authorities)
 			.signWith(key, SignatureAlgorithm.HS512)
-			.setExpiration(validity)
+			.setExpiration(accessTokenExpiration)
 			.compact();
 
 		String refreshToken = Jwts.builder()
 			.claim(JwtClaim.ROLE.name(), authorities)
 			.claim(JwtClaim.TYPE.name(), JwtType.REFRESH_TOKEN)
 			.signWith(key, SignatureAlgorithm.HS512)
-			.setExpiration(validity)
+			.setExpiration(refreshTokenExpiration)
 			.compact();
 
 		TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
