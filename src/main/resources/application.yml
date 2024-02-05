@@ -1,50 +1,20 @@
 # default
 
 server:
+  port: 12816
   servlet:
     context-path: /api
   error:
     whitelabel:
       enabled: false
-  port: 12816
 
 application:
   version: ${ext.appVersion}
 
+spring:
+  profiles:
+    default: local
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-
-spring:
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/foodage_test
-    username: root
-    password: ENC(P9e4T6LWe/YjgSDOp47HlOyukMcijCpDF+uWD/iGIHbOlx/PANpsNdx5CbFtg9b/)
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create # 개발 환경에서만 사용
-
-jwt:
-  header: Authorization
-  #HS512 알고리즘을 사용할 것이기 때문에 512bit, 64byte 이상의 secret key를 사용해야 한다.
-  secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
-  #토큰 만료 시간 설정
-  token-validity-in-seconds: 86400
-
-logging:
-  level:
-    com.fourdays.foodage: DEBUG
-
-oauth:
-  kakao:
-    client_id: ENC(L0yPdNFen+owiyjwGfChX0KtJ9dSK2SR30zALlUhqhD8rJp1aZFAd/6B+vWUlmBtb/Z976koXPZx54KfqlxVFnIM7oRWbOTZd/189+NlV5U=)
-    redirect_uri: http://localhost:12816/api/oauth/kakao/login
-    scope: account_email
-
-  naver:
-    client_id: kfc2ZNwdW3XGtQTXazSl
-    redirect_uri: http://localhost:12816/api/oauth/naver/login
-    client_secret: ENC(oxhRBHpLlzOrEYFGvZtf+Jjip5cOzuMngaGRed7mbD9L+qDZR+92ULLfmBM8nl13)
-    scope:
