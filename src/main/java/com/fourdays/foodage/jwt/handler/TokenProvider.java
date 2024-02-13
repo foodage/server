@@ -63,7 +63,7 @@ public class TokenProvider implements InitializingBean {
 		Date refreshTokenExpiration = new Date(now + this.refreshTokenExpiration);
 
 		String accessToken = Jwts.builder()
-			.claim(JwtClaim.NICKNAME.name(), authentication.getName())
+			.setSubject(authentication.getName())
 			.claim(JwtClaim.TYPE.name(), JwtType.ACCESS_TOKEN)
 			.claim(JwtClaim.ROLE.name(), authorities)
 			.signWith(key, SignatureAlgorithm.HS512)
