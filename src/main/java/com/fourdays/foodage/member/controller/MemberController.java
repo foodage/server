@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.jwt.enums.JwtType;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
@@ -49,7 +50,10 @@ public class MemberController {
 			memberCreateRequest.getNickname(), memberCreateRequest.getProfileUrl());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + memberJoinResponseDto.getTokenDto().accessToken());
+		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,
+			"Bearer " + memberJoinResponseDto.getTokenDto().accessToken());
+		httpHeaders.add(JwtType.REFRESH_TOKEN.getHeaderName(),
+			"Bearer " + memberJoinResponseDto.getTokenDto().refreshToken());
 
 		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
 	}

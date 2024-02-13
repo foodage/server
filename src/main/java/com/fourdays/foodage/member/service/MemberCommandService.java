@@ -87,7 +87,7 @@ public class MemberCommandService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		TokenDto jwt = tokenProvider.createToken(authentication);
-		log.debug("# jwt : {}", jwt);
+		log.debug("# at : {}\nrt : {}", jwt.accessToken(), jwt.refreshToken());
 
 		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);
 		return memberJoinResponseDto;
@@ -112,8 +112,6 @@ public class MemberCommandService {
 
 		// 마지막 로그인 일시 업데이트
 		findMember.get().updateLastLoginAt();
-
-		// jwt 발행 및 반환
 	}
 
 	@Transactional

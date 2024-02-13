@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.jwt.dto.TokenDto;
+import com.fourdays.foodage.jwt.enums.JwtType;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.member.domain.MemberRepository;
@@ -61,16 +62,15 @@ public class OauthService {
 		try {
 			memberCommandService.login(oauthMemberInfo.getOauthId(),
 				oauthMemberInfo.getAccountEmail());
-		} catch (MemberNotJoinedException e) {
+		} catch (MemberNotJoinedException e) { // 미가입 사용자
 			log.debug(e.getMessage());
 			return new OauthLoginResponseDto(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
 				LoginResult.NOT_JOINED);
-		} catch (MemberInvalidStateException e) {
+		} catch (MemberInvalidStateException e) { // 휴면, 블락 등의 상태를 가진 사용자
 			log.debug(e.getMessage());
 			return new OauthLoginResponseDto(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
-				e.getLoginResult()); // state와 관련된 LoginResult
+				e.getLoginResult());
 		}
-
 		return new OauthLoginResponseDto(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail(),
 			LoginResult.JOINED);
 	}
@@ -85,7 +85,8 @@ public class OauthService {
 		TokenDto jwt = tokenProvider.createToken(authentication);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt.accessToken());
+		httpHeaders.add(JwtType.REFRESH_TOKEN.getHeaderName(), "Bearer " + jwt.refreshToken());
 
 		return httpHeaders;
 	}
