@@ -12,8 +12,11 @@ public class MemberJoinResponseDto {
 	private TokenDto tokenDto;
 
 	public MemberJoinResponseDto(Member member, TokenDto tokenDto) {
-		memberInfoDto = new MemberInfoDto(member.getNickname(), member.getProfileUrl(),
-			member.getCreatedAt().toString(), member.getUpdatedAt().toString());
+		memberInfoDto = new MemberInfoDto(
+			member.getNickname()
+			, member.getProfileImage().toLowerCase()
+			, member.getCreatedAt().toString()
+			, member.getUpdatedAt().toString());
 		this.tokenDto = tokenDto;
 	}
 }

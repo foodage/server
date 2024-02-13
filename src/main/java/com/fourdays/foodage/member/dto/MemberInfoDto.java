@@ -11,7 +11,7 @@ public class MemberInfoDto {
 
 	private String nickname;
 
-	private String profileUrl;
+	private String profileImage;
 
 	private String createdAt;
 
@@ -19,7 +19,7 @@ public class MemberInfoDto {
 
 	public MemberInfoDto(Member member) {
 		this.nickname = member.getNickname();
-		this.profileUrl = member.getProfileUrl();
+		this.profileImage = member.getProfileImage();
 		this.createdAt = member.getCreatedAt().toString();
 		this.updatedAt = member.getUpdatedAt().toString();
 	}

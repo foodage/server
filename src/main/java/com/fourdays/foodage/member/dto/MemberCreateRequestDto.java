@@ -24,7 +24,7 @@ public class MemberCreateRequestDto {
 	@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "닉네임에 사용할 수 없는 문자가 포함되어 있습니다. 다시 입력해주세요.")
 	private String nickname;
 
-	private String profileUrl = "default";
+	private String profileImage;
 
 	public MemberCreateRequestDto(OauthId oauthId, String accountEmail, String nickname) {
 		this.oauthId = oauthId;
@@ -32,10 +32,10 @@ public class MemberCreateRequestDto {
 		this.nickname = nickname;
 	}
 
-	public MemberCreateRequestDto(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
+	public MemberCreateRequestDto(OauthId oauthId, String accountEmail, String nickname, String profileImage) {
 		this.oauthId = oauthId;
 		this.accountEmail = accountEmail;
 		this.nickname = nickname;
-		this.profileUrl = profileUrl;
+		this.profileImage = profileImage;
 	}
 }
