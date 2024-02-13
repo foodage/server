@@ -12,16 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
-
 import com.fourdays.foodage.jwt.dto.LoginDto;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/jwt")
 public class AuthController {
+
 	private final TokenProvider tokenProvider;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
@@ -34,16 +35,16 @@ public class AuthController {
 	public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
 
 		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getEmail());
+			new UsernamePasswordAuthenticationToken(loginDto.getNickname(), loginDto.getEmail());
 
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		String jwt = tokenProvider.createToken(authentication);
+		TokenDto jwt = tokenProvider.createToken(authentication);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
-		return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+		return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
 	}
 }

@@ -1,5 +1,6 @@
 package com.fourdays.foodage.member.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,9 +10,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.jwt.enums.JwtType;
+import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
-import com.fourdays.foodage.member.dto.MemberInfoDto;
+import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.member.service.MemberQueryService;
 
@@ -19,7 +22,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-// @RequestMapping("/member")
 @Tag(name = "member")
 @Slf4j
 public class MemberController {
@@ -40,13 +42,20 @@ public class MemberController {
 	}
 
 	@PostMapping("/member/join")
-	public ResponseEntity<MemberInfoDto> join(
+	public ResponseEntity<MemberJoinResponseDto> join(
 		@RequestBody MemberCreateRequestDto memberCreateRequest) {
 
-		memberCommandService.join(memberCreateRequest.getOauthId(), memberCreateRequest.getAccountEmail(),
+		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(memberCreateRequest.getOauthId(),
+			memberCreateRequest.getAccountEmail(),
 			memberCreateRequest.getNickname(), memberCreateRequest.getProfileUrl());
 
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,
+			"Bearer " + memberJoinResponseDto.getTokenDto().accessToken());
+		httpHeaders.add(JwtType.REFRESH_TOKEN.getHeaderName(),
+			"Bearer " + memberJoinResponseDto.getTokenDto().refreshToken());
+
+		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/member/{id}")

@@ -1,13 +1,25 @@
 package com.fourdays.foodage.member.service;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.jwt.domain.Authority;
+import com.fourdays.foodage.jwt.dto.TokenDto;
+import com.fourdays.foodage.jwt.enums.Role;
+import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
+import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
@@ -24,35 +36,65 @@ public class MemberCommandService {
 
 	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
+	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+	private final TokenProvider tokenProvider;
+	private final PasswordEncoder passwordEncoder;
 
-	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository) {
+	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository,
+		AuthenticationManagerBuilder authenticationManagerBuilder, TokenProvider tokenProvider,
+		PasswordEncoder passwordEncoder) {
 		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
+		this.authenticationManagerBuilder = authenticationManagerBuilder;
+		this.tokenProvider = tokenProvider;
+		this.passwordEncoder = passwordEncoder;
 	}
 
-	@Transactional
-	public void join(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
+	// @Transactional
+	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
 
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
 		if (findMember.isPresent())
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 
+		// create member
+		Authority authority = Authority.builder()
+			.authorityName(Role.MEMBER.getRole())
+			.build();
+		String credential = UUID.randomUUID().toString();
 		Member member = Member.builder()
 			.oauthId(oauthId)
 			.accountEmail(accountEmail)
+			.credential(passwordEncoder.encode(credential))
 			.nickname(nickname)
 			.profileUrl(profileUrl)
+			.authorities(Collections.singleton(authority))
 			.build();
-		Long id = memberRepository.save(member).getId();
 
-		log.debug("\n#--- saved member ---#\nid : {}\naccountEmail : {}\n#--------------------#",
+		Long id = memberRepository.save(member).getId();
+		log.debug(
+			"\n#--------- saved member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#--------------------------------#",
 			id,
+			credential,
 			accountEmail
 		);
+
+		// jwt 발행 (at & rt)
+		UsernamePasswordAuthenticationToken authenticationToken =
+			new UsernamePasswordAuthenticationToken(nickname, credential);
+
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		TokenDto jwt = tokenProvider.createToken(authentication);
+		log.debug("# at : {}\nrt : {}", jwt.accessToken(), jwt.refreshToken());
+
+		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);
+		return memberJoinResponseDto;
 	}
 
 	@Transactional
-	public void findMemberByIdentifier(OauthId oauthId, String accountEmail) {
+	public void login(OauthId oauthId, String accountEmail) {
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
 
@@ -70,8 +112,6 @@ public class MemberCommandService {
 
 		// 마지막 로그인 일시 업데이트
 		findMember.get().updateLastLoginAt();
-
-		// jwt 발행 및 반환
 	}
 
 	@Transactional

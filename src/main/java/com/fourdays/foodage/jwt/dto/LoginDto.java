@@ -1,9 +1,11 @@
 package com.fourdays.foodage.jwt.dto;
 
-import lombok.*;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
@@ -12,15 +14,15 @@ public class LoginDto {
 
 	@NotNull
 	@Size(min = 3, max = 50)
-	private String username;
+	private String nickname;
 
 	@NotNull
 	@Size(min = 3, max = 100)
 	private String email;
 
 	@Builder
-	public LoginDto(String username, String email) {
-		this.username = username;
+	public LoginDto(String nickname, String email) {
+		this.nickname = nickname;
 		this.email = email;
 	}
 }
