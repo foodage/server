@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
+import com.fourdays.foodage.member.dto.MemberResponseDto;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +27,14 @@ public class MemberQueryService {
 		this.memberRepository = memberRepository;
 	}
 
-	public Member getMemberById(Long id) {
+	public MemberResponseDto getMemberById(Long id) {
 		Optional<Member> findMember = memberRepository.findById(id);
 		log.debug("getMemberInfo() findMember : {}", findMember.get());
 		if (findMember.isEmpty()) {
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
-		return findMember.get();
+
+		return new MemberResponseDto(findMember.get());
 	}
 
 	public Member getMemberByAccountEmail(String accountEmail) {

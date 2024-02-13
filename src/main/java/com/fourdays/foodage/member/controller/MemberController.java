@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fourdays.foodage.jwt.enums.JwtType;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
-import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
+import com.fourdays.foodage.member.dto.MemberResponseDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.member.service.MemberQueryService;
 
@@ -35,7 +35,7 @@ public class MemberController {
 	}
 
 	@GetMapping("/member/{id}")
-	public ResponseEntity<Member> getMemberInfo(
+	public ResponseEntity<MemberResponseDto> getMemberInfo(
 		@PathVariable Long id) {
 
 		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMemberById(id));
