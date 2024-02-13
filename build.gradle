@@ -64,6 +64,9 @@ dependencies {
 
     // mac os 개발 시, front 연동 간 exception 발생하여 사용 (23-12-21)
     implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
+
+    // serialize, deserialize
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
 }
 
 tasks.named('test') {
