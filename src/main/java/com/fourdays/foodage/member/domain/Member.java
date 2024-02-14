@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fourdays.foodage.common.enums.CharacterType;
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
@@ -57,8 +58,8 @@ public class Member {
 	@Column(name = "nickname", nullable = false, length = 64)
 	private String nickname;
 
-	@Column(name = "profile_url")
-	private String profileUrl;
+	@Column(name = "profile_image")
+	private String profileImage;
 
 	@Column(name = "state")
 	private String state;
@@ -81,7 +82,8 @@ public class Member {
 		inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
 	private Set<Authority> authorities;
 
-	public Member(Long id, OauthId oauthId, String accountEmail, String credential, String nickname, String profileUrl,
+	public Member(Long id, OauthId oauthId, String accountEmail, String credential, String nickname,
+		String profileImage,
 		String state,
 		LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime lastLoginAt, Set<Authority> authorities) {
 		this.id = id;
@@ -89,7 +91,8 @@ public class Member {
 		this.accountEmail = accountEmail;
 		this.credential = credential;
 		this.nickname = nickname;
-		this.profileUrl = profileUrl;
+		this.profileImage =
+			profileImage != null ? profileImage : CharacterType.getRandomOne().name();
 		this.state = MemberState.NORMAL.name();
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
@@ -116,7 +119,7 @@ public class Member {
 		}
 		oauthId = null;
 		nickname = "탈퇴한 사용자";
-		profileUrl = null;
+		profileImage = null;
 		state = MemberState.LEAVE.name();
 	}
 }

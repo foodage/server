@@ -51,7 +51,7 @@ public class MemberCommandService {
 	}
 
 	// @Transactional
-	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileUrl) {
+	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileImage) {
 
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
 		if (findMember.isPresent())
@@ -67,7 +67,7 @@ public class MemberCommandService {
 			.accountEmail(accountEmail)
 			.credential(passwordEncoder.encode(credential))
 			.nickname(nickname)
-			.profileUrl(profileUrl)
+			.profileImage(profileImage)
 			.authorities(Collections.singleton(authority))
 			.build();
 

@@ -47,7 +47,8 @@ public class MemberController {
 
 		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(memberCreateRequest.getOauthId(),
 			memberCreateRequest.getAccountEmail(),
-			memberCreateRequest.getNickname(), memberCreateRequest.getProfileUrl());
+			memberCreateRequest.getNickname(),
+			memberCreateRequest.getProfileImage());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,
