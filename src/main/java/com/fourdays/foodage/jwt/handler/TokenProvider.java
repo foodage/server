@@ -16,12 +16,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.JwtClaim;
 import com.fourdays.foodage.jwt.enums.JwtType;
+import com.fourdays.foodage.jwt.exception.JwtClaimParseException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -108,6 +111,14 @@ public class TokenProvider implements InitializingBean {
 		User principal = new User(claims.getSubject(), "", authorities);
 
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+	}
+
+	public Jws<Claims> getClaims(String token) {
+
+		if (!validateToken(token)) { // 토큰이 유효하지 않을 경우
+			throw new JwtClaimParseException(ResultCode.ERR_INVALID_JWT);
+		}
+		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 	}
 
 	public boolean validateToken(String token) {

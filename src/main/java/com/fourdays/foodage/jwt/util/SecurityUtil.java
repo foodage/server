@@ -11,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SecurityUtil {
 
-	private SecurityUtil() {
-	}
-
 	public static Optional<String> getCurrentUsername() {
 
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

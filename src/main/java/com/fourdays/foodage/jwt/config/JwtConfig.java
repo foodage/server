@@ -8,19 +8,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 
-public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+public class JwtConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
 	private TokenProvider tokenProvider;
 
-	public JwtSecurityConfig(TokenProvider tokenProvider) {
+	public JwtConfig(TokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
 	}
 
 	@Override
 	public void configure(HttpSecurity http) {
+
 		http.addFilterBefore(
-			new JwtFilter(tokenProvider),
-			UsernamePasswordAuthenticationFilter.class
+			new JwtFilter(tokenProvider)
+			, UsernamePasswordAuthenticationFilter.class
 		);
 	}
 }

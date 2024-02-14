@@ -62,6 +62,7 @@ public class MemberCommandService {
 			.authorityName(Role.MEMBER.getRole())
 			.build();
 		String credential = UUID.randomUUID().toString();
+		log.debug("# credential (plain) : {}", credential);
 		Member member = Member.builder()
 			.oauthId(oauthId)
 			.accountEmail(accountEmail)
@@ -87,7 +88,7 @@ public class MemberCommandService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		TokenDto jwt = tokenProvider.createToken(authentication);
-		log.debug("# at : {}\nrt : {}", jwt.accessToken(), jwt.refreshToken());
+		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
 
 		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);
 		return memberJoinResponseDto;

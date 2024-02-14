@@ -78,7 +78,7 @@ public class SecurityConfig {
 				.authenticated()
 			)
 
-			.apply(new JwtSecurityConfig(tokenProvider));
+			.apply(new JwtConfig(tokenProvider));
 		return http.build();
 	}
 }

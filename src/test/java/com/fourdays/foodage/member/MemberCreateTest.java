@@ -6,26 +6,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
-import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@SpringBootTest
 @Slf4j
+@AllArgsConstructor
 public class MemberCreateTest {
 
-	@Autowired
-	private MemberCommandService memberCommandService;
-
-	@Autowired
 	private Validator validator;
 
 	@Nested
