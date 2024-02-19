@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourdays.foodage.common.enums.LoginResult;
+import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.oauth.dto.OauthLoginResponseDto;
 import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
@@ -21,9 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 public class OauthController {
 
 	private final OauthService oauthService;
+	private final AuthService authService;
 
-	public OauthController(OauthService oauthService) {
+	public OauthController(OauthService oauthService, AuthService authService) {
 		this.oauthService = oauthService;
+		this.authService = authService;
 	}
 
 	@Operation(summary = "Oauth 서비스 연동 URI 조회")
@@ -51,7 +54,7 @@ public class OauthController {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		String redirectUrl = "";
 		if (result.getResult().equals(LoginResult.JOINED)) {
-			httpHeaders = oauthService.provideToken(result.getOauthId(), result.getAccountEmail());
+			httpHeaders = authService.createTokenHeader(result.getNickname(), result.getAccountEmail());
 			redirectUrl = "http://localhost:3000/home";
 		}
 		if (result.getResult().equals(LoginResult.NOT_JOINED)) {

@@ -83,8 +83,8 @@ public class TokenProvider implements InitializingBean {
 			.setExpiration(refreshTokenExpiration)
 			.compact();
 
-		TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
-		return tokenDto;
+		TokenDto jwt = new TokenDto(accessToken, refreshToken);
+		return jwt;
 	}
 
 	private static String getAuthorities(Authentication authentication) {

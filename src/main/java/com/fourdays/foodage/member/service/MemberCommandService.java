@@ -4,10 +4,6 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +12,7 @@ import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.Role;
-import com.fourdays.foodage.jwt.handler.TokenProvider;
+import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
@@ -36,17 +32,14 @@ public class MemberCommandService {
 
 	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
-	private final TokenProvider tokenProvider;
+	private final AuthService authService;
 	private final PasswordEncoder passwordEncoder;
 
 	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository,
-		AuthenticationManagerBuilder authenticationManagerBuilder, TokenProvider tokenProvider,
-		PasswordEncoder passwordEncoder) {
+		AuthService authService, PasswordEncoder passwordEncoder) {
 		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
-		this.authenticationManagerBuilder = authenticationManagerBuilder;
-		this.tokenProvider = tokenProvider;
+		this.authService = authService;
 		this.passwordEncoder = passwordEncoder;
 	}
 
@@ -81,13 +74,7 @@ public class MemberCommandService {
 		);
 
 		// jwt 발행 (at & rt)
-		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(nickname, credential);
-
-		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		TokenDto jwt = tokenProvider.createToken(authentication);
+		TokenDto jwt = authService.createToken(member.getNickname(), member.getAccountEmail());
 		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
 
 		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);
@@ -96,6 +83,7 @@ public class MemberCommandService {
 
 	@Transactional
 	public void login(OauthId oauthId, String accountEmail) {
+
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
 
