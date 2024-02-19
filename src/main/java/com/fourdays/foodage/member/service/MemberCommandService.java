@@ -74,7 +74,7 @@ public class MemberCommandService {
 		);
 
 		// jwt 발행 (at & rt)
-		TokenDto jwt = authService.createToken(member.getNickname(), member.getCredential());
+		TokenDto jwt = authService.createToken(member.getNickname(), credential);
 		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
 
 		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);

@@ -39,8 +39,7 @@ public class OauthService {
 	public OauthLoginResponseDto login(OauthServerType oauthServerType, String authCode) {
 
 		// 매핑되는 server의 api로 token, 사용자 정보(member info) 요청
-		OauthMember oauthMemberInfo = oauthClient.fetch(oauthServerType,
-			authCode);
+		OauthMember oauthMemberInfo = oauthClient.fetch(oauthServerType, authCode);
 
 		// 해당 사용자 정보가 db에 존재하는지(기존 가입 여부) 확인
 		LoginResult loginResult;

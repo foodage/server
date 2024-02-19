@@ -45,10 +45,10 @@ public class AuthService {
 
 	//////////////////////////////////////////////////////////////////
 
-	public TokenDto createToken(String nickname, String accountEmail) {
+	public TokenDto createToken(String nickname, String plainCredential) {
 
 		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(nickname, accountEmail);
+			new UsernamePasswordAuthenticationToken(nickname, plainCredential);
 
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
