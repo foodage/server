@@ -43,31 +43,23 @@ public class OauthService {
 			authCode);
 
 		// 해당 사용자 정보가 db에 존재하는지(기존 가입 여부) 확인
+		LoginResult loginResult;
 		try {
 			memberCommandService.login(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
+			loginResult = LoginResult.JOINED;
 		} catch (MemberNotJoinedException e) { // 미가입 사용자
 			log.debug(e.getMessage());
-			return OauthLoginResponseDto.builder()
-				.oauthId(oauthMemberInfo.getOauthId())
-				.nickname(oauthMemberInfo.getNickname())
-				.accountEmail(oauthMemberInfo.getAccountEmail())
-				.result(LoginResult.NOT_JOINED)
-				.build();
+			loginResult = LoginResult.NOT_JOINED;
 		} catch (MemberInvalidStateException e) { // 휴면, 블락 등의 상태를 가진 사용자
 			log.debug(e.getMessage());
-			return OauthLoginResponseDto.builder()
-				.oauthId(oauthMemberInfo.getOauthId())
-				.nickname(oauthMemberInfo.getNickname())
-				.accountEmail(oauthMemberInfo.getAccountEmail())
-				.result(e.getLoginResult())
-				.build();
+			loginResult = e.getLoginResult();
 		}
 
 		return OauthLoginResponseDto.builder()
 			.oauthId(oauthMemberInfo.getOauthId())
 			.nickname(oauthMemberInfo.getNickname())
 			.accountEmail(oauthMemberInfo.getAccountEmail())
-			.result(LoginResult.JOINED)
+			.result(loginResult)
 			.build();
 	}
 }

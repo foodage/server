@@ -43,7 +43,7 @@ public class MemberCommandService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	// @Transactional
+	@Transactional
 	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileImage) {
 
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
@@ -74,7 +74,7 @@ public class MemberCommandService {
 		);
 
 		// jwt 발행 (at & rt)
-		TokenDto jwt = authService.createToken(member.getNickname(), member.getAccountEmail());
+		TokenDto jwt = authService.createToken(member.getNickname(), member.getCredential());
 		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
 
 		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);
