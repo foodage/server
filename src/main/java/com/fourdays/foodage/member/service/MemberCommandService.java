@@ -2,7 +2,6 @@ package com.fourdays.foodage.member.service;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,14 +46,15 @@ public class MemberCommandService {
 	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileImage) {
 
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
-		if (findMember.isPresent())
+		if (findMember.isPresent()) {
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+		}
 
 		// create member
 		Authority authority = Authority.builder()
 			.authorityName(Role.MEMBER.getRole())
 			.build();
-		String credential = UUID.randomUUID().toString();
+		String credential = authService.createCredential();
 		log.debug("# credential (plain) : {}", credential);
 		Member member = Member.builder()
 			.oauthId(oauthId)
@@ -88,7 +88,7 @@ public class MemberCommandService {
 			oauthId.getOauthServerType(), accountEmail);
 
 		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
-		if (!findMember.isPresent()) {
+		if (findMember.isEmpty()) {
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
 

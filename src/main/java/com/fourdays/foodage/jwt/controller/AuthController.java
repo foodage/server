@@ -48,7 +48,8 @@ public class AuthController {
 
 		// 신규 토큰 발급
 		Member findMember = memberQueryService.getMemberByAccountEmail(reissueTokenRequest.accountEmail());
-		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), findMember.getAccountEmail());
+		String credential = authService.updateCredential(reissueTokenRequest.accountEmail());
+		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
 
 		// 기존 refresh token은 만료 테이블에 추가
 		authService.addToBlacklist(refreshToken);
