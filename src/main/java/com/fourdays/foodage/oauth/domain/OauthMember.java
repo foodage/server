@@ -10,5 +10,8 @@ import lombok.Getter;
 public class OauthMember {
 
 	private OauthId oauthId;
+
+	private String nickname;
+
 	private String accountEmail;
 }

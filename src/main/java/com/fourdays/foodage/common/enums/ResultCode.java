@@ -11,22 +11,27 @@ public enum ResultCode {
 	CREATED(1, "생성 성공", HttpStatus.CREATED),
 
 	// COMMON /////////////////////////////////////////////////////////////////////////////////////////
-	// exception handler
+	// 1000~
 	ERR_INTERNAL(-1000, "서버에 알 수 없는 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 	ERR_REQUIRED_FIELD(-1001, "입력 파라미터가 유효하지 않습니다. 파라미터를 다시 확인해주세요.", HttpStatus.BAD_REQUEST),
 	ERR_ACCESS_DENIED(-1002, "해당 컨텐츠에 접근할 수 있는 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
 
+	// JWT ////////////////////////////////////////////////////////////////////////////////////////////
+	// 1200~
+	ERR_INVALID_JWT(-1200, "유효하지 않은 토큰입니다.", HttpStatus.BAD_REQUEST),
+	ERR_BLOCKED_REFRESH_TOKEN(-1201, "사용이 만료된 토큰으로는 재발행이 불가능합니다.", HttpStatus.BAD_REQUEST),
+
 	// MEMBER /////////////////////////////////////////////////////////////////////////////////////////
+	// 10000~
 	ERR_MEMBER_NOT_FOUND(-10000, "일치하는 사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	ERR_MEMBER_ALREADY_JOINED(-10001, "이미 가입된 사용자입니다.", HttpStatus.CONFLICT),
 	ERR_MEMBER_ALREADY_LEAVED(-10002, "이미 탈퇴한 사용자입니다.", HttpStatus.NOT_FOUND),
 	ERR_MEMBER_INVALID(-10002, "유효하지 않은 사용자입니다.", HttpStatus.NOT_FOUND),
 
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
-	ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE(-11000, "지원하지 않는 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST),
-	ERR_KAKAO_AUTH_CODE_REDIRECT(-11030, "인가 코드 발급 중 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-
-	;
+	// 10100~
+	ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE(-10100, "지원하지 않는 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST),
+	ERR_KAKAO_AUTH_CODE_REDIRECT(-10101, "인가 코드 발급 중 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
 	private final int code; // 에러 코드
 	private final String message; // 클라이언트 반환 메시지

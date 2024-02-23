@@ -16,12 +16,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.JwtClaim;
 import com.fourdays.foodage.jwt.enums.JwtType;
+import com.fourdays.foodage.jwt.exception.JwtClaimParseException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -43,6 +46,7 @@ public class TokenProvider implements InitializingBean {
 		@Value("${jwt.secret}") String secret,
 		@Value("${jwt.access-token-expiration-seconds}") long accessTokenExpiration,
 		@Value("${jwt.refresh-token-expiration-seconds}") long refreshTokenExpiration) {
+
 		this.secret = secret;
 		this.accessTokenExpiration = accessTokenExpiration * 1000;
 		this.refreshTokenExpiration = refreshTokenExpiration * 1000;
@@ -50,11 +54,13 @@ public class TokenProvider implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() {
+
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
 	public TokenDto createToken(Authentication authentication) {
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		String authorities = getAuthorities(authentication);
@@ -77,17 +83,19 @@ public class TokenProvider implements InitializingBean {
 			.setExpiration(refreshTokenExpiration)
 			.compact();
 
-		TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
-		return tokenDto;
+		TokenDto jwt = new TokenDto(accessToken, refreshToken);
+		return jwt;
 	}
 
 	private static String getAuthorities(Authentication authentication) {
+
 		return authentication.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
 	}
 
 	public Authentication getAuthentication(String token) {
+
 		Claims claims = Jwts
 			.parserBuilder()
 			.setSigningKey(key)
@@ -105,18 +113,25 @@ public class TokenProvider implements InitializingBean {
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
 	}
 
+	public Jws<Claims> getClaims(String token) {
+
+		if (!validateToken(token)) { // 토큰이 유효하지 않을 경우
+			throw new JwtClaimParseException(ResultCode.ERR_INVALID_JWT);
+		}
+		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+	}
+
 	public boolean validateToken(String token) {
+
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-			log.info("잘못된 JWT 서명입니다.");
+			log.info("JWT 서명이 잘못되었습니다.");
 		} catch (ExpiredJwtException e) {
-			log.info("만료된 JWT 토큰입니다.");
-		} catch (UnsupportedJwtException e) {
-			log.info("지원되지 않는 JWT 토큰입니다.");
-		} catch (IllegalArgumentException e) {
-			log.info("JWT 토큰이 잘못되었습니다.");
+			log.info("JWT가 만료되었습니다.");
+		} catch (UnsupportedJwtException | IllegalArgumentException e) {
+			log.info("유효하지 않은 JWT입니다.");
 		}
 		return false;
 	}

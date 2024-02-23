@@ -33,6 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(final String username) {
+
 		log.debug("# authenticate() --...--> loadUserByUsername() execute");
 		log.debug("# username : {}", username);
 
@@ -48,7 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 			.map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
 			.collect(Collectors.toList());
 
-		return new User(member.getNickname(), member.getCredential(),
-			grantedAuthorities);
+		return new User(member.getNickname(), member.getCredential()
+			, grantedAuthorities);
 	}
 }

@@ -2,12 +2,7 @@ package com.fourdays.foodage.member.service;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +11,7 @@ import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.Role;
-import com.fourdays.foodage.jwt.handler.TokenProvider;
+import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
@@ -36,32 +31,31 @@ public class MemberCommandService {
 
 	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
-	private final TokenProvider tokenProvider;
+	private final AuthService authService;
 	private final PasswordEncoder passwordEncoder;
 
 	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository,
-		AuthenticationManagerBuilder authenticationManagerBuilder, TokenProvider tokenProvider,
-		PasswordEncoder passwordEncoder) {
+		AuthService authService, PasswordEncoder passwordEncoder) {
 		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
-		this.authenticationManagerBuilder = authenticationManagerBuilder;
-		this.tokenProvider = tokenProvider;
+		this.authService = authService;
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	// @Transactional
+	@Transactional
 	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileImage) {
 
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
-		if (findMember.isPresent())
+		if (findMember.isPresent()) {
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+		}
 
 		// create member
 		Authority authority = Authority.builder()
 			.authorityName(Role.MEMBER.getRole())
 			.build();
-		String credential = UUID.randomUUID().toString();
+		String credential = authService.createCredential();
+		log.debug("# credential (plain) : {}", credential);
 		Member member = Member.builder()
 			.oauthId(oauthId)
 			.accountEmail(accountEmail)
@@ -80,14 +74,8 @@ public class MemberCommandService {
 		);
 
 		// jwt 발행 (at & rt)
-		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(nickname, credential);
-
-		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		TokenDto jwt = tokenProvider.createToken(authentication);
-		log.debug("# at : {}\nrt : {}", jwt.accessToken(), jwt.refreshToken());
+		TokenDto jwt = authService.createToken(member.getNickname(), credential);
+		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
 
 		MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);
 		return memberJoinResponseDto;
@@ -95,11 +83,12 @@ public class MemberCommandService {
 
 	@Transactional
 	public void login(OauthId oauthId, String accountEmail) {
+
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
 
 		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
-		if (!findMember.isPresent()) {
+		if (findMember.isEmpty()) {
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
 

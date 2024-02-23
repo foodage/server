@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fourdays.foodage.common.dto.ErrorResponseDto;
 import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,15 @@ public class ExceptionController {
 
 	@ExceptionHandler(MemberNotJoinedException.class)
 	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberNotJoinedException e) {
+
+		log.error("handleException : {}", e);
+		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
+
+		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
+	}
+
+	@ExceptionHandler(BlockedRefreshTokenException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(BlockedRefreshTokenException e) {
 
 		log.error("handleException : {}", e);
 		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());

@@ -9,14 +9,14 @@ import lombok.Getter;
 public class MemberJoinResponseDto {
 
 	private MemberInfoDto memberInfoDto;
-	private TokenDto tokenDto;
+	private TokenDto jwt;
 
-	public MemberJoinResponseDto(Member member, TokenDto tokenDto) {
+	public MemberJoinResponseDto(Member member, TokenDto jwt) {
 		memberInfoDto = new MemberInfoDto(
 			member.getNickname()
 			, member.getProfileImage().toLowerCase()
 			, member.getCreatedAt().toString()
 			, member.getUpdatedAt().toString());
-		this.tokenDto = tokenDto;
+		this.jwt = jwt;
 	}
 }

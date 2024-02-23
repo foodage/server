@@ -1,50 +1,59 @@
 package com.fourdays.foodage.jwt.controller;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fourdays.foodage.jwt.dto.LoginDto;
+import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.jwt.dto.ReissueTokenRequestDto;
 import com.fourdays.foodage.jwt.dto.TokenDto;
-import com.fourdays.foodage.jwt.handler.JwtFilter;
+import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
+import com.fourdays.foodage.jwt.service.AuthService;
+import com.fourdays.foodage.member.domain.Member;
+import com.fourdays.foodage.member.service.MemberQueryService;
 
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/jwt")
+@Slf4j
 public class AuthController {
 
 	private final TokenProvider tokenProvider;
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+	private final AuthService authService;
+	private final MemberQueryService memberQueryService;
 
-	public AuthController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+	public AuthController(TokenProvider tokenProvider, AuthService authService, MemberQueryService memberQueryService) {
 		this.tokenProvider = tokenProvider;
-		this.authenticationManagerBuilder = authenticationManagerBuilder;
+		this.authService = authService;
+		this.memberQueryService = memberQueryService;
 	}
 
-	@PostMapping("/authenticate")
-	public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
+	@Operation(summary = "jwt 재발급")
+	@PostMapping("/reissue")
+	public ResponseEntity<TokenDto> reissueToken(
+		@RequestBody ReissueTokenRequestDto reissueTokenRequest) {
 
-		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(loginDto.getNickname(), loginDto.getEmail());
+		String refreshToken = reissueTokenRequest.refreshToken();
 
-		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+		// 만료된 refresh token인지 확인 (만료된 rt는 blacklist 테이블에 추가됨)
+		tokenProvider.validateToken(refreshToken);
+		if (authService.isBlacklisted(refreshToken)) {
+			throw new BlockedRefreshTokenException(ResultCode.ERR_BLOCKED_REFRESH_TOKEN);
+		}
 
-		TokenDto jwt = tokenProvider.createToken(authentication);
+		// 신규 토큰 발급
+		Member findMember = memberQueryService.getMemberByAccountEmail(reissueTokenRequest.accountEmail());
+		String credential = authService.updateCredential(reissueTokenRequest.accountEmail());
+		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
 
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+		// 기존 refresh token은 만료 테이블에 추가
+		authService.addToBlacklist(refreshToken);
 
-		return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
+		return ResponseEntity.ok(reissueJwt);
 	}
 }

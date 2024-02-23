@@ -109,6 +109,10 @@ public class Member {
 		}
 	}
 
+	public void updateCredential(String encCredential) {
+		credential = encCredential;
+	}
+
 	public void updateLastLoginAt() {
 		lastLoginAt = LocalDateTime.now();
 	}

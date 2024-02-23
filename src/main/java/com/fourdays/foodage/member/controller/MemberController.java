@@ -52,9 +52,9 @@ public class MemberController {
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,
-			"Bearer " + memberJoinResponseDto.getTokenDto().accessToken());
+			"Bearer " + memberJoinResponseDto.getJwt().accessToken());
 		httpHeaders.add(JwtType.REFRESH_TOKEN.getHeaderName(),
-			"Bearer " + memberJoinResponseDto.getTokenDto().refreshToken());
+			"Bearer " + memberJoinResponseDto.getJwt().refreshToken());
 
 		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
 	}
