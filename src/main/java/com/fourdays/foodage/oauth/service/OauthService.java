@@ -43,24 +43,24 @@ public class OauthService {
 
 		// 해당 사용자 정보가 db에 존재하는지(기존 가입 여부) 확인
 		LoginResult loginResult;
+		Long memberId = null;
 		try {
-			memberCommandService.login(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
+			memberId = memberCommandService.login(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
 			loginResult = LoginResult.JOINED;
 		} catch (MemberNotJoinedException e) { // 미가입 사용자
-			// oauth server에서 전달받은 사용자 데이터 임시 저장 후, 추가 정보 입력받아 update (회원가입 완료 처리)
-			memberCommandService.tempJoin(oauthMemberInfo.getOauthId(),
-				oauthMemberInfo.getAccountEmail());
-
+			// redirect시 사용자 정보를 body에 전달할 수 없어, 사용자 데이터 임시 저장한 후 update하는 방법으로 회원가입 처리
+			memberId = memberCommandService.tempJoin(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
 			log.debug(e.getMessage());
 			loginResult = LoginResult.NOT_JOINED;
-		} catch (MemberInvalidStateException e) { // 휴면, 블락 등의 상태를 가진 사용자
+		} catch (MemberInvalidStateException e) { // 서비스 접근 불가능 상태인 사용자
 			log.debug(e.getMessage());
-			loginResult = e.getLoginResult();
+			loginResult = e.getLoginResult(); // BLOCK or LEAVE state
 		}
 
 		return OauthLoginResponseDto.builder()
 			.nickname(oauthMemberInfo.getNickname())
 			.accountEmail(oauthMemberInfo.getAccountEmail())
+			.memberId(memberId)
 			.result(loginResult)
 			.build();
 	}

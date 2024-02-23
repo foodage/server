@@ -1,7 +1,6 @@
 package com.fourdays.foodage.member.dto;
 
 import com.fourdays.foodage.common.enums.CharacterType;
-import com.fourdays.foodage.oauth.domain.OauthId;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,8 +13,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class MemberCreateRequestDto {
 
-	@NotBlank(message = "간편 로그인 서비스 종류를 입력해주세요.")
-	private OauthId oauthId;
+	@NotNull
+	private Long id;
 
 	@NotBlank(message = "계정 이메일을 입력해주세요.")
 	private String accountEmail;

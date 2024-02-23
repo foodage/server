@@ -26,8 +26,10 @@ public enum ResultCode {
 	ERR_MEMBER_NOT_FOUND(-10000, "일치하는 사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	ERR_MEMBER_ALREADY_JOINED(-10001, "이미 가입된 사용자입니다.", HttpStatus.CONFLICT),
 	ERR_MEMBER_ALREADY_LEAVED(-10002, "이미 탈퇴한 사용자입니다.", HttpStatus.NOT_FOUND),
-	ERR_MEMBER_INVALID(-10002, "유효하지 않은 사용자입니다.", HttpStatus.NOT_FOUND),
-	ERR_NOT_SUPPORT_CHARACTER_TYPE(-10002, "지원되지 않는 캐릭터 종류입니다.", HttpStatus.NOT_FOUND),
+	ERR_MEMBER_INVALID(-10003, "유효하지 않은 사용자입니다.", HttpStatus.NOT_FOUND),
+	ERR_NOT_SUPPORT_CHARACTER_TYPE(-10004, "지원되지 않는 캐릭터 종류입니다.", HttpStatus.NOT_FOUND),
+	ERR_MISMATCH_ACCOUNT_EMAIL(-10005, "로그인 한 계정의 이메일과 가입자 이메일이 다릅니다.", HttpStatus.BAD_REQUEST),
+	ERR_UNEXPECTED_JOIN(-10005, "비정상적인 접근입니다. 로그인 후 다시 시도해주세요.", HttpStatus.BAD_REQUEST),
 
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	// 10100~

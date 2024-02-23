@@ -111,6 +111,15 @@ public class Member {
 		lastLoginAt = LocalDateTime.now();
 	}
 
+	public void completedJoin(String nickname, String profileImage, CharacterType character,
+		String credential) {
+		this.credential = credential;
+		this.nickname = nickname;
+		this.profileImage = profileImage;
+		this.character = character;
+		this.state = MemberState.NORMAL;
+	}
+
 	public void leaved() {
 		if (state == MemberState.LEAVE) {
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_LEAVED);

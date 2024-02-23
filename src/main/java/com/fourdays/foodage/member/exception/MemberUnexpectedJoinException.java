@@ -10,11 +10,11 @@ import lombok.Getter;
  * description    : 비정상적인 방법으로 회원가입을 시도했을경우 <br/>
  */
 @Getter
-public class MemberUnusualJoinException extends RuntimeException {
+public class MemberUnexpectedJoinException extends RuntimeException {
 
 	private ResultCode errCode;
 
-	public MemberUnusualJoinException(ResultCode errCode) {
+	public MemberUnexpectedJoinException(ResultCode errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}

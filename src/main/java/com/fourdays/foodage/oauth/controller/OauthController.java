@@ -57,10 +57,11 @@ public class OauthController {
 			redirectUrl = "http://localhost:3000/home";
 		}
 		if (result.getResult().equals(LoginResult.NOT_JOINED)) {
-			redirectUrl = "http://localhost:3000/signup";
+			redirectUrl = "http://localhost:3000/signup/" + result.getMemberId();
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);
 
-		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).headers(httpHeaders).body(result);
+		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+			.headers(httpHeaders).build();
 	}
 }

@@ -10,11 +10,11 @@ import lombok.Getter;
  * description    : 이미 존재하는 member <br/>
  */
 @Getter
-public class MemberExistException extends RuntimeException {
+public class MemberAlreadyJoinedException extends RuntimeException {
 
 	private ResultCode errCode;
 
-	public MemberExistException(ResultCode errCode) {
+	public MemberAlreadyJoinedException(ResultCode errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}
