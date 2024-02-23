@@ -28,7 +28,8 @@ public class MemberTokenService {
 
 	@Transactional
 	public MemberTokenDto signup(@Valid MemberTokenDto memberTokenDto) {
-		if (memberTokenRepository.findOneWithAuthoritiesByNickname(memberTokenDto.getNickname()).orElse(null) != null) {
+		if (memberTokenRepository.findOneWithAuthoritiesByNickname(memberTokenDto.getNickname())
+			.orElse(null) != null) {
 			throw new DuplicateMemberException("이미 가입되어 있는 유저입니다.");
 		}
 

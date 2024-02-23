@@ -7,15 +7,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Table(name = "member_token")
-@Getter
+@Entity
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
 public class MemberToken {
 
 	@Id
@@ -31,12 +33,4 @@ public class MemberToken {
 
 	@Column(name = "activated")
 	private boolean activated;
-
-	@Builder
-	public MemberToken(Long id, String nickname, String email, boolean activated) {
-		this.id = id;
-		this.nickname = nickname;
-		this.email = email;
-		this.activated = activated;
-	}
 }
