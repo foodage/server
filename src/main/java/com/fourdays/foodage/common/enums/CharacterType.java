@@ -1,27 +1,30 @@
 package com.fourdays.foodage.common.enums;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fourdays.foodage.member.exception.MemberJoinException;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public enum CharacterType {
 
-	DUCK("오리"),
+	PIGEON("비둘기"),
 	SPARROW("참새"),
+	CHICK("병아리"),
+	HAMSTER("햄스터"),
 	RACCOON("너구리"),
-	SEAOTTER("해달"),
-	PIGEON("비둘기");
+	SEAL("물개"),
+	SEAOTTER("해달"), // 수달?
+	PANDA("팬더");
 
 	private final String krName;
-
-	@JsonValue
-	public String getKrName() {
-		return krName;
-	}
 
 	public static CharacterType getRandomOne() {
 		CharacterType[] characters = CharacterType.values();
@@ -34,7 +37,18 @@ public enum CharacterType {
 		return List.of(CharacterType.values());
 	}
 
-	public String getNameToResponseFormat() {
-		return this.name().toLowerCase();
+	@JsonCreator
+	public static CharacterType from(String jsonValue) {
+		for (CharacterType character : values()) {
+			if (character.name().equals(jsonValue.toUpperCase())) {
+				return character;
+			}
+		}
+		throw new MemberJoinException(ResultCode.ERR_NOT_SUPPORT_CHARACTER_TYPE);
+	}
+
+	@JsonValue
+	public String toLowerCase() {
+		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 }
