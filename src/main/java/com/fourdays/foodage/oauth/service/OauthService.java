@@ -47,6 +47,10 @@ public class OauthService {
 			memberCommandService.login(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
 			loginResult = LoginResult.JOINED;
 		} catch (MemberNotJoinedException e) { // 미가입 사용자
+			// oauth server에서 전달받은 사용자 데이터 임시 저장 후, 추가 정보 입력받아 update (회원가입 완료 처리)
+			memberCommandService.tempJoin(oauthMemberInfo.getOauthId(),
+				oauthMemberInfo.getAccountEmail());
+
 			log.debug(e.getMessage());
 			loginResult = LoginResult.NOT_JOINED;
 		} catch (MemberInvalidStateException e) { // 휴면, 블락 등의 상태를 가진 사용자
@@ -55,7 +59,6 @@ public class OauthService {
 		}
 
 		return OauthLoginResponseDto.builder()
-			.oauthId(oauthMemberInfo.getOauthId())
 			.nickname(oauthMemberInfo.getNickname())
 			.accountEmail(oauthMemberInfo.getAccountEmail())
 			.result(loginResult)

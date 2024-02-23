@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fourdays.foodage.common.enums.CharacterType;
+import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
@@ -41,6 +42,38 @@ public class MemberCommandService {
 		this.memberRepository = memberRepository;
 		this.authService = authService;
 		this.passwordEncoder = passwordEncoder;
+	}
+
+	@Transactional
+	public void tempJoin(OauthId oauthId, String accountEmail) {
+
+		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
+		if (findMember.isPresent()) {
+			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+		}
+
+		// create temp member info
+		Authority authority = Authority.builder()
+			.authorityName(Role.MEMBER.getRole())
+			.build();
+		String credential = authService.createCredential();
+		log.debug("# credential (plain) : {}", credential);
+
+		Member member = Member.builder()
+			.oauthId(oauthId)
+			.accountEmail(accountEmail)
+			.credential(passwordEncoder.encode(credential))
+			.state(MemberState.TEMP_JOIN)
+			.authorities(Collections.singleton(authority))
+			.build();
+
+		Long id = memberRepository.save(member).getId();
+		log.debug(
+			"\n#--------- saved temp join member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#--------------------------------#",
+			id,
+			credential,
+			accountEmail
+		);
 	}
 
 	@Transactional

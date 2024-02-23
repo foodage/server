@@ -41,8 +41,7 @@ public class OauthController {
 	// oauth -> (backend) redirect url로 전달하는 auth code를 receive & 사용자 정보 받아 login
 	@Operation(hidden = true)
 	@GetMapping("/oauth/{oauthServerName}/login")
-	public ResponseEntity<OauthLoginResponseDto> login(@PathVariable String oauthServerName,
-		@RequestParam String code) {
+	public ResponseEntity login(@PathVariable String oauthServerName, @RequestParam String code) {
 
 		log.debug("received auth code : {}", code);
 
