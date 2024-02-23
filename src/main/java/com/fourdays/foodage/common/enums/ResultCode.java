@@ -27,6 +27,7 @@ public enum ResultCode {
 	ERR_MEMBER_ALREADY_JOINED(-10001, "이미 가입된 사용자입니다.", HttpStatus.CONFLICT),
 	ERR_MEMBER_ALREADY_LEAVED(-10002, "이미 탈퇴한 사용자입니다.", HttpStatus.NOT_FOUND),
 	ERR_MEMBER_INVALID(-10002, "유효하지 않은 사용자입니다.", HttpStatus.NOT_FOUND),
+	ERR_NOT_SUPPORT_CHARACTER_TYPE(-10002, "지원되지 않는 캐릭터 종류입니다.", HttpStatus.NOT_FOUND),
 
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	// 10100~

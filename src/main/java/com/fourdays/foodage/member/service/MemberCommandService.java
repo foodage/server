@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fourdays.foodage.common.enums.CharacterType;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
@@ -43,7 +44,8 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileImage) {
+	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname,
+		String profileImage, CharacterType character) {
 
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
 		if (findMember.isPresent()) {
@@ -62,6 +64,7 @@ public class MemberCommandService {
 			.credential(passwordEncoder.encode(credential))
 			.nickname(nickname)
 			.profileImage(profileImage)
+			.character(character)
 			.authorities(Collections.singleton(authority))
 			.build();
 

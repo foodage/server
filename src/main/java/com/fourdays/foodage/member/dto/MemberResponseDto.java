@@ -23,6 +23,8 @@ public class MemberResponseDto {
 
 	private String profileImage;
 
+	private CharacterType character;
+
 	private String state;
 
 	private LocalDateTime createdAt;
@@ -42,6 +44,7 @@ public class MemberResponseDto {
 			member.getProfileImage() != null
 				? member.getProfileImage().toLowerCase()
 				: CharacterType.getRandomOne().name();
+		this.character = member.getCharacter();
 		this.state = member.getState().toLowerCase();
 		this.createdAt = member.getCreatedAt();
 		this.updatedAt = member.getUpdatedAt();

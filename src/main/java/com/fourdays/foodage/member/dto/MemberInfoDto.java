@@ -1,5 +1,8 @@
 package com.fourdays.foodage.member.dto;
 
+import java.time.LocalDateTime;
+
+import com.fourdays.foodage.common.enums.CharacterType;
 import com.fourdays.foodage.member.domain.Member;
 
 import lombok.AllArgsConstructor;
@@ -13,14 +16,17 @@ public class MemberInfoDto {
 
 	private String profileImage;
 
-	private String createdAt;
+	private CharacterType characater;
 
-	private String updatedAt;
+	private LocalDateTime createdAt;
+
+	private LocalDateTime updatedAt;
 
 	public MemberInfoDto(Member member) {
 		this.nickname = member.getNickname();
 		this.profileImage = member.getProfileImage();
-		this.createdAt = member.getCreatedAt().toString();
-		this.updatedAt = member.getUpdatedAt().toString();
+		this.characater = member.getCharacter();
+		this.createdAt = member.getCreatedAt();
+		this.updatedAt = member.getUpdatedAt();
 	}
 }

@@ -42,13 +42,11 @@ public class MemberController {
 	}
 
 	@PostMapping("/member/join")
-	public ResponseEntity<MemberJoinResponseDto> join(
-		@RequestBody MemberCreateRequestDto memberCreateRequest) {
+	public ResponseEntity<MemberJoinResponseDto> join(@RequestBody MemberCreateRequestDto memberCreateRequest) {
 
 		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(memberCreateRequest.getOauthId(),
-			memberCreateRequest.getAccountEmail(),
-			memberCreateRequest.getNickname(),
-			memberCreateRequest.getProfileImage());
+			memberCreateRequest.getAccountEmail(), memberCreateRequest.getNickname(),
+			memberCreateRequest.getProfileImage(), memberCreateRequest.getCharacter());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,

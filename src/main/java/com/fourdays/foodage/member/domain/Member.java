@@ -20,6 +20,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -61,6 +63,10 @@ public class Member {
 	@Column(name = "profile_image")
 	private String profileImage;
 
+	@Column(name = "character_type")
+	@Enumerated(EnumType.STRING)
+	private CharacterType character;
+
 	@Column(name = "state")
 	private String state;
 
@@ -82,17 +88,17 @@ public class Member {
 		inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
 	private Set<Authority> authorities;
 
-	public Member(Long id, OauthId oauthId, String accountEmail, String credential, String nickname,
-		String profileImage,
-		String state,
-		LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime lastLoginAt, Set<Authority> authorities) {
+	public Member(Long id, OauthId oauthId, String accountEmail,
+		String credential, String nickname, String profileImage,
+		CharacterType character, String state, LocalDateTime createdAt,
+		LocalDateTime updatedAt, LocalDateTime lastLoginAt, Set<Authority> authorities) {
 		this.id = id;
 		this.oauthId = oauthId;
 		this.accountEmail = accountEmail;
 		this.credential = credential;
 		this.nickname = nickname;
-		this.profileImage =
-			profileImage != null ? profileImage : CharacterType.getRandomOne().name();
+		this.profileImage = profileImage;
+		this.character = character;
 		this.state = MemberState.NORMAL.name();
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
