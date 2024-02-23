@@ -4,48 +4,31 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.redis.core.RedisHash;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import com.fourdays.foodage.jwt.enums.JwtType;
+
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@RedisHash("expired_token")
+@Getter
 public class ExpiredToken {
 
 	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private final String refreshToken;
 
-	// @Column(name = "member_id")
-	// private Long memberId;
-
-	@Column(name = "refresh_token")
-	private String refreshToken;
-
-	@Column(name = "expired_at")
-	@CreatedDate
-	private LocalDateTime expiredAt;
+	private LocalDateTime createdAt;
 
 	public ExpiredToken(String refreshToken) {
-		// this.memberId = memberId;
 		this.refreshToken = refreshToken;
+		this.createdAt = LocalDateTime.now();
 	}
 
-	public Long getKey() {
-		return id;
-	}
-
-	public Map<String, Object> getValue() {
+	public Map<String, Object> getRefreshTokenValues() {
 		Map<String, Object> values = new HashMap<>();
-		values.put("refresh_token", refreshToken);
-		values.put("expired_at", expiredAt);
+		values.put("type", JwtType.REFRESH_TOKEN.name().toLowerCase());
+		values.put("created_at", createdAt.toString());
 		return values;
 	}
 }

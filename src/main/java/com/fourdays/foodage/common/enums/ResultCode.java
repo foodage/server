@@ -19,7 +19,7 @@ public enum ResultCode {
 	// JWT ////////////////////////////////////////////////////////////////////////////////////////////
 	// 1200~
 	ERR_INVALID_JWT(-1200, "유효하지 않은 토큰입니다.", HttpStatus.BAD_REQUEST),
-	ERR_BLOCKED_REFRESH_TOKEN(-1201, "해당 토큰으로는 더이상 재발행이 불가능합니다.", HttpStatus.UNAUTHORIZED),
+	ERR_BLOCKED_REFRESH_TOKEN(-1201, "사용이 만료된 토큰으로는 재발행이 불가능합니다.", HttpStatus.BAD_REQUEST),
 
 	// MEMBER /////////////////////////////////////////////////////////////////////////////////////////
 	// 10000~
