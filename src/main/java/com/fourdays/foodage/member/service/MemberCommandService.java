@@ -93,9 +93,6 @@ public class MemberCommandService {
 		}
 
 		// update member info (completed join)
-		Authority authority = Authority.builder()
-			.authorityName(Role.MEMBER.getRole())
-			.build();
 		String credential = authService.createCredential();
 		log.debug("# credential (plain) : {}", credential);
 

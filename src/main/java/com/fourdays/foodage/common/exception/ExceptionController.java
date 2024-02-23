@@ -12,6 +12,7 @@ import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
 import com.fourdays.foodage.member.exception.MemberAlreadyJoinedException;
 import com.fourdays.foodage.member.exception.MemberJoinException;
 import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
+import com.fourdays.foodage.member.exception.MemberNotFoundException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ControllerAdvice
 public class ExceptionController {
+
+	// todo: MemberExceptionController 분리
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponseDto<?>> handleException(Exception e) {
@@ -57,6 +60,15 @@ public class ExceptionController {
 		ErrorResponseDto<?> res = ErrorResponseDto.error(ResultCode.ERR_REQUIRED_FIELD, message);
 
 		return new ResponseEntity<>(res, res.getHttpStatus());
+	}
+
+	@ExceptionHandler(MemberNotFoundException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberNotFoundException e) {
+
+		log.error("handleException : {}", e);
+		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
+
+		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
 	}
 
 	@ExceptionHandler(MemberJoinException.class)

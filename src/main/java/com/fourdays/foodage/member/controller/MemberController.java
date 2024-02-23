@@ -41,6 +41,13 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMemberById(id));
 	}
 
+	@GetMapping("/member/account-email/{id}")
+	public ResponseEntity<String> getMemberAccountEmail(
+		@PathVariable Long id) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getAccountEmailById(id));
+	}
+
 	@PostMapping("/member/join")
 	public ResponseEntity<MemberJoinResponseDto> join(@RequestBody MemberCreateRequestDto memberCreateRequest) {
 
