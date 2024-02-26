@@ -57,7 +57,7 @@ public class OauthController {
 		String redirectUrl = "";
 		if (result.getResult() == LoginResult.JOINED) {
 			String credential = authService.updateCredential(result.getAccountEmail());
-			httpHeaders = authService.createTokenHeader(result.getNickname(), credential);
+			httpHeaders = authService.createTokenHeader(result.getNickname(), credential); // header 토큰 받을 수 있는지 확인 필요
 			redirectUrl = clientBaseUrl + "/home";
 		}
 		if (result.getResult() == LoginResult.NOT_JOINED
