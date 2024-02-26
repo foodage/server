@@ -1,5 +1,6 @@
 package com.fourdays.foodage.oauth.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class OauthController {
 
 	private final OauthService oauthService;
 	private final AuthService authService;
+	@Value("${application.client.base-url}")
+	private String clientBaseUrl;
 
 	public OauthController(OauthService oauthService, AuthService authService) {
 		this.oauthService = oauthService;
@@ -55,11 +58,11 @@ public class OauthController {
 		if (result.getResult() == LoginResult.JOINED) {
 			String credential = authService.updateCredential(result.getAccountEmail());
 			httpHeaders = authService.createTokenHeader(result.getNickname(), credential);
-			redirectUrl = "http://localhost:3000/home";
+			redirectUrl = clientBaseUrl + "/home";
 		}
 		if (result.getResult() == LoginResult.NOT_JOINED
 			|| result.getResult() == LoginResult.JOIN_IN_PROGRESS) {
-			redirectUrl = "http://localhost:3000/signup/" + result.getMemberId();
+			redirectUrl = clientBaseUrl + "/signup/" + result.getMemberId();
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);
 

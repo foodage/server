@@ -35,3 +35,7 @@ oauth:
     redirect_uri: http://13.209.41.215:12816/api/oauth/naver/login
     client_secret: ENC(oxhRBHpLlzOrEYFGvZtf+Jjip5cOzuMngaGRed7mbD9L+qDZR+92ULLfmBM8nl13)
     scope:
+
+application:
+  client:
+    base-url: http://localhost:3000

@@ -7,7 +7,7 @@ import lombok.Getter;
 /**
  * author         : ebkim <br/>
  * date           : 2024/02/23 <br/>
- * description    : 이미 존재하는 member <br/>
+ * description    : 이미 가입한 Member일 경우 발생하는 Exception <br/>
  */
 @Getter
 public class MemberAlreadyJoinedException extends RuntimeException {

@@ -7,14 +7,14 @@ import lombok.Getter;
 /**
  * author         : ebkim <br/>
  * date           : 2024/02/23 <br/>
- * description    : 회원가입과 관련된 Exception  <br/>
+ * description    : 회원가입 진행 과정에서 문제가 있을 시 발생하는 Exception  <br/>
  */
 @Getter
-public class MemberJoinException extends RuntimeException {
+public class CharacterTypeNotSupportedException extends RuntimeException {
 
 	private ResultCode errCode;
 
-	public MemberJoinException(ResultCode errCode) {
+	public CharacterTypeNotSupportedException(ResultCode errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}
