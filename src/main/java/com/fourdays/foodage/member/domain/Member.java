@@ -3,6 +3,7 @@ package com.fourdays.foodage.member.domain;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,6 +40,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "member")
 @Entity
 @EntityListeners(value = {AuditingEntityListener.class})
+@DynamicUpdate // 오버헤드 발생할 수 있으므로 변경이 자주 일어나지 않는 Entity에는 주의해서 사용
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
