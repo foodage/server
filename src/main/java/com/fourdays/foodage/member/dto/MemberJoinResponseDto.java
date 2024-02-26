@@ -12,11 +12,8 @@ public class MemberJoinResponseDto {
 	private TokenDto jwt;
 
 	public MemberJoinResponseDto(Member member, TokenDto jwt) {
-		memberInfoDto = new MemberInfoDto(
-			member.getNickname()
-			, member.getProfileImage().toLowerCase()
-			, member.getCreatedAt().toString()
-			, member.getUpdatedAt().toString());
+		memberInfoDto = new MemberInfoDto(member.getNickname(), member.getProfileImage(), member.getCharacter(),
+			member.getCreatedAt(), member.getUpdatedAt());
 		this.jwt = jwt;
 	}
 }

@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.fourdays.foodage.common.dto.ErrorResponseDto;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
+import com.fourdays.foodage.member.exception.CharacterTypeNotSupportedException;
+import com.fourdays.foodage.member.exception.MemberAlreadyJoinedException;
+import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
+import com.fourdays.foodage.member.exception.MemberNotFoundException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ControllerAdvice
 public class ExceptionController {
+
+	// todo: MemberExceptionController 분리
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponseDto<?>> handleException(Exception e) {
@@ -56,8 +62,44 @@ public class ExceptionController {
 		return new ResponseEntity<>(res, res.getHttpStatus());
 	}
 
+	@ExceptionHandler(MemberNotFoundException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberNotFoundException e) {
+
+		log.error("handleException : {}", e);
+		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
+
+		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
+	}
+
+	@ExceptionHandler(CharacterTypeNotSupportedException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(CharacterTypeNotSupportedException e) {
+
+		log.error("handleException : {}", e);
+		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
+
+		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
+	}
+
 	@ExceptionHandler(MemberNotJoinedException.class)
 	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberNotJoinedException e) {
+
+		log.error("handleException : {}", e);
+		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
+
+		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
+	}
+
+	@ExceptionHandler(MemberAlreadyJoinedException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberAlreadyJoinedException e) {
+
+		log.error("handleException : {}", e);
+		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
+
+		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
+	}
+
+	@ExceptionHandler(MemberMismatchAccountEmailException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberMismatchAccountEmailException e) {
 
 		log.error("handleException : {}", e);
 		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());

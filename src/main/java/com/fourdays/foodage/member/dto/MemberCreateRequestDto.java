@@ -1,20 +1,20 @@
 package com.fourdays.foodage.member.dto;
 
-import com.fourdays.foodage.oauth.domain.OauthId;
+import com.fourdays.foodage.common.enums.CharacterType;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class MemberCreateRequestDto {
 
-	@NotBlank(message = "간편 로그인 서비스 종류를 입력해주세요.")
-	private OauthId oauthId;
+	@NotNull
+	private Long id;
 
 	@NotBlank(message = "계정 이메일을 입력해주세요.")
 	private String accountEmail;
@@ -26,16 +26,6 @@ public class MemberCreateRequestDto {
 
 	private String profileImage;
 
-	public MemberCreateRequestDto(OauthId oauthId, String accountEmail, String nickname) {
-		this.oauthId = oauthId;
-		this.accountEmail = accountEmail;
-		this.nickname = nickname;
-	}
-
-	public MemberCreateRequestDto(OauthId oauthId, String accountEmail, String nickname, String profileImage) {
-		this.oauthId = oauthId;
-		this.accountEmail = accountEmail;
-		this.nickname = nickname;
-		this.profileImage = profileImage;
-	}
+	@NotNull(message = "캐릭터를 선택해주세요.")
+	private CharacterType character;
 }

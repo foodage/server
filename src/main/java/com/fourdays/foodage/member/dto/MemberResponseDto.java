@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fourdays.foodage.common.enums.CharacterType;
+import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.oauth.domain.OauthId;
@@ -23,7 +24,9 @@ public class MemberResponseDto {
 
 	private String profileImage;
 
-	private String state;
+	private CharacterType character;
+
+	private MemberState state;
 
 	private LocalDateTime createdAt;
 
@@ -38,11 +41,9 @@ public class MemberResponseDto {
 		this.oauthId = member.getOauthId();
 		this.accountEmail = member.getAccountEmail();
 		this.nickname = member.getNickname();
-		this.profileImage =
-			member.getProfileImage() != null
-				? member.getProfileImage().toLowerCase()
-				: CharacterType.getRandomOne().name();
-		this.state = member.getState().toLowerCase();
+		this.profileImage = member.getProfileImage();
+		this.character = member.getCharacter();
+		this.state = member.getState();
 		this.createdAt = member.getCreatedAt();
 		this.updatedAt = member.getUpdatedAt();
 		this.lastLoginAt = member.getLastLoginAt();

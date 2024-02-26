@@ -1,5 +1,6 @@
 package com.fourdays.foodage.oauth.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class OauthController {
 
 	private final OauthService oauthService;
 	private final AuthService authService;
+	@Value("${application.client.base-url}")
+	private String clientBaseUrl;
 
 	public OauthController(OauthService oauthService, AuthService authService) {
 		this.oauthService = oauthService;
@@ -41,27 +44,29 @@ public class OauthController {
 	// oauth -> (backend) redirect url로 전달하는 auth code를 receive & 사용자 정보 받아 login
 	@Operation(hidden = true)
 	@GetMapping("/oauth/{oauthServerName}/login")
-	public ResponseEntity<OauthLoginResponseDto> login(@PathVariable String oauthServerName,
-		@RequestParam String code) {
+	public ResponseEntity login(@PathVariable String oauthServerName, @RequestParam String code) {
 
 		log.debug("received auth code : {}", code);
 
 		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
-		OauthLoginResponseDto result = oauthService.login(oauthServerType, code);
+		OauthLoginResponseDto result = oauthService.login(oauthServerType, code); // foodage 서비스 가입자인지 확인
 
 		log.debug("{} : {}", result.getResult().name(), result.getResult().getDetailMessage());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		String redirectUrl = "";
-		if (result.getResult().equals(LoginResult.JOINED)) {
-			httpHeaders = authService.createTokenHeader(result.getNickname(), result.getAccountEmail());
-			redirectUrl = "http://localhost:3000/home";
+		if (result.getResult() == LoginResult.JOINED) {
+			String credential = authService.updateCredential(result.getAccountEmail());
+			httpHeaders = authService.createTokenHeader(result.getNickname(), credential);
+			redirectUrl = clientBaseUrl + "/home";
 		}
-		if (result.getResult().equals(LoginResult.NOT_JOINED)) {
-			redirectUrl = "http://localhost:3000/signup";
+		if (result.getResult() == LoginResult.NOT_JOINED
+			|| result.getResult() == LoginResult.JOIN_IN_PROGRESS) {
+			redirectUrl = clientBaseUrl + "/signup/" + result.getMemberId();
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);
 
-		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).headers(httpHeaders).body(result);
+		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+			.headers(httpHeaders).build();
 	}
 }

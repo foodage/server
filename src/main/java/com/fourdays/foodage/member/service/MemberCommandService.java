@@ -7,6 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fourdays.foodage.common.enums.CharacterType;
+import com.fourdays.foodage.common.enums.LoginResult;
+import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
@@ -15,7 +18,11 @@ import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
+import com.fourdays.foodage.member.dto.MemberLoginInfoDto;
+import com.fourdays.foodage.member.exception.MemberAlreadyJoinedException;
+import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
+import com.fourdays.foodage.member.exception.MemberUnexpectedJoinException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,34 +50,63 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname, String profileImage) {
+	public MemberLoginInfoDto tempJoin(OauthId oauthId, String accountEmail) {
 
+		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
 		if (findMember.isPresent()) {
-			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+			throw new MemberAlreadyJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 		}
 
-		// create member
+		// create temp member info
 		Authority authority = Authority.builder()
 			.authorityName(Role.MEMBER.getRole())
 			.build();
 		String credential = authService.createCredential();
 		log.debug("# credential (plain) : {}", credential);
+
 		Member member = Member.builder()
 			.oauthId(oauthId)
 			.accountEmail(accountEmail)
 			.credential(passwordEncoder.encode(credential))
-			.nickname(nickname)
-			.profileImage(profileImage)
+			.state(MemberState.TEMP_JOIN)
 			.authorities(Collections.singleton(authority))
 			.build();
 
 		Long id = memberRepository.save(member).getId();
 		log.debug(
-			"\n#--------- saved member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#--------------------------------#",
+			"\n#--------- saved temp join member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#--------------------------------#",
 			id,
 			credential,
 			accountEmail
+		);
+
+		return new MemberLoginInfoDto(id, member.getNickname(), LoginResult.JOIN_IN_PROGRESS);
+	}
+
+	@Transactional
+	public MemberJoinResponseDto join(Long id, String accountEmail, String nickname,
+		String profileImage, CharacterType character) {
+
+		Member member = memberRepository.findById(id)
+			.orElseThrow(() -> new MemberUnexpectedJoinException(ResultCode.ERR_UNEXPECTED_JOIN));
+
+		if (!member.getAccountEmail().equals(accountEmail)) {
+			throw new MemberMismatchAccountEmailException(ResultCode.ERR_MISMATCH_ACCOUNT_EMAIL);
+		}
+
+		// update member info (completed join)
+		String credential = authService.createCredential();
+		log.debug("# credential (plain) : {}", credential);
+
+		member.completedJoin(nickname, profileImage, character,
+			passwordEncoder.encode(credential));
+
+		log.debug(
+			"\n#--------- updated member ---------#\nid : {}\naccountEmail : {}\nnickname : {}\n#--------------------------------#",
+			member.getId(),
+			accountEmail,
+			nickname
 		);
 
 		// jwt 발행 (at & rt)
@@ -81,40 +117,83 @@ public class MemberCommandService {
 		return memberJoinResponseDto;
 	}
 
+	// @Transactional
+	// public MemberJoinResponseDto join(OauthId oauthId, String accountEmail, String nickname,
+	// 	String profileImage, CharacterType character) {
+	//
+	// 	Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
+	// 	if (findMember.isPresent()) {
+	// 		throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+	// 	}
+	//
+	// 	// create member
+	// 	Authority authority = Authority.builder()
+	// 		.authorityName(Role.MEMBER.getRole())
+	// 		.build();
+	// 	String credential = authService.createCredential();
+	// 	log.debug("# credential (plain) : {}", credential);
+	// 	Member member = Member.builder()
+	// 		.oauthId(oauthId)
+	// 		.accountEmail(accountEmail)
+	// 		.credential(passwordEncoder.encode(credential))
+	// 		.nickname(nickname)
+	// 		.profileImage(profileImage)
+	// 		.character(character)
+	// 		.authorities(Collections.singleton(authority))
+	// 		.build();
+	//
+	// 	Long id = memberRepository.save(member).getId();
+	// 	log.debug(
+	// 		"\n#--------- saved member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#--------------------------------#",
+	// 		id,
+	// 		credential,
+	// 		accountEmail
+	// 	);
+	//
+	// 	// jwt 발행 (at & rt)
+	// 	TokenDto jwt = authService.createToken(member.getNickname(), credential);
+	// 	log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
+	//
+	// 	MemberJoinResponseDto memberJoinResponseDto = new MemberJoinResponseDto(member, jwt);
+	// 	return memberJoinResponseDto;
+	// }
+
 	@Transactional
-	public void login(OauthId oauthId, String accountEmail) {
+	public MemberLoginInfoDto login(OauthId oauthId, String accountEmail) {
 
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
 
-		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
-		if (findMember.isEmpty()) {
-			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
-		}
+		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
+			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+
+		// 가입 진행중인지 확인
+		LoginResult loginResult = findMember.getLoginResultByMemberState();
 
 		// 블락, 휴면, 탈퇴 상태인지 확인
-		findMember.get().validateState();
+		findMember.validateState();
 
 		// 약관 동의 여부 확인
 
 		// 로그인 히스토리 추가
 
 		// 마지막 로그인 일시 업데이트
-		findMember.get().updateLastLoginAt();
+		findMember.updateLastLoginAt();
+
+		return new MemberLoginInfoDto(findMember.getId(), findMember.getNickname(), loginResult);
 	}
 
 	@Transactional
 	public void leave(long memberId) {
-		Optional<Member> findMember = memberRepository.findById(memberId);
-		if (findMember.isEmpty()) {
-			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
-		}
 
-		findMember.get().leaved();
+		Member findMember = memberRepository.findById(memberId)
+			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+
+		findMember.leaved();
 
 		log.debug("\n#--- leaved member ---#\nid : {}\nnickname : {}\n#--------------------#",
-			findMember.get().getId(),
-			findMember.get().getNickname()
+			findMember.getId(),
+			findMember.getNickname()
 		);
 	}
 }

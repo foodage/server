@@ -41,14 +41,20 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMemberById(id));
 	}
 
-	@PostMapping("/member/join")
-	public ResponseEntity<MemberJoinResponseDto> join(
-		@RequestBody MemberCreateRequestDto memberCreateRequest) {
+	@GetMapping("/member/account-email/{id}")
+	public ResponseEntity<String> getMemberAccountEmail(
+		@PathVariable Long id) {
 
-		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(memberCreateRequest.getOauthId(),
-			memberCreateRequest.getAccountEmail(),
-			memberCreateRequest.getNickname(),
-			memberCreateRequest.getProfileImage());
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getAccountEmailById(id));
+	}
+
+	@PostMapping("/member/join")
+	public ResponseEntity<MemberJoinResponseDto> join(@RequestBody MemberCreateRequestDto memberCreateRequest) {
+
+		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(
+			memberCreateRequest.getId(), memberCreateRequest.getAccountEmail(),
+			memberCreateRequest.getNickname(), memberCreateRequest.getProfileImage(),
+			memberCreateRequest.getCharacter());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,
