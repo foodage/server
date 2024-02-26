@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fourdays.foodage.common.enums.CharacterType;
+import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
@@ -17,6 +18,7 @@ import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
+import com.fourdays.foodage.member.dto.MemberLoginInfoDto;
 import com.fourdays.foodage.member.exception.MemberAlreadyJoinedException;
 import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
@@ -48,7 +50,7 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public Long tempJoin(OauthId oauthId, String accountEmail) {
+	public MemberLoginInfoDto tempJoin(OauthId oauthId, String accountEmail) {
 
 		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
@@ -78,7 +80,8 @@ public class MemberCommandService {
 			credential,
 			accountEmail
 		);
-		return id;
+
+		return new MemberLoginInfoDto(id, member.getNickname(), LoginResult.JOIN_IN_PROGRESS);
 	}
 
 	@Transactional
@@ -156,13 +159,16 @@ public class MemberCommandService {
 	// }
 
 	@Transactional
-	public Long login(OauthId oauthId, String accountEmail) {
+	public MemberLoginInfoDto login(OauthId oauthId, String accountEmail) {
 
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
 
 		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
 			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+
+		// 가입 진행중인지 확인
+		LoginResult loginResult = findMember.getLoginResultByMemberState();
 
 		// 블락, 휴면, 탈퇴 상태인지 확인
 		findMember.validateState();
@@ -174,7 +180,7 @@ public class MemberCommandService {
 		// 마지막 로그인 일시 업데이트
 		findMember.updateLastLoginAt();
 
-		return findMember.getId();
+		return new MemberLoginInfoDto(findMember.getId(), findMember.getNickname(), loginResult);
 	}
 
 	@Transactional

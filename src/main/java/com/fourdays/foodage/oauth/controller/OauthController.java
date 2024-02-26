@@ -46,17 +46,19 @@ public class OauthController {
 		log.debug("received auth code : {}", code);
 
 		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
-		OauthLoginResponseDto result = oauthService.login(oauthServerType, code);
+		OauthLoginResponseDto result = oauthService.login(oauthServerType, code); // foodage 서비스 가입자인지 확인
 
 		log.debug("{} : {}", result.getResult().name(), result.getResult().getDetailMessage());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		String redirectUrl = "";
-		if (result.getResult().equals(LoginResult.JOINED)) {
-			httpHeaders = authService.createTokenHeader(result.getNickname(), result.getAccountEmail());
+		if (result.getResult() == LoginResult.JOINED) {
+			String credential = authService.updateCredential(result.getAccountEmail());
+			httpHeaders = authService.createTokenHeader(result.getNickname(), credential);
 			redirectUrl = "http://localhost:3000/home";
 		}
-		if (result.getResult().equals(LoginResult.NOT_JOINED)) {
+		if (result.getResult() == LoginResult.NOT_JOINED
+			|| result.getResult() == LoginResult.JOIN_IN_PROGRESS) {
 			redirectUrl = "http://localhost:3000/signup/" + result.getMemberId();
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);

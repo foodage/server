@@ -94,6 +94,26 @@ public class Member {
 		inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
 	private Set<Authority> authorities;
 
+	public LoginResult getLoginResultByMemberState() {
+		switch (state) {
+			case TEMP_JOIN -> { // 가입 진행중
+				return LoginResult.JOIN_IN_PROGRESS;
+			}
+			case NORMAL -> { // 정상 유저
+				return LoginResult.JOINED;
+			}
+			case BLOCK -> { // 제한된 사용자
+				return LoginResult.BLOCKED;
+			}
+			case LEAVE -> { // 탈퇴한 사용자
+				return LoginResult.LEAVED;
+			}
+			default -> {
+				return LoginResult.INVALID;
+			}
+		}
+	}
+
 	public void validateState() {
 		if (state == MemberState.BLOCK) {
 			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.BLOCKED);

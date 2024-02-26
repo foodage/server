@@ -3,7 +3,9 @@ package com.fourdays.foodage.oauth.service;
 import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.common.enums.LoginResult;
+import com.fourdays.foodage.member.dto.MemberLoginInfoDto;
 import com.fourdays.foodage.member.exception.MemberInvalidStateException;
+import com.fourdays.foodage.member.exception.MemberJoinInProgressException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.oauth.domain.OauthMember;
@@ -43,24 +45,32 @@ public class OauthService {
 
 		// 해당 사용자 정보가 db에 존재하는지(기존 가입 여부) 확인
 		LoginResult loginResult;
-		Long memberId = null;
+		MemberLoginInfoDto memberLoginInfo = null;
 		try {
-			memberId = memberCommandService.login(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
-			loginResult = LoginResult.JOINED;
+			memberLoginInfo = memberCommandService.login(oauthMemberInfo.getOauthId(),
+				oauthMemberInfo.getAccountEmail());
+			loginResult = memberLoginInfo.loginResult();
+
 		} catch (MemberNotJoinedException e) { // 미가입 사용자
 			// redirect시 사용자 정보를 body에 전달할 수 없어, 사용자 데이터 임시 저장한 후 update하는 방법으로 회원가입 처리
-			memberId = memberCommandService.tempJoin(oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
+			memberLoginInfo = memberCommandService.tempJoin(oauthMemberInfo.getOauthId(),
+				oauthMemberInfo.getAccountEmail());
 			log.debug(e.getMessage());
-			loginResult = LoginResult.NOT_JOINED;
+			loginResult = memberLoginInfo.loginResult();
+
+		} catch (MemberJoinInProgressException e) { // 미가입 사용자
+			log.debug(e.getMessage());
+			loginResult = e.getLoginResult(); // BLOCK or LEAVE state
+
 		} catch (MemberInvalidStateException e) { // 서비스 접근 불가능 상태인 사용자
 			log.debug(e.getMessage());
 			loginResult = e.getLoginResult(); // BLOCK or LEAVE state
 		}
 
 		return OauthLoginResponseDto.builder()
-			.nickname(oauthMemberInfo.getNickname())
+			.memberId(memberLoginInfo.memberId())
 			.accountEmail(oauthMemberInfo.getAccountEmail())
-			.memberId(memberId)
+			.nickname(memberLoginInfo.nickname())
 			.result(loginResult)
 			.build();
 	}
