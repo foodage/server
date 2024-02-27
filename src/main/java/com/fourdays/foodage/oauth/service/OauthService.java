@@ -58,7 +58,7 @@ public class OauthService {
 			log.debug(e.getMessage());
 			loginResult = memberLoginInfo.loginResult();
 
-		} catch (MemberJoinInProgressException e) { // 미가입 사용자
+		} catch (MemberJoinInProgressException e) { // 가입 진행중인 사용자
 			log.debug(e.getMessage());
 			loginResult = e.getLoginResult(); // BLOCK or LEAVE state
 
