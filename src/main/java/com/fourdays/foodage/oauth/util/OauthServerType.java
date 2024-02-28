@@ -6,7 +6,7 @@ public enum OauthServerType {
 
 	KAKAO,
 	NAVER,
-	;
+	GOOGLE;
 
 	public static OauthServerType fromName(String oauthServerName) {
 		return OauthServerType.valueOf(oauthServerName.toUpperCase(ENGLISH));

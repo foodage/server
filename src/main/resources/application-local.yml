@@ -49,6 +49,12 @@ oauth:
     client_secret: EdsUYwGe66
     scope:
 
+  google:
+    client_id: 820462637960-s73nnirqdfsseg592h6i7ogsfkidmq57.apps.googleusercontent.com
+    redirect_uri: http://localhost:12816/api/oauth/google/login
+    client_secret: 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
+    scope: email
+
 application:
   client:
     base-url: http://localhost:3000
