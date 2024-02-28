@@ -10,5 +10,5 @@ public enum Role {
 	MEMBER("ROLE_MEMBER"), // 로그인 완료된 회원
 	ADMIN("ROLE_ADMIN"); // 관리자
 
-	String role;
+	private final String role;
 }
