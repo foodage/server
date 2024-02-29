@@ -10,11 +10,11 @@ import lombok.Getter;
  * description    : 회원가입 진행 과정에서 문제가 있을 시 발생하는 Exception  <br/>
  */
 @Getter
-public class CharacterTypeNotSupportedException extends RuntimeException {
+public class MemberNotSupportedCharacterTypeException extends RuntimeException {
 
 	private ResultCode errCode;
 
-	public CharacterTypeNotSupportedException(ResultCode errCode) {
+	public MemberNotSupportedCharacterTypeException(ResultCode errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}

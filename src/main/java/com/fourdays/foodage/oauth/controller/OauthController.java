@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourdays.foodage.common.enums.LoginResult;
-import com.fourdays.foodage.jwt.service.AuthService;
+import com.fourdays.foodage.jwt.service.AuthUtilService;
 import com.fourdays.foodage.oauth.dto.OauthLoginResponseDto;
 import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
@@ -23,13 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 public class OauthController {
 
 	private final OauthService oauthService;
-	private final AuthService authService;
+	private final AuthUtilService authUtilService;
+
 	@Value("${application.client.base-url}")
 	private String clientBaseUrl;
 
-	public OauthController(OauthService oauthService, AuthService authService) {
+	public OauthController(OauthService oauthService, AuthUtilService authUtilService) {
 		this.oauthService = oauthService;
-		this.authService = authService;
+		this.authUtilService = authUtilService;
 	}
 
 	@Operation(summary = "Oauth 서비스 연동 URI 조회")
@@ -49,20 +50,21 @@ public class OauthController {
 		log.debug("received auth code : {}", code);
 
 		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
-		OauthLoginResponseDto result = oauthService.login(oauthServerType, code); // foodage 서비스 가입자인지 확인
+		OauthLoginResponseDto loginResult = oauthService.login(oauthServerType, code); // foodage 서비스 가입자인지 확인
 
-		log.debug("{} : {}", result.getResult().name(), result.getResult().getDetailMessage());
+		log.debug("{} : {}", loginResult.result().name(),
+			loginResult.result().getDetailMessage());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		String redirectUrl = "";
-		if (result.getResult() == LoginResult.JOINED) {
-			String credential = authService.updateCredential(result.getAccountEmail());
-			httpHeaders = authService.createTokenHeader(result.getNickname(), credential); // header 토큰 받을 수 있는지 확인 필요
+		if (loginResult.result() == LoginResult.JOINED) {
+			httpHeaders = authUtilService.createTokenHeader(loginResult.nickname(),
+				loginResult.credential()); // header 토큰 받을 수 있는지 확인 필요
 			redirectUrl = clientBaseUrl + "/home";
 		}
-		if (result.getResult() == LoginResult.NOT_JOINED
-			|| result.getResult() == LoginResult.JOIN_IN_PROGRESS) {
-			redirectUrl = clientBaseUrl + "/signup/" + result.getMemberId();
+		if (loginResult.result() == LoginResult.NOT_JOINED
+			|| loginResult.result() == LoginResult.JOIN_IN_PROGRESS) {
+			redirectUrl = clientBaseUrl + "/signup";
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);
 

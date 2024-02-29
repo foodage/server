@@ -6,7 +6,7 @@ import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fourdays.foodage.member.exception.CharacterTypeNotSupportedException;
+import com.fourdays.foodage.member.exception.MemberNotSupportedCharacterTypeException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public enum CharacterType {
 				return character;
 			}
 		}
-		throw new CharacterTypeNotSupportedException(ResultCode.ERR_NOT_SUPPORT_CHARACTER_TYPE);
+		throw new MemberNotSupportedCharacterTypeException(ResultCode.ERR_NOT_SUPPORT_CHARACTER_TYPE);
 	}
 
 	@JsonValue

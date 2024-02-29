@@ -33,11 +33,19 @@ public class KakaoLoginProvider implements OauthLoginProvider {
 	@Override
 	public OauthMember getTokenAndMemberInfo(String authCode) {
 		KakaoToken kakaoToken = kakaoApiClient.fetchToken(tokenRequestParams(authCode));
-		log.debug("received access token : {}", kakaoToken.accessToken());
-		KakaoMemberResponseDto kakaoMemberResponseDto = kakaoApiClient.fetchMemberInfo(
+		log.debug("# kakaoAccessToken : {}", kakaoToken.accessToken());
+		KakaoMemberResponseDto kakaoMemberResponseDto = kakaoApiClient.fetchMember(
 			"Bearer " + kakaoToken.accessToken());
 
 		return kakaoMemberResponseDto.toOauthMember();
+	}
+
+	@Override
+	public OauthMember getMemberInfo(String accessToken) {
+		KakaoMemberResponseDto naverMemberResponse = kakaoApiClient.fetchMember(
+			"Bearer " + accessToken);
+
+		return naverMemberResponse.toOauthMember(); // = toDomain()
 	}
 
 	private MultiValueMap<String, String> tokenRequestParams(String authCode) {

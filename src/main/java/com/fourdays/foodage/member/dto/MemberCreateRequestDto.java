@@ -14,7 +14,10 @@ import lombok.Getter;
 public class MemberCreateRequestDto {
 
 	@NotNull
-	private Long id;
+	private String oauthServerName;
+
+	@NotNull
+	private String accessToken;
 
 	@NotBlank(message = "계정 이메일을 입력해주세요.")
 	private String accountEmail;
