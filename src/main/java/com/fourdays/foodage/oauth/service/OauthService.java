@@ -79,10 +79,4 @@ public class OauthService {
 			.credential(credential)
 			.build();
 	}
-
-	public OauthMember getOauthMember(String oauthServerName, String authCode) {
-
-		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
-		return oauthClient.fetch(oauthServerType, authCode);
-	}
 }
