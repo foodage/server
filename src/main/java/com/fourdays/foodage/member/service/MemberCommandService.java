@@ -19,11 +19,11 @@ import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.dto.MemberLoginInfoDto;
-import com.fourdays.foodage.member.exception.InvalidOauthServerTypeException;
-import com.fourdays.foodage.member.exception.MemberAlreadyJoinedException;
+import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
+import com.fourdays.foodage.member.exception.MemberJoinUnexpectedException;
+import com.fourdays.foodage.member.exception.MemberJoinedException;
 import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
-import com.fourdays.foodage.member.exception.MemberUnexpectedJoinException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
 import com.fourdays.foodage.oauth.service.OauthQueryService;
@@ -60,7 +60,7 @@ public class MemberCommandService {
 		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
 		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
 		if (findMember.isPresent()) {
-			throw new MemberAlreadyJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 		}
 
 		// create temp member info
@@ -98,7 +98,7 @@ public class MemberCommandService {
 			// 로그인 한 사용자의 oauth 정보 get
 			oauthMember = oauthQueryService.getOauthMember(oauthServerName, accessToken);
 		} catch (Exception e) {
-			throw new InvalidOauthServerTypeException(ResultCode.ERR_INVALID_OAUTH_SERVER_TYPE);
+			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_INVALID_OAUTH_SERVER_TYPE);
 		}
 
 		// 로그인 한 oauth 계정의 이메일이 가입 요청 이메일과 다른 경우
@@ -108,7 +108,7 @@ public class MemberCommandService {
 
 		Member member = memberRepository.findByOauthIdAndAccountEmail(oauthMember.getOauthId(),
 				oauthMember.getAccountEmail())
-			.orElseThrow(() -> new MemberUnexpectedJoinException(ResultCode.ERR_UNEXPECTED_JOIN));
+			.orElseThrow(() -> new MemberJoinUnexpectedException(ResultCode.ERR_UNEXPECTED_JOIN));
 
 		// update로 회원가입 완료 처리
 		String credential = authService.createCredential();

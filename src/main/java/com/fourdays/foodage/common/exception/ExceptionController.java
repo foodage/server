@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.fourdays.foodage.common.dto.ErrorResponseDto;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
-import com.fourdays.foodage.member.exception.CharacterTypeNotSupportedException;
-import com.fourdays.foodage.member.exception.MemberAlreadyJoinedException;
+import com.fourdays.foodage.member.exception.MemberJoinedException;
 import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
 import com.fourdays.foodage.member.exception.MemberNotFoundException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
+import com.fourdays.foodage.member.exception.MemberNotSupportedCharacterTypeException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,8 +71,8 @@ public class ExceptionController {
 		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
 	}
 
-	@ExceptionHandler(CharacterTypeNotSupportedException.class)
-	public ResponseEntity<ErrorResponseDto<?>> handleException(CharacterTypeNotSupportedException e) {
+	@ExceptionHandler(MemberNotSupportedCharacterTypeException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberNotSupportedCharacterTypeException e) {
 
 		log.error("handleException : {}", e);
 		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
@@ -89,8 +89,8 @@ public class ExceptionController {
 		return new ResponseEntity<>(res, res.getHttpStatus()); // or not_found 처리 고려
 	}
 
-	@ExceptionHandler(MemberAlreadyJoinedException.class)
-	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberAlreadyJoinedException e) {
+	@ExceptionHandler(MemberJoinedException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(MemberJoinedException e) {
 
 		log.error("handleException : {}", e);
 		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());
