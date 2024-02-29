@@ -28,7 +28,7 @@ public enum ResultCode {
 	ERR_MEMBER_ALREADY_LEAVED(-10002, "이미 탈퇴한 사용자입니다.", HttpStatus.NOT_FOUND),
 	ERR_MEMBER_INVALID(-10003, "유효하지 않은 사용자입니다.", HttpStatus.NOT_FOUND),
 	ERR_NOT_SUPPORT_CHARACTER_TYPE(-10004, "지원되지 않는 캐릭터 종류입니다.", HttpStatus.NOT_FOUND),
-	ERR_MISMATCH_ACCOUNT_EMAIL(-10005, "로그인 한 계정의 이메일과 가입자 이메일이 다릅니다.", HttpStatus.BAD_REQUEST),
+	ERR_MISMATCH_ACCOUNT_EMAIL(-10005, "로그인 계정의 이메일과 가입자 이메일이 다릅니다.", HttpStatus.BAD_REQUEST),
 	ERR_UNEXPECTED_JOIN(-10006, "비정상적인 접근입니다. 로그인 후 다시 시도해주세요.", HttpStatus.BAD_REQUEST),
 	ERR_JOIN_IN_PROGRESS(-10007, "가입 진행중인 사용자입니다.", HttpStatus.CONFLICT),
 
@@ -36,7 +36,7 @@ public enum ResultCode {
 	// 10100~
 	ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE(-10100, "지원하지 않는 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST),
 	ERR_KAKAO_AUTH_CODE_REDIRECT(-10101, "인가 코드 발급 중 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-	ERR_INVALID_OAUTH_SERVER_TYPE(-10102, "로그인 한 정보와 다른 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST);
+	ERR_INVALID_OAUTH_SERVER_TYPE(-10102, "로그인 정보와 다른 간편 로그인 종류이거나, 잘못된 토큰 정보입니다.", HttpStatus.BAD_REQUEST);
 
 	private final int code; // 에러 코드
 	private final String message; // 클라이언트 반환 메시지

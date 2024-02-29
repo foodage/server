@@ -33,7 +33,7 @@ public class KakaoLoginProvider implements OauthLoginProvider {
 	@Override
 	public OauthMember getTokenAndMemberInfo(String authCode) {
 		KakaoToken kakaoToken = kakaoApiClient.fetchToken(tokenRequestParams(authCode));
-		log.debug("# kakaoAccessToken : {}", kakaoToken.accessToken());
+		log.debug("# kakao accessToken : {}", kakaoToken.accessToken());
 		KakaoMemberResponseDto kakaoMemberResponseDto = kakaoApiClient.fetchMember(
 			"Bearer " + kakaoToken.accessToken());
 

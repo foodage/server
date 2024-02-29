@@ -20,8 +20,8 @@ spring:
     tracing: # ?에 파라미터 대입 사용
       include-parameter-values: true
   jpa:
-  # hibernate:
-  #   ddl-auto: create # 개발 환경에서만 사용
+#    hibernate:
+#      ddl-auto: create # 개발 환경에서만 사용
 
 jwt:
   header: Authorization

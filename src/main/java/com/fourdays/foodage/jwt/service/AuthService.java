@@ -16,6 +16,7 @@ import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberQueryService;
+import com.fourdays.foodage.oauth.domain.OauthId;
 
 @Service
 public class AuthService {
@@ -56,9 +57,9 @@ public class AuthService {
 		return UUID.randomUUID().toString();
 	}
 
-	public String updateCredential(String accountEmail) {
+	public String updateCredential(OauthId oauthId, String accountEmail) {
 
-		Member member = memberQueryService.getMemberByAccountEmail(accountEmail);
+		Member member = memberQueryService.getMember(oauthId, accountEmail);
 		String credential = createCredential();
 		member.updateCredential(passwordEncoder.encode(credential));
 

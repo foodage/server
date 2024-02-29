@@ -47,8 +47,9 @@ public class AuthController {
 		}
 
 		// 신규 토큰 발급
-		Member findMember = memberQueryService.getMemberByAccountEmail(reissueTokenRequest.accountEmail());
-		String credential = authService.updateCredential(reissueTokenRequest.accountEmail());
+		Member findMember = memberQueryService.getMember(reissueTokenRequest.oauthServerName(),
+			reissueTokenRequest.accountEmail());
+		String credential = authService.updateCredential(findMember.getOauthId(), reissueTokenRequest.accountEmail());
 		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
 
 		// 기존 refresh token은 만료 테이블에 추가

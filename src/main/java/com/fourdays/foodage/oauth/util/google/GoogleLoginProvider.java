@@ -33,10 +33,19 @@ public class GoogleLoginProvider implements OauthLoginProvider {
 	@Override
 	public OauthMember getTokenAndMemberInfo(String authCode) {
 		GoogleToken googleToken = googleApiClient.fetchToken(tokenRequestParams(authCode));
+		log.debug("# google accessToken : {}", googleToken.accessToken());
 		GoogleMemberResponseDto googleMemberResponse = googleApiClient.fetchMember(
 			"Bearer " + googleToken.accessToken());
 
 		return googleMemberResponse.toOauthMember(); // = toDomain()
+	}
+
+	@Override
+	public OauthMember getMemberInfo(String accessToken) {
+		GoogleMemberResponseDto naverMemberResponse = googleApiClient.fetchMember(
+			"Bearer " + accessToken);
+
+		return naverMemberResponse.toOauthMember(); // = toDomain()
 	}
 
 	private MultiValueMap<String, String> tokenRequestParams(String authCode) {

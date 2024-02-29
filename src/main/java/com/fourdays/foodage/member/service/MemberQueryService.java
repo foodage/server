@@ -10,6 +10,8 @@ import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberResponseDto;
 import com.fourdays.foodage.member.exception.MemberNotFoundException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
+import com.fourdays.foodage.oauth.domain.OauthId;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +30,8 @@ public class MemberQueryService {
 		this.memberRepository = memberRepository;
 	}
 
-	public MemberResponseDto getMemberById(Long id) {
+	public MemberResponseDto getMember(Long id) {
+
 		Member findMember = memberRepository.findById(id)
 			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
 		log.debug("getMemberInfo() findMember : {}", findMember);
@@ -36,20 +39,34 @@ public class MemberQueryService {
 		return new MemberResponseDto(findMember);
 	}
 
-	public String getAccountEmailById(Long id) {
-		String findAccountEmail = memberRepository.findAccountEmailById(id)
-			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
-		log.debug("getMemberInfo() findAccountEmail : {}", findAccountEmail);
+	public Member getMember(String oauthServerName, String accountEmail) {
 
-		return findAccountEmail;
-	}
-
-	public Member getMemberByAccountEmail(String accountEmail) {
-		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
+		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
+		Optional<Member> findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(oauthServerType,
+			accountEmail);
 		if (findMember.isEmpty()) {
 			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
 		}
 		log.debug("getMemberInfo() findMember : {}", findMember.get());
 		return findMember.get();
+	}
+
+	public Member getMember(OauthId oauthId, String accountEmail) {
+
+		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
+		if (findMember.isEmpty()) {
+			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
+		}
+		log.debug("getMemberInfo() findMember : {}", findMember.get());
+		return findMember.get();
+	}
+
+	public String getAccountEmail(Long id) {
+
+		String findAccountEmail = memberRepository.findAccountEmailById(id)
+			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		log.debug("getMemberInfo() findAccountEmail : {}", findAccountEmail);
+
+		return findAccountEmail;
 	}
 }

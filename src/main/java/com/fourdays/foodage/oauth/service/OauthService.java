@@ -53,8 +53,10 @@ public class OauthService {
 		try {
 			memberLoginInfo = memberCommandService.login(oauthMemberInfo.getOauthId(),
 				oauthMemberInfo.getAccountEmail());
-			loginResult = memberLoginInfo.loginResult();
-			credential = authService.updateCredential(oauthMemberInfo.getAccountEmail());
+
+			loginResult = memberLoginInfo.loginResult(); //
+			credential = authService.updateCredential(
+				oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
 
 		} catch (MemberNotJoinedException e) { // 미가입 사용자
 			// redirect시 사용자 정보를 body에 전달할 수 없어, 사용자 데이터 임시 저장한 후 update하는 방법으로 회원가입 처리

@@ -40,14 +40,14 @@ public class MemberController {
 	public ResponseEntity<MemberResponseDto> getMemberInfo(
 		@PathVariable Long id) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMemberById(id));
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMember(id));
 	}
 
 	@GetMapping("/member/account-email/{id}")
 	public ResponseEntity<String> getMemberAccountEmail(
 		@PathVariable Long id) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getAccountEmailById(id));
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getAccountEmail(id));
 	}
 
 	@PostMapping("/member/join")
