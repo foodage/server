@@ -33,6 +33,21 @@ public class AuthController {
 		this.memberQueryService = memberQueryService;
 	}
 
+	// 개발 테스트용 api
+	@Operation(summary = "jwt 발급", hidden = true)
+	@PostMapping("/jwt/test-issue")
+	public ResponseEntity<TokenDto> issueToken(
+		@RequestParam("oauthServerType") OauthServerType oauthServerType,
+		@RequestParam("accountEmail") String accountEmail) {
+
+		// 신규 토큰 발급
+		Member findMember = memberQueryService.getMember(oauthServerType, accountEmail);
+		String credential = authService.updateCredential(findMember.getOauthId(), accountEmail);
+		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
+
+		return ResponseEntity.ok(reissueJwt);
+	}
+
 	@Operation(summary = "jwt 재발급")
 	@PostMapping("/jwt/reissue")
 	public ResponseEntity<TokenDto> reissueToken(
