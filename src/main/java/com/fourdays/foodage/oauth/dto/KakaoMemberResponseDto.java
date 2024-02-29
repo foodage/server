@@ -1,13 +1,12 @@
 package com.fourdays.foodage.oauth.dto;
 
-import static com.fourdays.foodage.oauth.util.OauthServerType.*;
-
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 @JsonNaming(SnakeCaseStrategy.class)
 public record KakaoMemberResponseDto(
@@ -19,7 +18,7 @@ public record KakaoMemberResponseDto(
 
 	public OauthMember toOauthMember() {
 		return OauthMember.builder()
-			.oauthId(new OauthId(String.valueOf(id), KAKAO))
+			.oauthId(new OauthId(String.valueOf(id), OauthServerType.KAKAO))
 			.accountEmail(kakaoAccount.email)
 			.build();
 	}

@@ -17,6 +17,7 @@ import com.fourdays.foodage.member.dto.MemberResponseDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.member.service.MemberQueryService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,20 +37,23 @@ public class MemberController {
 		this.authUtilService = authUtilService;
 	}
 
+	@Operation(summary = "사용자 정보 조회 (id 기반)")
 	@GetMapping("/member/{id}")
 	public ResponseEntity<MemberResponseDto> getMemberInfo(
 		@PathVariable Long id) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMemberById(id));
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMember(id));
 	}
 
+	@Operation(summary = "사용자 이메일 조회 (id 기반)")
 	@GetMapping("/member/account-email/{id}")
 	public ResponseEntity<String> getMemberAccountEmail(
 		@PathVariable Long id) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getAccountEmailById(id));
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getAccountEmail(id));
 	}
 
+	@Operation(summary = "foodage 서비스 회원가입 완료 요청 (추가 정보 필수)")
 	@PostMapping("/member/join")
 	public ResponseEntity<MemberJoinResponseDto> join(@RequestBody MemberCreateRequestDto memberCreateRequest) {
 
@@ -63,6 +67,7 @@ public class MemberController {
 		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
 	}
 
+	@Operation(summary = "회원 탈퇴")
 	@PutMapping("/member/{id}")
 	public ResponseEntity leaveMember(@PathVariable("id") long id) {
 

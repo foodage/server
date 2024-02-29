@@ -20,8 +20,8 @@ spring:
     tracing: # ?에 파라미터 대입 사용
       include-parameter-values: true
   jpa:
-  # hibernate:
-  #   ddl-auto: create # 개발 환경에서만 사용
+#    hibernate:
+#      ddl-auto: create # 개발 환경에서만 사용
 
 jwt:
   header: Authorization
@@ -48,6 +48,12 @@ oauth:
     redirect_uri: http://localhost:12816/api/oauth/naver/login
     client_secret: EdsUYwGe66
     scope:
+
+  google:
+    client_id: 820462637960-s73nnirqdfsseg592h6i7ogsfkidmq57.apps.googleusercontent.com
+    redirect_uri: http://localhost:12816/api/oauth/google/login
+    client_secret: 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
+    scope: email
 
 application:
   client:

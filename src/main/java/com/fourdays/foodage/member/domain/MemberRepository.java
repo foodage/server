@@ -8,17 +8,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.fourdays.foodage.oauth.domain.OauthId;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-	Optional<Member> findByAccountEmail(String accountEmail);
+	Optional<Member> findByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail);
+
+	Optional<Member> findByOauthIdOauthServerTypeAndAccountEmail(OauthServerType oauthServer, String accountEmail);
 
 	@Query("SELECT m.accountEmail FROM Member m WHERE m.id = :id")
 	Optional<String> findAccountEmailById(Long id);
 
-	Optional<Member> findByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail);
-	
 	@EntityGraph(attributePaths = "authorities")
 	Optional<Member> findOneWithAuthoritiesByNickname(String nickname);
 }

@@ -33,7 +33,7 @@ public class OauthController {
 		this.authUtilService = authUtilService;
 	}
 
-	@Operation(summary = "Oauth 서비스 연동 URI 조회")
+	@Operation(summary = "oauth 서비스 연동 url 조회")
 	@GetMapping("/oauth/{oauthServerType}")
 	public ResponseEntity<String> getRequestUrl(@PathVariable OauthServerType oauthServerType
 	) {

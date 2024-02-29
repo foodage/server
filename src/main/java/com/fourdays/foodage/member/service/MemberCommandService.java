@@ -58,7 +58,7 @@ public class MemberCommandService {
 	public MemberLoginInfoDto tempJoin(OauthId oauthId, String accountEmail) {
 
 		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
-		Optional<Member> findMember = memberRepository.findByAccountEmail(accountEmail);
+		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
 		if (findMember.isPresent()) {
 			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 		}

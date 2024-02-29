@@ -10,5 +10,5 @@ public enum JwtType {
 	ACCESS_TOKEN("Access-Token"),
 	REFRESH_TOKEN("Refresh-Token");
 
-	String headerName;
+	private final String headerName;
 }

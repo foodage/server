@@ -23,6 +23,7 @@ public class MemberEncryptTest {
 	@DisplayName("DB 컬럼의 데이터 암복호화가 정상적으로 이루어지는지 확인합니다.")
 	class DecryptAccountEmail {
 
+		String oauthServerName = "naver";
 		String accountEmail = "box0_@naver.com";
 
 		@Nested
@@ -33,7 +34,7 @@ public class MemberEncryptTest {
 			@DisplayName("<이메일>을 잘 가져왔으면 성공")
 			public void get_이메일() {
 				// when - then
-				Member member = memberQueryService.getMemberByAccountEmail(accountEmail);
+				Member member = memberQueryService.getMember(oauthServerName, accountEmail);
 				Assertions.assertNotNull(member);
 				System.out.println(member.getAccountEmail());
 			}
