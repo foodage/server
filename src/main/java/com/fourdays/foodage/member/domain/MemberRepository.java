@@ -13,6 +13,9 @@ import com.fourdays.foodage.oauth.util.OauthServerType;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+	@Query("SELECT m.id FROM Member m WHERE m.nickname = :nickname")
+	Long findIdByNickname(String nickname);
+
 	Optional<Member> findByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail);
 
 	Optional<Member> findByOauthIdOauthServerTypeAndAccountEmail(OauthServerType oauthServer, String accountEmail);

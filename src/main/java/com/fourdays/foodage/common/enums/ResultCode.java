@@ -31,6 +31,7 @@ public enum ResultCode {
 	ERR_MISMATCH_ACCOUNT_EMAIL(-10005, "로그인 계정의 이메일과 가입자 이메일이 다릅니다.", HttpStatus.BAD_REQUEST),
 	ERR_UNEXPECTED_JOIN(-10006, "비정상적인 접근입니다. 로그인 후 다시 시도해주세요.", HttpStatus.BAD_REQUEST),
 	ERR_JOIN_IN_PROGRESS(-10007, "가입 진행중인 사용자입니다.", HttpStatus.CONFLICT),
+	ERR_DUPLICATE_NICKNAME(-10008, "이미 사용중인 닉네임입니다.", HttpStatus.CONFLICT),
 
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	// 10100~

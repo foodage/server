@@ -62,7 +62,7 @@ public class Member {
 	@Column(name = "credential", nullable = false)
 	private String credential; // 사용자가 입력하지는 않음, 서버에서 생성-관리하는 비밀번호
 
-	@Column(name = "nickname", length = 64)
+	@Column(name = "nickname", length = 64, unique = true)
 	private String nickname;
 
 	@Column(name = "profile_image")

@@ -19,6 +19,7 @@ import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.dto.MemberLoginResultDto;
+import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
 import com.fourdays.foodage.member.exception.MemberJoinUnexpectedException;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
@@ -93,6 +94,9 @@ public class MemberCommandService {
 	@Transactional
 	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken, String accountEmail,
 		String nickname, String profileImage, CharacterType character) {
+
+		// 닉네임 존재 여부 확인 (이미 사용중일 시 exception 발생)
+		validateUsableNickname(nickname);
 
 		OauthMember oauthMember = null;
 		try {
@@ -169,5 +173,15 @@ public class MemberCommandService {
 			findMember.getId(),
 			findMember.getNickname()
 		);
+	}
+
+	//////////////////////////////////////////////////////////////////
+
+	public void validateUsableNickname(String nickname) {
+
+		Long id = memberRepository.findIdByNickname(nickname);
+		if (id != null) {
+			throw new MemberDuplicateNicknameException(ResultCode.ERR_DUPLICATE_NICKNAME);
+		}
 	}
 }
