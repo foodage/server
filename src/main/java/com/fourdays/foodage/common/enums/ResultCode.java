@@ -35,7 +35,8 @@ public enum ResultCode {
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	// 10100~
 	ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE(-10100, "지원하지 않는 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST),
-	ERR_KAKAO_AUTH_CODE_REDIRECT(-10101, "인가 코드 발급 중 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+	ERR_KAKAO_AUTH_CODE_REDIRECT(-10101, "인가 코드 발급 중 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+	ERR_INVALID_OAUTH_SERVER_TYPE(-10102, "로그인 한 정보와 다른 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST);
 
 	private final int code; // 에러 코드
 	private final String message; // 클라이언트 반환 메시지

@@ -16,4 +16,6 @@ public interface OauthLoginProvider {
 	// Auth Code로 인증 서버로부터 인가 Token을 발급받아 가져온 후,
 	// 해당 인가 Token으로 간편 로그인 사용자 정보를 가져와 반환합니다.
 	OauthMember getTokenAndMemberInfo(String code);
+
+	OauthMember getMemberInfo(String accessToken);
 }

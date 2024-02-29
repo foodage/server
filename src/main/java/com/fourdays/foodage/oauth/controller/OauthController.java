@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourdays.foodage.common.enums.LoginResult;
-import com.fourdays.foodage.jwt.service.AuthService;
+import com.fourdays.foodage.jwt.service.AuthUtilService;
 import com.fourdays.foodage.oauth.dto.OauthLoginResponseDto;
 import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;

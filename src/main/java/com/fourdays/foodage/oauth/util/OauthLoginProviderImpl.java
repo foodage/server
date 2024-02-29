@@ -30,6 +30,10 @@ public class OauthLoginProviderImpl {
 		return getClient(oauthServerType).getTokenAndMemberInfo(authCode);
 	}
 
+	public OauthMember fetchMember(OauthServerType oauthServerType, String accessToken) {
+		return getClient(oauthServerType).getMemberInfo(accessToken);
+	}
+
 	private OauthLoginProvider getClient(OauthServerType oauthServerType) {
 		return Optional.ofNullable(oauthInfo.get(oauthServerType))
 			.orElseThrow(() -> new OauthException(ResultCode.ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE));

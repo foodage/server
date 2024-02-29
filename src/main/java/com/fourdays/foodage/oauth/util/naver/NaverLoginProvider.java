@@ -17,35 +17,44 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NaverLoginProvider implements OauthLoginProvider {
 
-    private final NaverApiClient naverApiClient;
-    private final NaverConfig naverOauthConfig;
+	private final NaverApiClient naverApiClient;
+	private final NaverConfig naverOauthConfig;
 
-    public NaverLoginProvider(NaverApiClient naverApiClient, NaverConfig naverOauthConfig) {
-        this.naverApiClient = naverApiClient;
-        this.naverOauthConfig = naverOauthConfig;
-    }
+	public NaverLoginProvider(NaverApiClient naverApiClient, NaverConfig naverOauthConfig) {
+		this.naverApiClient = naverApiClient;
+		this.naverOauthConfig = naverOauthConfig;
+	}
 
-    @Override
-    public OauthServerType getSupportedServerType() {
-        return OauthServerType.NAVER;
-    }
+	@Override
+	public OauthServerType getSupportedServerType() {
+		return OauthServerType.NAVER;
+	}
 
-    @Override
-    public OauthMember getTokenAndMemberInfo(String authCode) {
-        NaverToken naverToken = naverApiClient.fetchToken(tokenRequestParams(authCode));
-        NaverMemberResponseDto naverMemberResponse = naverApiClient.fetchMember(
-            "Bearer " + naverToken.accessToken());
+	@Override
+	public OauthMember getTokenAndMemberInfo(String authCode) {
+		NaverToken naverToken = naverApiClient.fetchToken(tokenRequestParams(authCode));
+		log.debug("# naverAccessToken : {}", naverToken.accessToken());
+		NaverMemberResponseDto naverMemberResponse = naverApiClient.fetchMember(
+			"Bearer " + naverToken.accessToken());
 
-        return naverMemberResponse.toOauthMember(); // = toDomain()
-    }
+		return naverMemberResponse.toOauthMember(); // = toDomain()
+	}
 
-    private MultiValueMap<String, String> tokenRequestParams(String authCode) {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", naverOauthConfig.clientId());
-        params.add("client_secret", naverOauthConfig.clientSecret());
-        params.add("code", authCode);
-        params.add("state", naverOauthConfig.state());
-        return params;
-    }
+	@Override
+	public OauthMember getMemberInfo(String accessToken) {
+		NaverMemberResponseDto naverMemberResponse = naverApiClient.fetchMember(
+			"Bearer " + accessToken);
+
+		return naverMemberResponse.toOauthMember(); // = toDomain()
+	}
+
+	private MultiValueMap<String, String> tokenRequestParams(String authCode) {
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "authorization_code");
+		params.add("client_id", naverOauthConfig.clientId());
+		params.add("client_secret", naverOauthConfig.clientSecret());
+		params.add("code", authCode);
+		params.add("state", naverOauthConfig.state());
+		return params;
+	}
 }

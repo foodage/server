@@ -18,5 +18,5 @@ public interface KakaoApiClient {
 	KakaoToken fetchToken(@RequestParam MultiValueMap<String, String> params);
 
 	@GetExchange("https://kapi.kakao.com/v2/user/me")
-	KakaoMemberResponseDto fetchMemberInfo(@RequestHeader(name = AUTHORIZATION) String bearerToken);
+	KakaoMemberResponseDto fetchMember(@RequestHeader(name = AUTHORIZATION) String bearerToken);
 }
