@@ -2,7 +2,6 @@ package com.fourdays.foodage.jwt.service;
 
 import java.util.UUID;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -14,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fourdays.foodage.jwt.domain.ExpiredToken;
 import com.fourdays.foodage.jwt.domain.ExpiredTokenRepository;
 import com.fourdays.foodage.jwt.dto.TokenDto;
-import com.fourdays.foodage.jwt.enums.JwtType;
-import com.fourdays.foodage.jwt.handler.JwtFilter;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberQueryService;
@@ -78,16 +75,5 @@ public class AuthService {
 
 		TokenDto jwt = tokenProvider.createToken(authentication);
 		return jwt;
-	}
-
-	public HttpHeaders createTokenHeader(String nickname, String accountEmail) {
-
-		TokenDto jwt = createToken(nickname, accountEmail);
-
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt.accessToken());
-		httpHeaders.add(JwtType.REFRESH_TOKEN.getHeaderName(), "Bearer " + jwt.refreshToken());
-
-		return httpHeaders;
 	}
 }

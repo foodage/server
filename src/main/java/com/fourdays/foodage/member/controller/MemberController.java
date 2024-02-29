@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fourdays.foodage.jwt.enums.JwtType;
-import com.fourdays.foodage.jwt.handler.JwtFilter;
+import com.fourdays.foodage.jwt.service.AuthUtilService;
 import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.dto.MemberResponseDto;
@@ -28,10 +27,13 @@ public class MemberController {
 
 	private final MemberCommandService memberCommandService;
 	private final MemberQueryService memberQueryService;
+	private final AuthUtilService authUtilService;
 
-	public MemberController(MemberCommandService memberCommandService, MemberQueryService memberQueryService) {
+	public MemberController(MemberCommandService memberCommandService, MemberQueryService memberQueryService,
+		AuthUtilService authUtilService) {
 		this.memberCommandService = memberCommandService;
 		this.memberQueryService = memberQueryService;
+		this.authUtilService = authUtilService;
 	}
 
 	@GetMapping("/member/{id}")
@@ -56,12 +58,7 @@ public class MemberController {
 			memberCreateRequest.getNickname(), memberCreateRequest.getProfileImage(),
 			memberCreateRequest.getCharacter());
 
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,
-			"Bearer " + memberJoinResponseDto.getJwt().accessToken());
-		httpHeaders.add(JwtType.REFRESH_TOKEN.getHeaderName(),
-			"Bearer " + memberJoinResponseDto.getJwt().refreshToken());
-
+		HttpHeaders httpHeaders = authUtilService.createTokenHeader(memberJoinResponseDto.getJwt());
 		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
 	}
 
