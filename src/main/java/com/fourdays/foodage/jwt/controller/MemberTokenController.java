@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fourdays.foodage.jwt.dto.MemberTokenDto;
 import com.fourdays.foodage.jwt.service.MemberTokenService;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/jwt")
+@Hidden
 public class MemberTokenController {
 	private final MemberTokenService memberTokenService;
 
