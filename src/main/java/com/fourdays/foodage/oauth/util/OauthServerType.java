@@ -2,7 +2,12 @@ package com.fourdays.foodage.oauth.util;
 
 import static java.util.Locale.*;
 
+import java.util.Locale;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.oauth.exception.NotSupportedOauthServerTypeException;
 
 public enum OauthServerType {
 
@@ -15,12 +20,17 @@ public enum OauthServerType {
 	}
 
 	@JsonCreator
-	public static OauthServerType from(String value) {
-		for (OauthServerType type : values()) {
-			if (type.name().toLowerCase().equals(value)) {
-				return type;
+	public static OauthServerType from(String jsonValue) {
+		for (OauthServerType oauthServerType : values()) {
+			if (oauthServerType.name().equals(jsonValue.toUpperCase())) {
+				return oauthServerType;
 			}
 		}
-		throw new IllegalArgumentException("Invalid OauthServerType value: " + value);
+		throw new NotSupportedOauthServerTypeException(ResultCode.ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE);
+	}
+
+	@JsonValue
+	public String toLowerCase() {
+		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 }

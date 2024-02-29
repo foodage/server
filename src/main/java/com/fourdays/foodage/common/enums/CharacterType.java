@@ -44,7 +44,7 @@ public enum CharacterType {
 				return character;
 			}
 		}
-		throw new MemberNotSupportedCharacterTypeException(ResultCode.ERR_NOT_SUPPORT_CHARACTER_TYPE);
+		throw new MemberNotSupportedCharacterTypeException(ResultCode.ERR_NOT_SUPPORTED_CHARACTER_TYPE);
 	}
 
 	@JsonValue
