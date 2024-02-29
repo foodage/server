@@ -18,7 +18,7 @@ import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
-import com.fourdays.foodage.member.dto.MemberLoginInfoDto;
+import com.fourdays.foodage.member.dto.MemberLoginResultDto;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
 import com.fourdays.foodage.member.exception.MemberJoinUnexpectedException;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
@@ -27,6 +27,7 @@ import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
 import com.fourdays.foodage.oauth.service.OauthQueryService;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,7 +56,7 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberLoginInfoDto tempJoin(OauthId oauthId, String accountEmail) {
+	public MemberLoginResultDto tempJoin(OauthId oauthId, String accountEmail) {
 
 		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
 		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
@@ -86,17 +87,17 @@ public class MemberCommandService {
 			accountEmail
 		);
 
-		return new MemberLoginInfoDto(id, member.getNickname(), LoginResult.JOIN_IN_PROGRESS);
+		return new MemberLoginResultDto(member.getNickname(), LoginResult.JOIN_IN_PROGRESS);
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(String oauthServerName, String accessToken, String accountEmail,
+	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken, String accountEmail,
 		String nickname, String profileImage, CharacterType character) {
 
 		OauthMember oauthMember = null;
 		try {
 			// 로그인 한 사용자의 oauth 정보 get
-			oauthMember = oauthQueryService.getOauthMember(oauthServerName, accessToken);
+			oauthMember = oauthQueryService.getOauthMember(oauthServerType, accessToken);
 		} catch (Exception e) {
 			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_INVALID_OAUTH_SERVER_TYPE);
 		}
@@ -132,7 +133,7 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberLoginInfoDto login(OauthId oauthId, String accountEmail) {
+	public MemberLoginResultDto login(OauthId oauthId, String accountEmail) {
 
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
@@ -153,7 +154,7 @@ public class MemberCommandService {
 		// 마지막 로그인 일시 업데이트
 		findMember.updateLastLoginAt();
 
-		return new MemberLoginInfoDto(findMember.getId(), findMember.getNickname(), loginResult);
+		return new MemberLoginResultDto(findMember.getNickname(), loginResult);
 	}
 
 	@Transactional

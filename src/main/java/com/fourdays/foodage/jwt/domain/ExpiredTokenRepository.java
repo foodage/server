@@ -25,7 +25,7 @@ public class ExpiredTokenRepository {
 			Duration.ofDays(expirationDays));
 
 		log.debug(
-			"\n#--------- saved expired refreshToken ---------#\ntoken : {}\ncreatedAt : {}\nexpiredAt : {} days later\n#--------------------------------#",
+			"\n#--------- saved expired refreshToken ---------#\ntoken : {}\ncreatedAt : {}\nexpiredAt : {} days later\n#----------------------------------------------#",
 			expiredToken.getRefreshToken(),
 			expiredToken.getCreatedAt(),
 			Duration.ofDays(expirationDays).toDays()

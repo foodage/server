@@ -66,6 +66,8 @@ public class AuthService {
 		return credential;
 	}
 
+	// createToken 전, member credential 초기화 하는 과정 반드시 필요함 (updateCredential 메소드 사용)
+	// 초기화 후 plain text를 두 번째 인자로 입력
 	public TokenDto createToken(String nickname, String plainCredential) {
 
 		UsernamePasswordAuthenticationToken authenticationToken =

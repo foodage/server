@@ -18,9 +18,8 @@ public class OauthQueryService {
 		this.oauthClient = oauthClient;
 	}
 
-	public OauthMember getOauthMember(String oauthServerName, String accessToken) {
+	public OauthMember getOauthMember(OauthServerType oauthServerType, String accessToken) {
 
-		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
 		return oauthClient.fetchMember(oauthServerType, accessToken);
 	}
 }

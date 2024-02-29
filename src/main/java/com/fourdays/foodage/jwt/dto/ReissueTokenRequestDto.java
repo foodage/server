@@ -1,5 +1,7 @@
 package com.fourdays.foodage.jwt.dto;
 
+import com.fourdays.foodage.oauth.util.OauthServerType;
+
 import jakarta.validation.constraints.NotNull;
 
 public record ReissueTokenRequestDto(
@@ -8,7 +10,7 @@ public record ReissueTokenRequestDto(
 	String refreshToken,
 
 	@NotNull
-	String oauthServerName,
+	OauthServerType oauthServerType,
 
 	@NotNull
 	String accountEmail

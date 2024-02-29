@@ -2,9 +2,8 @@ package com.fourdays.foodage.member.dto;
 
 import com.fourdays.foodage.common.enums.LoginResult;
 
-public record MemberLoginInfoDto(
+public record MemberLoginResultDto(
 
-	long memberId,
 	String nickname,
 	LoginResult loginResult
 ) {
