@@ -95,27 +95,32 @@ public class MemberCommandService {
 	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken, String accountEmail,
 		String nickname, String profileImage, CharacterType character) {
 
+		//////////////////// validate ////////////////////
 		// 닉네임 존재 여부 확인 (이미 사용중일 시 exception 발생)
 		validateUsableNickname(nickname);
 
+		// 로그인한 사용자의 oauth 정보 get
 		OauthMember oauthMember = null;
 		try {
-			// 로그인 한 사용자의 oauth 정보 get
 			oauthMember = oauthQueryService.getOauthMember(oauthServerType, accessToken);
 		} catch (Exception e) {
-			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_INVALID_OAUTH_SERVER_TYPE);
+			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_NOT_FOUND_OAUTH_MEMBER);
 		}
 
-		// 로그인 한 oauth 계정의 이메일이 가입 요청 이메일과 다른 경우
+		// 로그인한 oauth 계정의 이메일이 가입 요청 이메일과 다른 경우
 		if (!oauthMember.getAccountEmail().equals(accountEmail)) {
 			throw new MemberMismatchAccountEmailException(ResultCode.ERR_MISMATCH_ACCOUNT_EMAIL);
 		}
 
+		// oauth 로그인을 완료하지 않은 사용자일 경우 (temp_join 상태가 아닐 경우)
 		Member member = memberRepository.findByOauthIdAndAccountEmail(oauthMember.getOauthId(),
 				oauthMember.getAccountEmail())
 			.orElseThrow(() -> new MemberJoinUnexpectedException(ResultCode.ERR_UNEXPECTED_JOIN));
 
-		// update로 회원가입 완료 처리
+		// 이미 가입한 정보가 있는지 확인
+		member.hasJoined();
+
+		//////////////////// 회원가입 완료 처리 (update query) ////////////////////
 		String credential = authService.createCredential();
 		log.debug("# credential (plain) : {}", credential);
 

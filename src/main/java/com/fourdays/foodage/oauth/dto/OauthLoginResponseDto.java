@@ -7,6 +7,7 @@ import lombok.Builder;
 @Builder
 public record OauthLoginResponseDto(
 	String accountEmail,
+	String accessToken,
 	String nickname,
 	LoginResult result,
 	String credential

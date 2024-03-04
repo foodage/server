@@ -10,13 +10,19 @@ import com.fourdays.foodage.oauth.util.OauthServerType;
 public record NaverMemberResponseDto(
 	String resultcode,
 	String message,
-	Response response
+	Response response,
+	String accessToken
 ) {
+
+	public NaverMemberResponseDto withAccessToken(String accessToken) {
+		return new NaverMemberResponseDto(resultcode, message, response, accessToken);
+	}
 
 	public OauthMember toOauthMember() {
 		return OauthMember.builder()
 			.oauthId(new OauthId(String.valueOf(response.id), OauthServerType.NAVER))
 			.accountEmail(response.email)
+			.accessToken(accessToken)
 			.build();
 	}
 

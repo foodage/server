@@ -14,6 +14,7 @@ import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.member.exception.MemberInvalidStateException;
+import com.fourdays.foodage.member.exception.MemberJoinedException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
@@ -125,6 +126,14 @@ public class Member {
 		}
 	}
 
+	public void hasJoined() {
+		if (state != MemberState.TEMP_JOIN &&
+			nickname != null &&
+			character != null) {
+			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+		}
+	}
+
 	public void updateCredential(String encCredential) {
 		credential = encCredential;
 	}
@@ -140,6 +149,7 @@ public class Member {
 		this.profileImage = profileImage;
 		this.character = character;
 		this.state = MemberState.NORMAL;
+		updateLastLoginAt();
 	}
 
 	public void leaved() {

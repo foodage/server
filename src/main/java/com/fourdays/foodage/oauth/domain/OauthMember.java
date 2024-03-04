@@ -12,4 +12,6 @@ public class OauthMember {
 	private OauthId oauthId;
 
 	private String accountEmail;
+
+	private String accessToken;
 }
