@@ -6,65 +6,96 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.jwt.dto.TokenDto;
+import com.fourdays.foodage.jwt.enums.JwtClaim;
+import com.fourdays.foodage.jwt.enums.JwtType;
+import com.fourdays.foodage.jwt.exception.JwtClaimParseException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class TokenProvider implements InitializingBean {
 
-	private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
-	private static final String AUTHORITIES_KEY = "auth";
 	private final String secret;
-	private final long tokenValidityInMilliseconds;
+	private final long accessTokenExpiration; // ms
+	private final long refreshTokenExpiration; // ms
 	private Key key;
 
 	public TokenProvider(
 		@Value("${jwt.secret}") String secret,
-		@Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+		@Value("${jwt.access-token-expiration-seconds}") long accessTokenExpiration,
+		@Value("${jwt.refresh-token-expiration-seconds}") long refreshTokenExpiration) {
+
 		this.secret = secret;
-		this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+		this.accessTokenExpiration = accessTokenExpiration * 1000;
+		this.refreshTokenExpiration = refreshTokenExpiration * 1000;
 	}
 
 	@Override
 	public void afterPropertiesSet() {
+
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public String createToken(Authentication authentication) {
-		String authorities = authentication.getAuthorities().stream()
+	public TokenDto createToken(Authentication authentication) {
+
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		String authorities = getAuthorities(authentication);
+		long now = (new Date()).getTime();
+		Date accessTokenExpiration = new Date(now + this.accessTokenExpiration);
+		Date refreshTokenExpiration = new Date(now + this.refreshTokenExpiration);
+
+		String accessToken = Jwts.builder()
+			.setSubject(authentication.getName())
+			.claim(JwtClaim.TYPE.name(), JwtType.ACCESS_TOKEN)
+			.claim(JwtClaim.ROLE.name(), authorities)
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(accessTokenExpiration)
+			.compact();
+
+		String refreshToken = Jwts.builder()
+			.claim(JwtClaim.ROLE.name(), authorities)
+			.claim(JwtClaim.TYPE.name(), JwtType.REFRESH_TOKEN)
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(refreshTokenExpiration)
+			.compact();
+
+		TokenDto jwt = new TokenDto(accessToken, refreshToken);
+		return jwt;
+	}
+
+	private static String getAuthorities(Authentication authentication) {
+
+		return authentication.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
-
-		long now = (new Date()).getTime();
-		Date validity = new Date(now + this.tokenValidityInMilliseconds);
-
-		return Jwts.builder()
-			.setSubject(authentication.getName())
-			.claim(AUTHORITIES_KEY, authorities)
-			.signWith(key, SignatureAlgorithm.HS512)
-			.setExpiration(validity)
-			.compact();
 	}
 
 	public Authentication getAuthentication(String token) {
+
 		Claims claims = Jwts
 			.parserBuilder()
 			.setSigningKey(key)
@@ -73,7 +104,7 @@ public class TokenProvider implements InitializingBean {
 			.getBody();
 
 		Collection<? extends GrantedAuthority> authorities =
-			Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+			Arrays.stream(claims.get(JwtClaim.ROLE.name()).toString().split(","))
 				.map(SimpleGrantedAuthority::new)
 				.collect(Collectors.toList());
 
@@ -82,18 +113,25 @@ public class TokenProvider implements InitializingBean {
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
 	}
 
+	public Jws<Claims> getClaims(String token) {
+
+		if (!validateToken(token)) { // 토큰이 유효하지 않을 경우
+			throw new JwtClaimParseException(ResultCode.ERR_INVALID_JWT);
+		}
+		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+	}
+
 	public boolean validateToken(String token) {
+
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-			logger.info("잘못된 JWT 서명입니다.");
+			log.info("JWT 서명이 잘못되었습니다.");
 		} catch (ExpiredJwtException e) {
-			logger.info("만료된 JWT 토큰입니다.");
-		} catch (UnsupportedJwtException e) {
-			logger.info("지원되지 않는 JWT 토큰입니다.");
-		} catch (IllegalArgumentException e) {
-			logger.info("JWT 토큰이 잘못되었습니다.");
+			log.info("JWT가 만료되었습니다.");
+		} catch (UnsupportedJwtException | IllegalArgumentException e) {
+			log.info("유효하지 않은 JWT입니다.");
 		}
 		return false;
 	}

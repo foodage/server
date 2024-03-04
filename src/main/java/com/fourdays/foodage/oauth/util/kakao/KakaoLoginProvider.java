@@ -6,12 +6,15 @@ import org.springframework.util.MultiValueMap;
 
 import com.fourdays.foodage.oauth.config.KakaoConfig;
 import com.fourdays.foodage.oauth.domain.OauthMember;
-import com.fourdays.foodage.oauth.dto.response.KakaoMember;
-import com.fourdays.foodage.oauth.dto.response.KakaoToken;
+import com.fourdays.foodage.oauth.dto.KakaoMemberResponseDto;
+import com.fourdays.foodage.oauth.dto.KakaoToken;
 import com.fourdays.foodage.oauth.util.OauthLoginProvider;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class KakaoLoginProvider implements OauthLoginProvider {
 
 	private final KakaoApiClient kakaoApiClient;
@@ -30,9 +33,21 @@ public class KakaoLoginProvider implements OauthLoginProvider {
 	@Override
 	public OauthMember getTokenAndMemberInfo(String authCode) {
 		KakaoToken kakaoToken = kakaoApiClient.fetchToken(tokenRequestParams(authCode));
-		KakaoMember kakaoMember = kakaoApiClient.fetchMemberInfo("Bearer " + kakaoToken.accessToken());
+		log.debug("# kakao accessToken : {}", kakaoToken.accessToken());
+		KakaoMemberResponseDto kakaoMemberResponseDto = kakaoApiClient.fetchMember(
+				"Bearer " + kakaoToken.accessToken())
+			.withAccessToken(kakaoToken.accessToken());
 
-		return kakaoMember.toOauthMember();
+		return kakaoMemberResponseDto.toOauthMember();
+	}
+
+	@Override
+	public OauthMember getMemberInfo(String accessToken) {
+		KakaoMemberResponseDto kakaoMemberResponse = kakaoApiClient.fetchMember(
+				"Bearer " + accessToken)
+			.withAccessToken(accessToken);
+
+		return kakaoMemberResponse.toOauthMember(); // = toDomain()
 	}
 
 	private MultiValueMap<String, String> tokenRequestParams(String authCode) {

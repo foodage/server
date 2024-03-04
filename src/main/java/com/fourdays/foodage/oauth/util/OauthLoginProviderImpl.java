@@ -10,8 +10,8 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 import com.fourdays.foodage.common.enums.ResultCode;
-import com.fourdays.foodage.common.exception.OauthException;
 import com.fourdays.foodage.oauth.domain.OauthMember;
+import com.fourdays.foodage.oauth.exception.OauthException;
 
 @Component
 public class OauthLoginProviderImpl {
@@ -28,6 +28,10 @@ public class OauthLoginProviderImpl {
 
 	public OauthMember fetch(OauthServerType oauthServerType, String authCode) {
 		return getClient(oauthServerType).getTokenAndMemberInfo(authCode);
+	}
+
+	public OauthMember fetchMember(OauthServerType oauthServerType, String accessToken) {
+		return getClient(oauthServerType).getMemberInfo(accessToken);
 	}
 
 	private OauthLoginProvider getClient(OauthServerType oauthServerType) {
