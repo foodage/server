@@ -35,7 +35,8 @@ public class NaverLoginProvider implements OauthLoginProvider {
 		NaverToken naverToken = naverApiClient.fetchToken(tokenRequestParams(authCode));
 		log.debug("# naver accessToken : {}", naverToken.accessToken());
 		NaverMemberResponseDto naverMemberResponse = naverApiClient.fetchMember(
-			"Bearer " + naverToken.accessToken());
+				"Bearer " + naverToken.accessToken())
+			.withAccessToken(naverToken.accessToken());
 
 		return naverMemberResponse.toOauthMember(); // = toDomain()
 	}
@@ -43,7 +44,8 @@ public class NaverLoginProvider implements OauthLoginProvider {
 	@Override
 	public OauthMember getMemberInfo(String accessToken) {
 		NaverMemberResponseDto naverMemberResponse = naverApiClient.fetchMember(
-			"Bearer " + accessToken);
+				"Bearer " + accessToken)
+			.withAccessToken(accessToken);
 
 		return naverMemberResponse.toOauthMember(); // = toDomain()
 	}

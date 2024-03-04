@@ -64,6 +64,8 @@ public class OauthController {
 		}
 		if (loginResult.result() == LoginResult.NOT_JOINED
 			|| loginResult.result() == LoginResult.JOIN_IN_PROGRESS) {
+			httpHeaders.add("Oauth-Server-Type", oauthServerName.toLowerCase());
+			httpHeaders.add("Oauth-Access-Token", loginResult.accessToken());
 			redirectUrl = clientBaseUrl + "/signup";
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);

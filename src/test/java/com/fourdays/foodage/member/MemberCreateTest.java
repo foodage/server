@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.fourdays.foodage.common.enums.CharacterType;
-import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
+import com.fourdays.foodage.member.dto.MemberJoinRequestDto;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -25,7 +26,8 @@ public class MemberCreateTest {
 	@DisplayName("닉네임 유효성 검사 로직이 정상 동작하는지 확인합니다.")
 	class ValidateNickname {
 
-		Long id = 100L;
+		OauthServerType oauthServerType = OauthServerType.GOOGLE;
+		String accessToken = "21213321";
 		String accountEmail = "a@gmail.com";
 		String profileUrl = "https://";
 		CharacterType characterType;
@@ -41,8 +43,9 @@ public class MemberCreateTest {
 				String 정상_닉네임 = "mammoth";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(id, accountEmail,
-					정상_닉네임, profileUrl, characterType);
+				MemberJoinRequestDto memberCreateRequest = new MemberJoinRequestDto(oauthServerType, accessToken,
+					accountEmail, 정상_닉네임, profileUrl,
+					characterType);
 				validate(memberCreateRequest);
 			}
 		}
@@ -58,8 +61,9 @@ public class MemberCreateTest {
 				String 닉네임_공백 = "";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(id, accountEmail,
-					닉네임_공백, profileUrl, characterType);
+				MemberJoinRequestDto memberCreateRequest = new MemberJoinRequestDto(oauthServerType, accessToken,
+					accountEmail, 닉네임_공백, profileUrl,
+					characterType);
 				validate(memberCreateRequest);
 			}
 
@@ -70,8 +74,9 @@ public class MemberCreateTest {
 				String 닉네임_공백포함 = "가  나다";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(id, accountEmail,
-					닉네임_공백포함, profileUrl, characterType);
+				MemberJoinRequestDto memberCreateRequest = new MemberJoinRequestDto(oauthServerType, accessToken,
+					accountEmail, 닉네임_공백포함, profileUrl,
+					characterType);
 				validate(memberCreateRequest);
 			}
 
@@ -82,8 +87,9 @@ public class MemberCreateTest {
 				String 닉네임_특수문자 = "@가나다";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(id, accountEmail,
-					닉네임_특수문자, profileUrl, characterType);
+				MemberJoinRequestDto memberCreateRequest = new MemberJoinRequestDto(oauthServerType, accessToken,
+					accountEmail, 닉네임_특수문자, profileUrl,
+					characterType);
 				validate(memberCreateRequest);
 			}
 
@@ -94,8 +100,9 @@ public class MemberCreateTest {
 				String 닉네임_자음 = "ㄱㄴㄷ";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(id, accountEmail,
-					닉네임_자음, profileUrl, characterType);
+				MemberJoinRequestDto memberCreateRequest = new MemberJoinRequestDto(oauthServerType, accessToken,
+					accountEmail, 닉네임_자음, profileUrl,
+					characterType);
 				validate(memberCreateRequest);
 			}
 
@@ -106,8 +113,9 @@ public class MemberCreateTest {
 				String 닉네임_2글자_미만 = "가";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(id, accountEmail,
-					닉네임_2글자_미만, profileUrl, characterType);
+				MemberJoinRequestDto memberCreateRequest = new MemberJoinRequestDto(oauthServerType, accessToken,
+					accountEmail, 닉네임_2글자_미만, profileUrl,
+					characterType);
 				validate(memberCreateRequest);
 			}
 
@@ -118,15 +126,16 @@ public class MemberCreateTest {
 				String 닉네임_12글자_초과 = "가나다라abcd마바사아efgh초과";
 
 				// when - then
-				MemberCreateRequestDto memberCreateRequest = new MemberCreateRequestDto(id, accountEmail,
-					닉네임_12글자_초과, profileUrl, characterType);
+				MemberJoinRequestDto memberCreateRequest = new MemberJoinRequestDto(oauthServerType, accessToken,
+					accountEmail, 닉네임_12글자_초과, profileUrl,
+					characterType);
 				validate(memberCreateRequest);
 			}
 		}
 	}
 
-	private void validate(MemberCreateRequestDto memberCreateRequest) {
-		Set<ConstraintViolation<MemberCreateRequestDto>> errorMessage = validator.validate(memberCreateRequest);
+	private void validate(MemberJoinRequestDto memberCreateRequest) {
+		Set<ConstraintViolation<MemberJoinRequestDto>> errorMessage = validator.validate(memberCreateRequest);
 
 		log.debug("\n\n### errorMessage : {}", errorMessage);
 

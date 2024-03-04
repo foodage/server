@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourdays.foodage.jwt.service.AuthUtilService;
-import com.fourdays.foodage.member.dto.MemberCreateRequestDto;
+import com.fourdays.foodage.member.dto.MemberJoinRequestDto;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.dto.MemberResponseDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
@@ -55,10 +55,10 @@ public class MemberController {
 
 	@Operation(summary = "foodage 서비스 회원가입 완료 요청 (추가 정보 필수)")
 	@PostMapping("/member/join")
-	public ResponseEntity<MemberJoinResponseDto> join(@RequestBody MemberCreateRequestDto memberCreateRequest) {
+	public ResponseEntity<MemberJoinResponseDto> join(@RequestBody MemberJoinRequestDto memberCreateRequest) {
 
 		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(
-			memberCreateRequest.getOauthServerName(), memberCreateRequest.getAccessToken(),
+			memberCreateRequest.getOauthServerType(), memberCreateRequest.getAccessToken(),
 			memberCreateRequest.getAccountEmail(), memberCreateRequest.getNickname(),
 			memberCreateRequest.getProfileImage(), memberCreateRequest.getCharacter()
 		);

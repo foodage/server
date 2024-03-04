@@ -1,7 +1,5 @@
 package com.fourdays.foodage.member.service;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.common.enums.ResultCode;
@@ -39,26 +37,19 @@ public class MemberQueryService {
 		return new MemberResponseDto(findMember);
 	}
 
-	public Member getMember(String oauthServerName, String accountEmail) {
+	public Member getMember(OauthServerType oauthServerType, String accountEmail) {
 
-		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
-		Optional<Member> findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(oauthServerType,
-			accountEmail);
-		if (findMember.isEmpty()) {
-			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
-		}
-		log.debug("getMemberInfo() findMember : {}", findMember.get());
-		return findMember.get();
+		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
+				oauthServerType, accountEmail)
+			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		return findMember;
 	}
 
 	public Member getMember(OauthId oauthId, String accountEmail) {
 
-		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
-		if (findMember.isEmpty()) {
-			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND);
-		}
-		log.debug("getMemberInfo() findMember : {}", findMember.get());
-		return findMember.get();
+		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
+			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		return findMember;
 	}
 
 	public String getAccountEmail(Long id) {

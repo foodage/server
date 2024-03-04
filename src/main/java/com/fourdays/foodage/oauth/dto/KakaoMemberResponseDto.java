@@ -13,13 +13,20 @@ public record KakaoMemberResponseDto(
 	Long id,
 	boolean hasSignedUp,
 	LocalDateTime connectedAt,
-	KakaoAccount kakaoAccount
+	KakaoAccount kakaoAccount,
+	String accessToken
 ) {
+
+	public KakaoMemberResponseDto withAccessToken(String accessToken) {
+		return new KakaoMemberResponseDto(id, hasSignedUp, connectedAt,
+			kakaoAccount, accessToken);
+	}
 
 	public OauthMember toOauthMember() {
 		return OauthMember.builder()
 			.oauthId(new OauthId(String.valueOf(id), OauthServerType.KAKAO))
 			.accountEmail(kakaoAccount.email)
+			.accessToken(accessToken)
 			.build();
 	}
 

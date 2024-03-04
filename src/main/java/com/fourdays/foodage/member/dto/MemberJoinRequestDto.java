@@ -1,6 +1,7 @@
 package com.fourdays.foodage.member.dto;
 
 import com.fourdays.foodage.common.enums.CharacterType;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,10 +12,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class MemberCreateRequestDto {
+public class MemberJoinRequestDto {
 
 	@NotNull
-	private String oauthServerName;
+	private OauthServerType oauthServerType;
 
 	@NotNull
 	private String accessToken;

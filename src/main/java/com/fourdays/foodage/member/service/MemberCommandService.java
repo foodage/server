@@ -18,7 +18,8 @@ import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
-import com.fourdays.foodage.member.dto.MemberLoginInfoDto;
+import com.fourdays.foodage.member.dto.MemberLoginResultDto;
+import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
 import com.fourdays.foodage.member.exception.MemberJoinUnexpectedException;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
@@ -27,6 +28,7 @@ import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
 import com.fourdays.foodage.oauth.service.OauthQueryService;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,7 +57,7 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberLoginInfoDto tempJoin(OauthId oauthId, String accountEmail) {
+	public MemberLoginResultDto tempJoin(OauthId oauthId, String accountEmail) {
 
 		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
 		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
@@ -86,31 +88,39 @@ public class MemberCommandService {
 			accountEmail
 		);
 
-		return new MemberLoginInfoDto(id, member.getNickname(), LoginResult.JOIN_IN_PROGRESS);
+		return new MemberLoginResultDto(member.getNickname(), LoginResult.JOIN_IN_PROGRESS);
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(String oauthServerName, String accessToken, String accountEmail,
+	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken, String accountEmail,
 		String nickname, String profileImage, CharacterType character) {
 
+		//////////////////// validate ////////////////////
+		// 닉네임 존재 여부 확인 (이미 사용중일 시 exception 발생)
+		validateUsableNickname(nickname);
+
+		// 로그인한 사용자의 oauth 정보 get
 		OauthMember oauthMember = null;
 		try {
-			// 로그인 한 사용자의 oauth 정보 get
-			oauthMember = oauthQueryService.getOauthMember(oauthServerName, accessToken);
+			oauthMember = oauthQueryService.getOauthMember(oauthServerType, accessToken);
 		} catch (Exception e) {
-			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_INVALID_OAUTH_SERVER_TYPE);
+			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_NOT_FOUND_OAUTH_MEMBER);
 		}
 
-		// 로그인 한 oauth 계정의 이메일이 가입 요청 이메일과 다른 경우
+		// 로그인한 oauth 계정의 이메일이 가입 요청 이메일과 다른 경우
 		if (!oauthMember.getAccountEmail().equals(accountEmail)) {
 			throw new MemberMismatchAccountEmailException(ResultCode.ERR_MISMATCH_ACCOUNT_EMAIL);
 		}
 
+		// oauth 로그인을 완료하지 않은 사용자일 경우 (temp_join 상태가 아닐 경우)
 		Member member = memberRepository.findByOauthIdAndAccountEmail(oauthMember.getOauthId(),
 				oauthMember.getAccountEmail())
 			.orElseThrow(() -> new MemberJoinUnexpectedException(ResultCode.ERR_UNEXPECTED_JOIN));
 
-		// update로 회원가입 완료 처리
+		// 이미 가입한 정보가 있는지 확인
+		member.hasJoined();
+
+		//////////////////// 회원가입 완료 처리 (update query) ////////////////////
 		String credential = authService.createCredential();
 		log.debug("# credential (plain) : {}", credential);
 
@@ -132,7 +142,7 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberLoginInfoDto login(OauthId oauthId, String accountEmail) {
+	public MemberLoginResultDto login(OauthId oauthId, String accountEmail) {
 
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
@@ -153,7 +163,7 @@ public class MemberCommandService {
 		// 마지막 로그인 일시 업데이트
 		findMember.updateLastLoginAt();
 
-		return new MemberLoginInfoDto(findMember.getId(), findMember.getNickname(), loginResult);
+		return new MemberLoginResultDto(findMember.getNickname(), loginResult);
 	}
 
 	@Transactional
@@ -168,5 +178,15 @@ public class MemberCommandService {
 			findMember.getId(),
 			findMember.getNickname()
 		);
+	}
+
+	//////////////////////////////////////////////////////////////////
+
+	public void validateUsableNickname(String nickname) {
+
+		Long id = memberRepository.findIdByNickname(nickname);
+		if (id != null) {
+			throw new MemberDuplicateNicknameException(ResultCode.ERR_DUPLICATE_NICKNAME);
+		}
 	}
 }

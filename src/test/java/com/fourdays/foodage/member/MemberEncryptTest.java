@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberQueryService;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +24,7 @@ public class MemberEncryptTest {
 	@DisplayName("DB 컬럼의 데이터 암복호화가 정상적으로 이루어지는지 확인합니다.")
 	class DecryptAccountEmail {
 
-		String oauthServerName = "naver";
+		OauthServerType oauthServerType = OauthServerType.NAVER;
 		String accountEmail = "box0_@naver.com";
 
 		@Nested
@@ -34,7 +35,7 @@ public class MemberEncryptTest {
 			@DisplayName("<이메일>을 잘 가져왔으면 성공")
 			public void get_이메일() {
 				// when - then
-				Member member = memberQueryService.getMember(oauthServerName, accountEmail);
+				Member member = memberQueryService.getMember(oauthServerType, accountEmail);
 				Assertions.assertNotNull(member);
 				System.out.println(member.getAccountEmail());
 			}
