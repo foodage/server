@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fourdays.foodage.common.dto.ErrorResponseDto;
 import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,8 +55,8 @@ public class ExceptionController {
 		return new ResponseEntity<>(res, res.getHttpStatus());
 	}
 
-	@ExceptionHandler(UserException.class)
-	public ResponseEntity<ErrorResponseDto<?>> handleException(UserException e) {
+	@ExceptionHandler(BlockedRefreshTokenException.class)
+	public ResponseEntity<ErrorResponseDto<?>> handleException(BlockedRefreshTokenException e) {
 
 		log.error("handleException : {}", e);
 		ErrorResponseDto<?> res = ErrorResponseDto.error(e.getErrCode(), e.getMessage());

@@ -1,7 +1,7 @@
 package com.fourdays.foodage.config;
 
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.iv.RandomIvGenerator;
+import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
+import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.junit.jupiter.api.Test;
 
 class JasyptTest {
@@ -29,20 +29,30 @@ class JasyptTest {
 	@Test
 	void 평문_암호화() {
 
-		String password1 = "password1";
-		String password2 = "password2";
+		String password1 = "plain";
+		String password2 = "plain";
 
-		System.out.println("### Encode1 : " + jasyptEncoding(password1));
-		System.out.println("### Encode2 : " + jasyptEncoding(password2));
+		System.out.println("### Encode Password1 : " + jasyptEncoding(password1));
+		System.out.println("### Encode Password2 : " + jasyptEncoding(password2));
 	}
 
 	private String jasyptEncoding(String value) {
 
 		String key = "Vnelwl@1!";
-		StandardPBEStringEncryptor pbeEnc = new StandardPBEStringEncryptor();
-		pbeEnc.setAlgorithm("PBEWITHHMACSHA512ANDAES_256");
-		pbeEnc.setPassword(key);
-		pbeEnc.setIvGenerator(new RandomIvGenerator());
-		return pbeEnc.encrypt(value);
+
+		PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+		SimpleStringPBEConfig config = new SimpleStringPBEConfig();
+
+		config.setPassword(key);                       // 암호화 키
+		config.setAlgorithm("PBEWITHHMACSHA512ANDAES_256"); // 암호화 알고리즘
+		config.setKeyObtentionIterations(1000);           // 해싱 횟수
+		config.setPoolSize(1);                            // 인스턴스 pool
+		config.setProviderName("SunJCE");
+		config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
+		config.setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator");
+		config.setStringOutputType("base64");               // 인코딩 방식
+		encryptor.setConfig(config);
+
+		return encryptor.encrypt(value);
 	}
 }

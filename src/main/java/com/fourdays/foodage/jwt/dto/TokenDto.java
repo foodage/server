@@ -1,13 +1,8 @@
 package com.fourdays.foodage.jwt.dto;
 
-import lombok.*;
+public record TokenDto(
 
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class TokenDto {
-
-	private String token;
+	String accessToken,
+	String refreshToken
+) {
 }
