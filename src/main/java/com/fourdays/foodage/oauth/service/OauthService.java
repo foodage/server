@@ -74,8 +74,6 @@ public class OauthService {
 			loginResult = e.getLoginResult(); // BLOCK or LEAVE state
 		}
 
-		System.out.println("###" + oauthMemberInfo.getAccessToken());
-
 		return OauthLoginResponseDto.builder()
 			.accountEmail(oauthMemberInfo.getAccountEmail())
 			.accessToken(oauthMemberInfo.getAccessToken())
