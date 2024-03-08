@@ -63,7 +63,7 @@ public class MemberController {
 			memberCreateRequest.getProfileImage(), memberCreateRequest.getCharacter()
 		);
 
-		HttpHeaders httpHeaders = authUtilService.createTokenHeader(memberJoinResponseDto.getJwt());
+		HttpHeaders httpHeaders = authUtilService.createHeader(memberJoinResponseDto.getJwt());
 		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
 	}
 

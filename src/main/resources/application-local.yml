@@ -45,7 +45,7 @@ oauth:
 
   naver:
     client_id: j6ztPQjigmcPexSsU4Dz
-    redirect_uri: http://10.48.17.178:12816/api/oauth/naver/login
+    redirect_uri: http://localhost:12816/api/oauth/naver/login
     client_secret: EdsUYwGe66
     scope:
 
@@ -56,5 +56,6 @@ oauth:
     scope: email
 
 application:
+  domain: localhost
   client:
     base-url: http://localhost:3000
