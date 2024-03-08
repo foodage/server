@@ -56,5 +56,6 @@ oauth:
     scope:
 
 application:
+  domain: 43.202.224.202
   client:
-    base-url: http://43.202.224.202/
+    base-url: http://43.202.224.202

@@ -16,6 +16,7 @@ import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -45,7 +46,8 @@ public class OauthController {
 	// oauth -> (backend) redirect url로 전달하는 auth code를 receive & 사용자 정보 받아 login
 	@Operation(hidden = true)
 	@GetMapping("/oauth/{oauthServerName}/login")
-	public ResponseEntity login(@PathVariable String oauthServerName, @RequestParam String code) {
+	public ResponseEntity login(@PathVariable String oauthServerName, @RequestParam String code,
+		HttpServletResponse response) {
 
 		log.debug("received auth code : {}", code);
 
@@ -58,19 +60,20 @@ public class OauthController {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		String redirectUrl = "";
 		if (loginResult.result() == LoginResult.JOINED) {
-			httpHeaders = authUtilService.createTokenHeader(loginResult.nickname(),
-				loginResult.credential()); // header 토큰 받을 수 있는지 확인 필요
+
+			httpHeaders = authUtilService.createJwtHeader(loginResult.nickname(),
+				loginResult.credential(), true); // header 토큰 받을 수 있는지 확인 필요
 			redirectUrl = clientBaseUrl + "/home";
 		}
 		if (loginResult.result() == LoginResult.NOT_JOINED
 			|| loginResult.result() == LoginResult.JOIN_IN_PROGRESS) {
-			httpHeaders.add("Oauth-Server-Type", oauthServerName.toLowerCase());
-			httpHeaders.add("Oauth-Access-Token", loginResult.accessToken());
+
+			httpHeaders = authUtilService.createCookieHeader(loginResult.accessToken(), oauthServerName.toLowerCase());
 			redirectUrl = clientBaseUrl + "/signup";
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);
 
-		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+		return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
 			.headers(httpHeaders).build();
 	}
 }
