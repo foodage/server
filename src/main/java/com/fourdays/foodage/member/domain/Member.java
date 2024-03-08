@@ -92,7 +92,7 @@ public class Member {
 
 	@ManyToMany
 	@JoinTable(
-		name = "member_token_authority",
+		name = "member_authority",
 		joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
 		inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
 	private Set<Authority> authorities;
