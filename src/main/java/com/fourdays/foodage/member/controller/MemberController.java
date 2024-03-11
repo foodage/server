@@ -58,12 +58,12 @@ public class MemberController {
 	public ResponseEntity<MemberJoinResponseDto> join(@RequestBody MemberJoinRequestDto memberCreateRequest) {
 
 		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(
-			memberCreateRequest.getOauthServerType(), memberCreateRequest.getAccessToken(),
-			memberCreateRequest.getAccountEmail(), memberCreateRequest.getNickname(),
-			memberCreateRequest.getProfileImage(), memberCreateRequest.getCharacter()
+			memberCreateRequest.oauthServerType(), memberCreateRequest.accessToken(),
+			memberCreateRequest.accountEmail(), memberCreateRequest.nickname(),
+			memberCreateRequest.profileImage(), memberCreateRequest.character()
 		);
 
-		HttpHeaders httpHeaders = authUtilService.createHeader(memberJoinResponseDto.getJwt());
+		HttpHeaders httpHeaders = authUtilService.createHeader(memberJoinResponseDto.jwt());
 		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
 	}
 

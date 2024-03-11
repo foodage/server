@@ -9,44 +9,34 @@ import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
-import lombok.Getter;
+public record MemberResponseDto(
 
-@Getter
-public class MemberResponseDto {
-
-	private Long id;
-
-	private OauthId oauthId;
-
-	private String accountEmail;
-
-	private String nickname;
-
-	private String profileImage;
-
-	private CharacterType character;
-
-	private MemberState state;
-
-	private LocalDateTime createdAt;
-
-	private LocalDateTime updatedAt;
-
-	private LocalDateTime lastLoginAt;
-
-	private Set<Authority> authorities;
+	Long id,
+	OauthId oauthId,
+	String accountEmail,
+	String nickname,
+	String profileImage,
+	CharacterType character,
+	MemberState state,
+	LocalDateTime createdAt,
+	LocalDateTime updatedAt,
+	LocalDateTime lastLoginAt,
+	Set<Authority> authorities
+) {
 
 	public MemberResponseDto(Member member) {
-		this.id = member.getId();
-		this.oauthId = member.getOauthId();
-		this.accountEmail = member.getAccountEmail();
-		this.nickname = member.getNickname();
-		this.profileImage = member.getProfileImage();
-		this.character = member.getCharacter();
-		this.state = member.getState();
-		this.createdAt = member.getCreatedAt();
-		this.updatedAt = member.getUpdatedAt();
-		this.lastLoginAt = member.getLastLoginAt();
-		this.authorities = member.getAuthorities();
+		this(
+			member.getId(),
+			member.getOauthId(),
+			member.getAccountEmail(),
+			member.getNickname(),
+			member.getProfileImage(),
+			member.getCharacter(),
+			member.getState(),
+			member.getCreatedAt(),
+			member.getUpdatedAt(),
+			member.getLastLoginAt(),
+			member.getAuthorities()
+		);
 	}
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(value = SnakeCaseStrategy.class)
 public record NaverToken(
+
 	String accessToken,
 	String refreshToken,
 	String tokenType,

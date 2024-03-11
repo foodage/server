@@ -8,6 +8,7 @@ import com.fourdays.foodage.oauth.util.OauthServerType;
 
 @JsonNaming(value = SnakeCaseStrategy.class)
 public record NaverMemberResponseDto(
+
 	String resultcode,
 	String message,
 	Response response,
