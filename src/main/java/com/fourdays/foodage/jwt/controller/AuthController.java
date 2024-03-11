@@ -17,10 +17,12 @@ import com.fourdays.foodage.member.service.MemberQueryService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
+@Tag(name = "인증 관련 API", description = "JWT 재발행 등, Foodage 사용자 인증과 관련된 작업 수행")
 public class AuthController {
 
 	private final TokenProvider tokenProvider;
