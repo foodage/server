@@ -7,6 +7,12 @@ plugins {
 group = 'com.fourdays'
 version = '1.0.3'
 
+processResources {
+    filesMatching('**/application.yml') {
+        expand(project.properties)
+    }
+}
+
 java {
     sourceCompatibility = '17'
 }

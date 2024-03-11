@@ -9,7 +9,7 @@ server:
       enabled: false
 
 application:
-  version: ${ext.appVersion}
+  version: ${version}
 
 spring:
   profiles:

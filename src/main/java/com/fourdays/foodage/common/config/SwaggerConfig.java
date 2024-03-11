@@ -10,6 +10,9 @@ import io.swagger.v3.oas.models.info.Info;
 @Configuration
 public class SwaggerConfig {
 
+	@Value("${application.version}")
+	private String version;
+
 	@Bean
 	public OpenAPI openAPI() {
 		return new OpenAPI()
@@ -25,6 +28,6 @@ public class SwaggerConfig {
 		return new Info()
 			.title("Foodage")
 			.description(description)
-			.version("1.0.3");
+			.version(version);
 	}
 }
