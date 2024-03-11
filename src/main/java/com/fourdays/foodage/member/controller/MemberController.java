@@ -22,8 +22,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@Tag(name = "member")
 @Slf4j
+@Tag(name = "회원 API", description = "회원 조회, 가입, 탈퇴 등 회원 관련 작업 수행")
 public class MemberController {
 
 	private final MemberCommandService memberCommandService;

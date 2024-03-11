@@ -1,5 +1,6 @@
 package com.fourdays.foodage.common.config;// Java
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,9 +22,11 @@ public class SwaggerConfig {
 	}
 
 	private Info apiInfo() {
+		// markdown 문법 사용
 		String description =
-			"## Foodage API Docs\n" +
-				"``Hello!``\n";
+			"<h3> Foodage API Doc </h3>"
+				+ "[ use port : ``12816`` ]</br>"
+				+ "[ base url : ``/api`` ] ";
 
 		return new Info()
 			.title("Foodage")
