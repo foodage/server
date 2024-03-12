@@ -4,10 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.common.enums.CharacterType;
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
@@ -20,7 +18,6 @@ import com.fourdays.foodage.oauth.domain.OauthId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -39,13 +36,12 @@ import lombok.NoArgsConstructor;
 
 @Table(name = "member")
 @Entity
-@EntityListeners(value = {AuditingEntityListener.class})
 @DynamicUpdate // 오버헤드 발생할 수 있으므로 변경이 자주 일어나지 않는 Entity에는 주의해서 사용
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Member {
+public class Member extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,15 +69,6 @@ public class Member {
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private MemberState state;
-
-	@CreatedDate
-	@Column(name = "created_at", updatable = false)
-	@NotNull
-	private LocalDateTime createdAt;
-
-	@LastModifiedDate
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
 
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
