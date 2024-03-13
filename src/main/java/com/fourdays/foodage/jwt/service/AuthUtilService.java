@@ -9,10 +9,13 @@ import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.JwtType;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
 
+import lombok.extern.slf4j.Slf4j;
+
 /*
  * Controller 레벨에서만 사용
  */
 @Service
+@Slf4j
 public class AuthUtilService {
 
 	private final AuthService authService;
@@ -35,6 +38,9 @@ public class AuthUtilService {
 
 	public HttpHeaders createHeader(TokenDto jwt) {
 
+		log.debug("# createHeader\n[header] accessToken : {}\n[header] refreshToken : {})",
+			jwt.accessToken(), jwt.refreshToken());
+
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, jwt.accessToken());
 		httpHeaders.add(JwtType.REFRESH_TOKEN.getHeaderName(), jwt.refreshToken());
@@ -43,6 +49,9 @@ public class AuthUtilService {
 
 	//////////////////// cookie ////////////////////
 	private HttpHeaders createCookieHeader(TokenDto jwt) {
+
+		log.debug("# createCookieHeader\n[set-cookie] accessToken : {}\n[set-cookie] refreshToken : {})",
+			jwt.accessToken(), jwt.refreshToken());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("Set-Cookie",
@@ -54,6 +63,9 @@ public class AuthUtilService {
 	}
 
 	public HttpHeaders createCookieHeader(String oauthAccessToken, String oauthServerType) {
+
+		log.debug("# createCookieHeader\n[set-cookie] accessToken : {}\n[set-cookie] oauthServerName : {})",
+			oauthAccessToken, oauthServerType);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("Set-Cookie",

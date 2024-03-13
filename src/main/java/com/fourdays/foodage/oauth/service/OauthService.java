@@ -54,7 +54,7 @@ public class OauthService {
 			memberLoginInfo = memberCommandService.login(oauthMemberInfo.getOauthId(),
 				oauthMemberInfo.getAccountEmail());
 
-			loginResult = memberLoginInfo.loginResult(); //
+			loginResult = memberLoginInfo.loginResult();
 			credential = authService.updateCredential(
 				oauthMemberInfo.getOauthId(), oauthMemberInfo.getAccountEmail());
 
@@ -67,7 +67,7 @@ public class OauthService {
 
 		} catch (MemberJoinInProgressException e) { // 가입 진행중인 사용자
 			log.debug(e.getMessage());
-			loginResult = e.getLoginResult(); // BLOCK or LEAVE state
+			loginResult = e.getLoginResult(); // TEMP_JOIN state
 
 		} catch (MemberInvalidStateException e) { // 서비스 접근 불가능 상태인 사용자
 			log.debug(e.getMessage());
