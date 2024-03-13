@@ -34,7 +34,7 @@ public class MemberQueryService {
 		Member findMember = memberRepository.findById(id)
 			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
 		log.debug(
-			"findById (param | id : {})\n#--------- member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#--------------------------------#",
+			"findById (param | id : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
 			id, findMember.getId(), findMember.getAccountEmail(),
 			findMember.getOauthId().getOauthServerType(), findMember.getCredential(), findMember.getState()
 		);
@@ -48,7 +48,7 @@ public class MemberQueryService {
 				oauthServerType, accountEmail)
 			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
 		log.debug(
-			"findByOauthServerTypeAndAccountEmail (param | oauthServerType : {}, accountEmail : {})\n#--------- member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#--------------------------------#",
+			"findByOauthServerTypeAndAccountEmail (param | oauthServerType : {}, accountEmail : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
 			oauthServerType, accountEmail, findMember.getId(),
 			findMember.getAccountEmail(), findMember.getOauthId().getOauthServerType(),
 			findMember.getCredential(), findMember.getState()
@@ -61,7 +61,7 @@ public class MemberQueryService {
 		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
 			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
 		log.debug(
-			"findByOauthIdAndAccountEmail (param | oauthId : {} {}, accountEmail : {})\n#--------- member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#--------------------------------#",
+			"findByOauthIdAndAccountEmail (param | oauthId : {} {}, accountEmail : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
 			oauthId.getOauthServerType(), oauthId.getOauthServerId(), accountEmail,
 			findMember.getId(), findMember.getAccountEmail(), findMember.getOauthId().getOauthServerType(),
 			findMember.getCredential(), findMember.getState()
@@ -74,7 +74,7 @@ public class MemberQueryService {
 		String findAccountEmail = memberRepository.findAccountEmailById(id)
 			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
 		log.debug(
-			"findAccountEmailById (param | id : {})\n#--------- account email ---------#\naccountEmail : {}\n#--------------------------------#",
+			"findAccountEmailById (param | id : {})\n#--------- find account email ---------#\naccountEmail : {}\n#--------------------------------------#",
 			id, findAccountEmail
 		);
 
