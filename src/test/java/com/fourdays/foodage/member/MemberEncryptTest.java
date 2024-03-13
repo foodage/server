@@ -35,7 +35,7 @@ public class MemberEncryptTest {
 			@DisplayName("<이메일>을 잘 가져왔으면 성공")
 			public void get_이메일() {
 				// when - then
-				Member member = memberQueryService.getMember(oauthServerType, accountEmail);
+				Member member = memberQueryService.findByOauthServerTypeAndAccountEmail(oauthServerType, accountEmail);
 				Assertions.assertNotNull(member);
 				System.out.println(member.getAccountEmail());
 			}

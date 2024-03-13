@@ -19,7 +19,7 @@ spring:
     logging: slf4j
     tracing: # ?에 파라미터 대입 사용
       include-parameter-values: true
-  jpa:
+#  jpa:
 #    hibernate:
 #      ddl-auto: create # 개발 환경에서만 사용
 

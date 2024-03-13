@@ -43,7 +43,7 @@ public class AuthController {
 		@RequestParam("accountEmail") String accountEmail) {
 
 		// 신규 토큰 발급
-		Member findMember = memberQueryService.getMember(oauthServerType, accountEmail);
+		Member findMember = memberQueryService.findByOauthServerTypeAndAccountEmail(oauthServerType, accountEmail);
 		String credential = authService.updateCredential(findMember.getOauthId(), accountEmail);
 		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
 
@@ -64,7 +64,8 @@ public class AuthController {
 		}
 
 		// 신규 토큰 발급
-		Member findMember = memberQueryService.getMember(reissueTokenRequest.oauthServerType(),
+		Member findMember = memberQueryService.findByOauthServerTypeAndAccountEmail(
+			reissueTokenRequest.oauthServerType(),
 			reissueTokenRequest.accountEmail());
 		String credential = authService.updateCredential(findMember.getOauthId(), reissueTokenRequest.accountEmail());
 		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);

@@ -42,15 +42,15 @@ public class MemberController {
 	public ResponseEntity<MemberResponseDto> getMemberInfo(
 		@PathVariable Long id) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMember(id));
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getMemberById(id));
 	}
 
 	@Operation(summary = "사용자 이메일 조회 (id 기반)")
-	@GetMapping("/member/account-email/{id}")
+	@GetMapping("/member/{id}/account-email")
 	public ResponseEntity<String> getMemberAccountEmail(
 		@PathVariable Long id) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.getAccountEmail(id));
+		return ResponseEntity.status(HttpStatus.OK).body(memberQueryService.findAccountEmailById(id));
 	}
 
 	@Operation(summary = "foodage 서비스 회원가입 완료 요청 (추가 정보 필수)")

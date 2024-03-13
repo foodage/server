@@ -1,7 +1,6 @@
 package com.fourdays.foodage.member.service;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,10 +20,8 @@ import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.dto.MemberLoginResultDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
-import com.fourdays.foodage.member.exception.MemberJoinUnexpectedException;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
 import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
-import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
 import com.fourdays.foodage.oauth.service.OauthQueryService;
@@ -60,12 +57,13 @@ public class MemberCommandService {
 	public MemberLoginResultDto tempJoin(OauthId oauthId, String accountEmail) {
 
 		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
-		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
-		if (findMember.isPresent()) {
+		// 이미 가입된 유저인지 확인
+		boolean isJoined = memberQueryService.isMemberAlreadyJoined(oauthId, accountEmail);
+		if (isJoined) {
 			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 		}
 
-		// create temp member info
+		// 임시 회원가입 정보 생성
 		Authority authority = Authority.builder()
 			.authorityName(Role.MEMBER.getRole())
 			.build();
@@ -96,9 +94,6 @@ public class MemberCommandService {
 		String nickname, String profileImage, CharacterType character) {
 
 		//////////////////// validate ////////////////////
-		// 닉네임 존재 여부 확인 (이미 사용중일 시 exception 발생)
-		validateUsableNickname(nickname);
-
 		// 로그인한 사용자의 oauth 정보 get
 		OauthMember oauthMember = null;
 		try {
@@ -113,12 +108,14 @@ public class MemberCommandService {
 		}
 
 		// oauth 로그인을 완료하지 않은 사용자일 경우 (temp_join 상태가 아닐 경우)
-		Member member = memberRepository.findByOauthIdAndAccountEmail(oauthMember.getOauthId(),
-				oauthMember.getAccountEmail())
-			.orElseThrow(() -> new MemberJoinUnexpectedException(ResultCode.ERR_UNEXPECTED_JOIN));
+		Member member = memberQueryService.findByOauthIdAndAccountEmail(oauthMember.getOauthId(),
+			oauthMember.getAccountEmail());
 
-		// 이미 가입한 정보가 있는지 확인
-		member.hasJoined();
+		// 사용자가 임시 가입 상태가 맞는지 확인
+		member.checkTempJoinMember();
+
+		// 이미 사용중인 닉네임인지 확인 (닉네임 중복 불가능)
+		checkDuplicateNickname(nickname);
 
 		//////////////////// 회원가입 완료 처리 (update query) ////////////////////
 		String credential = authService.createCredential();
@@ -147,8 +144,7 @@ public class MemberCommandService {
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
 
-		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
-			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		Member findMember = memberQueryService.findByOauthIdAndAccountEmail(oauthId, accountEmail);
 
 		// 가입 진행중인지 확인
 		LoginResult loginResult = findMember.getLoginResultByMemberState();
@@ -169,8 +165,7 @@ public class MemberCommandService {
 	@Transactional
 	public void leave(long memberId) {
 
-		Member findMember = memberRepository.findById(memberId)
-			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		Member findMember = memberQueryService.findById(memberId);
 
 		findMember.leaved();
 
@@ -182,9 +177,9 @@ public class MemberCommandService {
 
 	//////////////////////////////////////////////////////////////////
 
-	public void validateUsableNickname(String nickname) {
+	public void checkDuplicateNickname(String nickname) {
 
-		Long id = memberRepository.findIdByNickname(nickname);
+		Long id = memberQueryService.findIdByNickname(nickname);
 		if (id != null) {
 			throw new MemberDuplicateNicknameException(ResultCode.ERR_DUPLICATE_NICKNAME);
 		}

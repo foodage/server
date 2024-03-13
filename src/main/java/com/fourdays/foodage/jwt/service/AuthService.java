@@ -59,7 +59,7 @@ public class AuthService {
 
 	public String updateCredential(OauthId oauthId, String accountEmail) {
 
-		Member member = memberQueryService.getMember(oauthId, accountEmail);
+		Member member = memberQueryService.findByOauthIdAndAccountEmail(oauthId, accountEmail);
 		String credential = createCredential();
 		member.updateCredential(passwordEncoder.encode(credential));
 
