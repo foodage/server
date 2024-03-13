@@ -54,7 +54,8 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberLoginResultDto tempJoin(OauthId oauthId, String accountEmail) {
+	public MemberLoginResultDto tempJoin(final OauthId oauthId,
+		final String accountEmail) {
 
 		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
 		// 이미 가입된 유저인지 확인
@@ -90,8 +91,12 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken, String accountEmail,
-		String nickname, String profileImage, CharacterType character) {
+	public MemberJoinResponseDto join(final OauthServerType oauthServerType,
+		final String accessToken,
+		final String accountEmail,
+		final String nickname,
+		final String profileImage,
+		final CharacterType character) {
 
 		//////////////////// validate ////////////////////
 		// 로그인한 사용자의 oauth 정보 get
@@ -112,10 +117,10 @@ public class MemberCommandService {
 			oauthMember.getAccountEmail());
 
 		// 사용자가 임시 가입 상태가 맞는지 확인
-		member.checkTempJoinMember();
+		member.validateMemberIsTempJoin();
 
 		// 이미 사용중인 닉네임인지 확인 (닉네임 중복 불가능)
-		checkDuplicateNickname(nickname);
+		validateNicknameIsDuplicate(nickname);
 
 		//////////////////// 회원가입 완료 처리 (update query) ////////////////////
 		String credential = authService.createCredential();
@@ -139,7 +144,7 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberLoginResultDto login(OauthId oauthId, String accountEmail) {
+	public MemberLoginResultDto login(final OauthId oauthId, final String accountEmail) {
 
 		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
 			oauthId.getOauthServerType(), accountEmail);
@@ -150,7 +155,7 @@ public class MemberCommandService {
 		LoginResult loginResult = findMember.getLoginResultByMemberState();
 
 		// 블락, 휴면, 탈퇴 상태인지 확인
-		findMember.validateState();
+		findMember.validateMemberHasInvalidState();
 
 		// 약관 동의 여부 확인
 
@@ -163,7 +168,7 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public void leave(long memberId) {
+	public void leave(final long memberId) {
 
 		Member findMember = memberQueryService.findById(memberId);
 
@@ -177,7 +182,7 @@ public class MemberCommandService {
 
 	//////////////////////////////////////////////////////////////////
 
-	public void checkDuplicateNickname(String nickname) {
+	public void validateNicknameIsDuplicate(String nickname) {
 
 		Long id = memberQueryService.findIdByNickname(nickname);
 		if (id != null) {
