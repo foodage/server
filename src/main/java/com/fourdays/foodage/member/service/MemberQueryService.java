@@ -42,7 +42,8 @@ public class MemberQueryService {
 		return findMember;
 	}
 
-	public Member findByOauthServerTypeAndAccountEmail(OauthServerType oauthServerType, String accountEmail) {
+	public Member findByOauthServerTypeAndAccountEmail(OauthServerType oauthServerType,
+		String accountEmail) {
 		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
 				oauthServerType, accountEmail)
 			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
