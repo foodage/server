@@ -39,10 +39,11 @@ public class AuthController {
 	@Operation(summary = "jwt 발급", hidden = true)
 	@PostMapping("/jwt/test-issue")
 	public ResponseEntity<TokenDto> issueToken(
-		@RequestParam("oauthServerType") OauthServerType oauthServerType,
+		@RequestParam("oauthServerName") String oauthServerName,
 		@RequestParam("accountEmail") String accountEmail) {
 
 		// 신규 토큰 발급
+		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
 		Member findMember = memberQueryService.findByOauthServerTypeAndAccountEmail(oauthServerType, accountEmail);
 		String credential = authService.updateCredential(findMember.getOauthId(), accountEmail);
 		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
