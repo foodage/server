@@ -54,15 +54,11 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberLoginResultDto tempJoin(final OauthId oauthId,
-		final String accountEmail) {
+	public MemberLoginResultDto tempJoin(final OauthId oauthId, final String accountEmail) {
 
 		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
 		// 이미 가입된 유저인지 확인
-		boolean isJoined = memberQueryService.isMemberAlreadyJoined(oauthId, accountEmail);
-		if (isJoined) {
-			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
-		}
+		validateMemberHasJoined(oauthId, accountEmail);
 
 		// 임시 회원가입 정보 생성
 		Authority authority = Authority.builder()
@@ -182,11 +178,19 @@ public class MemberCommandService {
 
 	//////////////////////////////////////////////////////////////////
 
-	public void validateNicknameIsDuplicate(String nickname) {
+	private void validateNicknameIsDuplicate(String nickname) {
 
-		Long id = memberQueryService.findIdByNickname(nickname);
-		if (id != null) {
+		boolean isExist = memberQueryService.existByNickname(nickname);
+		if (isExist) {
 			throw new MemberDuplicateNicknameException(ResultCode.ERR_DUPLICATE_NICKNAME);
+		}
+	}
+
+	private void validateMemberHasJoined(OauthId oauthId, String accountEmail) {
+
+		boolean isExist = memberQueryService.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
+		if (isExist) {
+			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
 		}
 	}
 }
