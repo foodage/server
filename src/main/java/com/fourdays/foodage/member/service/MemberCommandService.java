@@ -77,7 +77,7 @@ public class MemberCommandService {
 
 		Long id = memberRepository.save(member).getId();
 		log.debug(
-			"\n#--------- saved temp join member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#--------------------------------#",
+			"\n#--------- saved temp join member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#------------------------------------------#",
 			id,
 			credential,
 			accountEmail
