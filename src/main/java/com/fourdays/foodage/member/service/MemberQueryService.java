@@ -81,9 +81,14 @@ public class MemberQueryService {
 		return findAccountEmail;
 	}
 
-	public Long findIdByNickname(String nickname) {
+	public boolean existByNickname(String nickname) {
 
-		return memberRepository.findIdByNickname(nickname);
+		return memberRepository.existsByNickname(nickname);
+	}
+
+	public boolean existsByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail) {
+
+		return memberRepository.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
 	}
 
 	//////////////////////////////////////////////////////////////////
@@ -91,10 +96,5 @@ public class MemberQueryService {
 	public MemberResponseDto getMemberById(Long id) {
 
 		return new MemberResponseDto(findById(id));
-	}
-
-	public boolean isMemberAlreadyJoined(OauthId oauthId, String accountEmail) {
-
-		return memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail).isPresent();
 	}
 }
