@@ -126,7 +126,7 @@ public class Member {
 		}
 	}
 
-	public void hasJoined() {
+	public void checkTempJoinMember() {
 		if (state != MemberState.TEMP_JOIN &&
 			nickname != null &&
 			character != null) {
