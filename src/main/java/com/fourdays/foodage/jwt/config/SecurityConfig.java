@@ -31,9 +31,8 @@ public class SecurityConfig {
 		"/swagger-ui/**",
 		"/swagger-resources/**",
 		"/v3/api-docs/**", // swagger
-		"/jwt/authenticate",
-		"/jwt/signup",
 		"/oauth/**",
+		"/jwt/test-issue",
 		"/member/join"
 	};
 
