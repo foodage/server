@@ -9,10 +9,19 @@ spring:
     url: jdbc:mariadb://localhost:3306/foodage_database
     username: root
     password: ENC(P9e4T6LWe/YjgSDOp47HlOyukMcijCpDF+uWD/iGIHbOlx/PANpsNdx5CbFtg9b/)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  p6spy:
+    enable-logging: true
+    multiline: true
+    logging: slf4j
+    tracing: # ?에 파라미터 대입 사용
+      include-parameter-values: true
   jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create
+  # hibernate:
+  #   ddl-auto: create # 개발 환경에서만 사용
 
 jwt:
   header: Authorization
@@ -29,24 +38,24 @@ logging:
 # local 환경, dev 환경 분리
 oauth:
   kakao:
-    client_id: fb2a4ad47b5f715e785754c4ec10a4c9
-    redirect_uri: http://3.36.239.143:12816/api/oauth/kakao/login
-    client-secret: jz2ITUF1AzDGJnPNT6S9YT4pADSlL5Nr
+    client_id: c4d00b18c12a18770f2cb73f277ef6e8
+    redirect_uri: http://43.202.224.202/api/oauth/kakao/login
+    client-secret: ENC(stduxu35kkFMwkedFCAPPV5XHxCYX/NNWmQFETi5qx8F0LJQO2JIxl66xQxJe5H2AFpSgOPZQFeurvdpjuoJAucVXfKZMOu9xYL+SMdCt7o=)
     scope: account_email
 
   naver:
-    client_id: ikvTx89ygb3cwlWkF39g
-    redirect_uri: http://3.36.239.143:12816/api/oauth/naver/login
-    client_secret: D93Z6PoGko
+    client_id: kfc2ZNwdW3XGtQTXazSl
+    redirect_uri: http://43.202.224.202/api/oauth/naver/login
+    client_secret: ENC(WO2osexU3gX9epb3RQILL6BDMymFl9NVdmv0EYxuOvaTZd9fhBPJDgif98NkrYMa)
     scope:
 
   google:
     client_id:
-    redirect_uri: http://3.36.239.143:12816/api/oauth/google/login
+    redirect_uri: http://43.202.224.202/api/oauth/google/login
     client_secret:
     scope:
 
 application:
-  domain: 3.36.239.143
+  domain: 43.202.224.202
   client:
-    base-url: http://3.36.239.143:12816
+    base-url: http://43.202.224.202
