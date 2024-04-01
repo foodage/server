@@ -19,7 +19,7 @@ spring:
     logging: slf4j
     tracing: # ?에 파라미터 대입 사용
       include-parameter-values: true
-  jpa:
+#  jpa:
 #    hibernate:
 #      ddl-auto: create # 개발 환경에서만 사용
 
@@ -39,7 +39,7 @@ logging:
 oauth:
   kakao:
     client_id: 82f26cfc6fc100e96d6412872692f5b0
-    redirect_uri: http://10.48.17.178:12816/api/oauth/kakao/login
+    redirect_uri: http://localhost:12816/api/oauth/kakao/login
     client-secret: 1aKOP7wMRrENEpVAZcdFyP0Xat6JwSO0
     scope: account_email
 

@@ -1,6 +1,7 @@
 package com.fourdays.foodage.member.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.member.domain.Member;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * description    : db의 변경이 일어나지 않는 단순 조회 작업을 여기에 작성합니다.
  */
 @Service
+@Transactional(readOnly = true)
 @Slf4j
 public class MemberQueryService {
 
@@ -28,36 +30,71 @@ public class MemberQueryService {
 		this.memberRepository = memberRepository;
 	}
 
-	public MemberResponseDto getMember(Long id) {
-
+	public Member findById(Long id) {
 		Member findMember = memberRepository.findById(id)
 			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
-		log.debug("getMemberInfo() findMember : {}", findMember);
+		log.debug(
+			"findById (param | id : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
+			id, findMember.getId(), findMember.getAccountEmail(),
+			findMember.getOauthId().getOauthServerType(), findMember.getCredential(), findMember.getState()
+		);
 
-		return new MemberResponseDto(findMember);
+		return findMember;
 	}
 
-	public Member getMember(OauthServerType oauthServerType, String accountEmail) {
-
+	public Member findByOauthServerTypeAndAccountEmail(OauthServerType oauthServerType,
+		String accountEmail) {
 		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
 				oauthServerType, accountEmail)
 			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		log.debug(
+			"findByOauthServerTypeAndAccountEmail (param | oauthServerType : {}, accountEmail : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
+			oauthServerType, accountEmail, findMember.getId(),
+			findMember.getAccountEmail(), findMember.getOauthId().getOauthServerType(),
+			findMember.getCredential(), findMember.getState()
+		);
+
 		return findMember;
 	}
 
-	public Member getMember(OauthId oauthId, String accountEmail) {
-
+	public Member findByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail) {
 		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
 			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		log.debug(
+			"findByOauthIdAndAccountEmail (param | oauthId : {} {}, accountEmail : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
+			oauthId.getOauthServerType(), oauthId.getOauthServerId(), accountEmail,
+			findMember.getId(), findMember.getAccountEmail(), findMember.getOauthId().getOauthServerType(),
+			findMember.getCredential(), findMember.getState()
+		);
+
 		return findMember;
 	}
 
-	public String getAccountEmail(Long id) {
-
+	public String findAccountEmailById(Long id) {
 		String findAccountEmail = memberRepository.findAccountEmailById(id)
 			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
-		log.debug("getMemberInfo() findAccountEmail : {}", findAccountEmail);
+		log.debug(
+			"findAccountEmailById (param | id : {})\n#--------- find account email ---------#\naccountEmail : {}\n#--------------------------------------#",
+			id, findAccountEmail
+		);
 
 		return findAccountEmail;
+	}
+
+	public boolean existByNickname(String nickname) {
+
+		return memberRepository.existsByNickname(nickname);
+	}
+
+	public boolean existsByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail) {
+
+		return memberRepository.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
+	}
+
+	//////////////////////////////////////////////////////////////////
+
+	public MemberResponseDto getMemberById(Long id) {
+
+		return new MemberResponseDto(findById(id));
 	}
 }
