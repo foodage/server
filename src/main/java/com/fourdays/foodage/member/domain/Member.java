@@ -117,7 +117,7 @@ public class Member {
 		}
 	}
 
-	public void validateState() {
+	public void validateMemberHasInvalidState() {
 		if (state == MemberState.BLOCK) {
 			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.BLOCKED);
 		}
@@ -126,7 +126,7 @@ public class Member {
 		}
 	}
 
-	public void hasJoined() {
+	public void validateMemberIsTempJoin() {
 		if (state != MemberState.TEMP_JOIN &&
 			nickname != null &&
 			character != null) {
