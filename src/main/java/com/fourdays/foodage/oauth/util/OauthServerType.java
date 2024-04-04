@@ -22,7 +22,7 @@ public enum OauthServerType {
 	@JsonCreator
 	public static OauthServerType from(String jsonValue) {
 		for (OauthServerType oauthServerType : values()) {
-			if (oauthServerType.name().equals(jsonValue.toUpperCase())) {
+			if (oauthServerType.name().equalsIgnoreCase(jsonValue)) {
 				return oauthServerType;
 			}
 		}
