@@ -9,8 +9,8 @@ import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberResponseDto;
 import com.fourdays.foodage.member.exception.MemberNotFoundException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
+import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
-import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +30,7 @@ public class MemberQueryService {
 		this.memberRepository = memberRepository;
 	}
 
-	public Member findById(Long id) {
+	public Member findById(final Long id) {
 		Member findMember = memberRepository.findById(id)
 			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
 		log.debug(
@@ -42,22 +42,8 @@ public class MemberQueryService {
 		return findMember;
 	}
 
-	public Member findByOauthServerTypeAndAccountEmail(OauthServerType oauthServerType,
-		String accountEmail) {
-		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
-				oauthServerType, accountEmail)
-			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
-		log.debug(
-			"findByOauthServerTypeAndAccountEmail (param | oauthServerType : {}, accountEmail : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
-			oauthServerType, accountEmail, findMember.getId(),
-			findMember.getAccountEmail(), findMember.getOauthId().getOauthServerType(),
-			findMember.getCredential(), findMember.getState()
-		);
+	public Member findByOauthIdAndAccountEmail(final OauthId oauthId, final String accountEmail) {
 
-		return findMember;
-	}
-
-	public Member findByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail) {
 		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
 			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
 		log.debug(
@@ -70,30 +56,51 @@ public class MemberQueryService {
 		return findMember;
 	}
 
-	public String findAccountEmailById(Long id) {
-		String findAccountEmail = memberRepository.findAccountEmailById(id)
-			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
+	public Member findByMemberId(final MemberId memberId) {
+
+		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
+				memberId.oauthServerType(), memberId.accountEmail())
+			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+
 		log.debug(
-			"findAccountEmailById (param | id : {})\n#--------- find account email ---------#\naccountEmail : {}\n#--------------------------------------#",
-			id, findAccountEmail
+			"findByOauthServerTypeAndAccountEmail (param | oauthServerType : {}, accountEmail : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
+			memberId.oauthServerType(), memberId.accountEmail(), findMember.getId(),
+			findMember.getAccountEmail(), findMember.getOauthId().getOauthServerType(),
+			findMember.getCredential(), findMember.getState()
+		);
+
+		return findMember;
+	}
+
+	public String findAccountEmailByMemberId(final MemberId memberId) {
+
+		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
+			memberId.oauthServerType(), memberId.accountEmail()
+		).orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		String findAccountEmail = findMember.getAccountEmail();
+
+		log.debug(
+			"findAccountEmailById (param | memberId : {}, {})\n#--------- find account email ---------#\naccountEmail : {}\n#--------------------------------------#",
+			memberId.oauthServerType(), memberId.accountEmail(),
+			findAccountEmail
 		);
 
 		return findAccountEmail;
 	}
 
-	public boolean existByNickname(String nickname) {
+	public boolean existByNickname(final String nickname) {
 
 		return memberRepository.existsByNickname(nickname);
 	}
 
-	public boolean existsByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail) {
+	public boolean existsByOauthIdAndAccountEmail(final OauthId oauthId, final String accountEmail) {
 
 		return memberRepository.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
 	}
 
 	//////////////////////////////////////////////////////////////////
 
-	public MemberResponseDto getMemberById(Long id) {
+	public MemberResponseDto getMemberById(final Long id) {
 
 		return new MemberResponseDto(findById(id));
 	}
