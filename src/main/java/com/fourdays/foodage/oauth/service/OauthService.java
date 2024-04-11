@@ -75,6 +75,7 @@ public class OauthService {
 		}
 
 		return OauthLoginResponseDto.builder()
+			.oauthServerType(oauthMemberInfo.getOauthId().getOauthServerType())
 			.accountEmail(oauthMemberInfo.getAccountEmail())
 			.accessToken(oauthMemberInfo.getAccessToken())
 			.nickname(memberLoginInfo.nickname())

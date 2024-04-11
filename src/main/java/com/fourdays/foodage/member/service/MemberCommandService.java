@@ -22,6 +22,7 @@ import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
 import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
+import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
 import com.fourdays.foodage.oauth.service.OauthQueryService;
@@ -133,7 +134,8 @@ public class MemberCommandService {
 		);
 
 		// jwt 발행 (at & rt)
-		TokenDto jwt = authService.createToken(member.getNickname(), credential);
+		TokenDto jwt = authService.createToken(member.getOauthId().getOauthServerType(),
+			member.getAccountEmail(), credential);
 		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
 
 		return new MemberJoinResponseDto(member, jwt);
@@ -164,9 +166,9 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public void leave(final long memberId) {
+	public void leave(final MemberId memberId) {
 
-		Member findMember = memberQueryService.findById(memberId);
+		Member findMember = memberQueryService.findByMemberId(memberId);
 
 		findMember.leaved();
 

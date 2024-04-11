@@ -1,13 +1,15 @@
 package com.fourdays.foodage.member.vo;
 
-import lombok.Getter;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
-@Getter
-public class MemberId {
+public record MemberId(
 
-	private Long memberId;
+	OauthServerType oauthServerType,
 
-	public MemberId(Long memberId) {
-		this.memberId = memberId;
+	String accountEmail
+) {
+
+	public static MemberId create(OauthServerType oauthServerType, String accountEmail) {
+		return new MemberId(oauthServerType, accountEmail);
 	}
 }

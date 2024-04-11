@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.JwtType;
 import com.fourdays.foodage.jwt.handler.JwtFilter;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,9 +28,10 @@ public class AuthUtilService {
 	}
 
 	//////////////////// header ////////////////////
-	public HttpHeaders createJwtHeader(String nickname, String accountEmail, boolean useCookie) {
+	public HttpHeaders createJwtHeader(OauthServerType oauthServerType, String accountEmail,
+		String plainCredential, boolean useCookie) {
 
-		TokenDto jwt = authService.createToken(nickname, accountEmail);
+		TokenDto jwt = authService.createToken(oauthServerType, accountEmail, plainCredential);
 		if (useCookie) {
 			return createCookieHeader(jwt);
 		}
