@@ -30,23 +30,23 @@ logging:
 oauth:
   kakao:
     client_id: fb2a4ad47b5f715e785754c4ec10a4c9
-    redirect_uri: http://3.36.239.143:12816/api/oauth/kakao/login
+    redirect_uri: http://3.36.239.143/api/oauth/kakao/login
     client-secret: jz2ITUF1AzDGJnPNT6S9YT4pADSlL5Nr
     scope: account_email
 
   naver:
     client_id: ikvTx89ygb3cwlWkF39g
-    redirect_uri: http://3.36.239.143:12816/api/oauth/naver/login
+    redirect_uri: http://3.36.239.143/api/oauth/naver/login
     client_secret: D93Z6PoGko
     scope:
 
   google:
     client_id:
-    redirect_uri: http://3.36.239.143:12816/api/oauth/google/login
+    redirect_uri: http://3.36.239.143/api/oauth/google/login
     client_secret:
     scope:
 
 application:
   domain: 3.36.239.143
   client:
-    base-url: http://3.36.239.143:12816
+    base-url: http://3.36.239.143
