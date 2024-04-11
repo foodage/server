@@ -14,6 +14,7 @@ import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberQueryService;
+import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,10 +44,11 @@ public class AuthController {
 		@RequestParam("accountEmail") String accountEmail) {
 
 		// 신규 토큰 발급
-		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
-		Member findMember = memberQueryService.findByOauthServerTypeAndAccountEmail(oauthServerType, accountEmail);
+		OauthServerType oauthServerType = OauthServerType.from(oauthServerName);
+		Member findMember = memberQueryService.findByMemberId(MemberId.create(oauthServerType, accountEmail));
 		String credential = authService.updateCredential(findMember.getOauthId(), accountEmail);
-		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
+		TokenDto reissueJwt = authService.createToken(findMember.getOauthId().getOauthServerType(),
+			findMember.getAccountEmail(), credential);
 
 		return ResponseEntity.ok(reissueJwt);
 	}
@@ -65,11 +67,11 @@ public class AuthController {
 		}
 
 		// 신규 토큰 발급
-		Member findMember = memberQueryService.findByOauthServerTypeAndAccountEmail(
-			reissueTokenRequest.oauthServerType(),
-			reissueTokenRequest.accountEmail());
+		Member findMember = memberQueryService.findByMemberId(MemberId.create(
+			reissueTokenRequest.oauthServerType(), reissueTokenRequest.accountEmail()));
 		String credential = authService.updateCredential(findMember.getOauthId(), reissueTokenRequest.accountEmail());
-		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
+		TokenDto reissueJwt = authService.createToken(findMember.getOauthId().getOauthServerType(),
+			findMember.getAccountEmail(), credential);
 
 		// 기존 refresh token은 만료 테이블에 추가
 		authService.addToBlacklist(refreshToken);

@@ -13,6 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.handler.TokenProvider;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 @SpringBootTest
 @TestPropertySource(properties = "spring.jpa.hibernate.ddl-auto=none")
@@ -42,13 +43,9 @@ public class JwtSampleTest {
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		TokenDto jwt = tokenProvider.createToken(authentication);
+		TokenDto jwt = tokenProvider.createToken(OauthServerType.KAKAO, authentication);
 		System.out.println("access token : " + jwt.accessToken());
 		System.out.println("refresh token : " + jwt.refreshToken());
-
-		// ResponseEntity<>에 함께 전달
-		// HttpHeaders httpHeaders = new HttpHeaders();
-		// httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
 		System.out.println(jwt);
 	}
