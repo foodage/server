@@ -88,12 +88,8 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(final OauthServerType oauthServerType,
-		final String accessToken,
-		final String accountEmail,
-		final String nickname,
-		final String profileImage,
-		final CharacterType character) {
+	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken, String accountEmail,
+		String nickname, CharacterType character) {
 
 		//////////////////// validate ////////////////////
 		// 로그인한 사용자의 oauth 정보 get
@@ -123,8 +119,8 @@ public class MemberCommandService {
 		String credential = authService.createCredential();
 		log.debug("# credential (plain) : {}", credential);
 
-		member.completedJoin(nickname, profileImage, character,
-			passwordEncoder.encode(credential));
+		member.completedJoin(nickname, character,
+				passwordEncoder.encode(credential));
 
 		log.debug(
 			"\n#--------- updated member ---------#\nid : {}\naccountEmail : {}\nnickname : {}\n#--------------------------------#",

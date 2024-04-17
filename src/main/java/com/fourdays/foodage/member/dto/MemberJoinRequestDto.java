@@ -24,8 +24,6 @@ public record MemberJoinRequestDto(
 	@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "닉네임에 사용할 수 없는 문자가 포함되어 있습니다. 다시 입력해주세요.")
 	String nickname,
 
-	String profileImage,
-
 	@NotNull(message = "캐릭터를 선택해주세요.")
 	CharacterType character
 ) {
