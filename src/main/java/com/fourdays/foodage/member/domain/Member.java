@@ -66,9 +66,6 @@ public class Member {
 	@Column(name = "nickname", length = 64, unique = true)
 	private String nickname;
 
-	@Column(name = "profile_image")
-	private String profileImage;
-
 	@Column(name = "character_type")
 	@Enumerated(EnumType.STRING)
 	private CharacterType character;
@@ -142,11 +139,10 @@ public class Member {
 		lastLoginAt = LocalDateTime.now();
 	}
 
-	public void completedJoin(String nickname, String profileImage, CharacterType character,
+	public void completedJoin(String nickname, CharacterType character,
 		String credential) {
 		this.credential = credential;
 		this.nickname = nickname;
-		this.profileImage = profileImage;
 		this.character = character;
 		this.state = MemberState.NORMAL;
 		updateLastLoginAt();
@@ -158,7 +154,6 @@ public class Member {
 		}
 		oauthId = null;
 		nickname = "탈퇴한 사용자";
-		profileImage = null;
 		state = MemberState.LEAVE;
 	}
 }
