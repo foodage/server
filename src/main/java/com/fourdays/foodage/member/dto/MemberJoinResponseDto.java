@@ -11,7 +11,7 @@ public record MemberJoinResponseDto(
 
 	public MemberJoinResponseDto(Member member, TokenDto jwt) {
 		this(new MemberInfoDto(
-			member.getNickname(), member.getProfileImage(), member.getCharacter(),
+			member.getNickname(), member.getCharacter(),
 			member.getCreatedAt(), member.getUpdatedAt()
 		), jwt);
 	}

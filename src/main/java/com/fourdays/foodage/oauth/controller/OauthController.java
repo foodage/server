@@ -62,9 +62,9 @@ public class OauthController {
 		String redirectUrl = "";
 		if (loginResult.result() == LoginResult.JOINED) {
 
-			httpHeaders = authUtilService.createJwtHeader(loginResult.oauthServerType(),
-				loginResult.accountEmail(), loginResult.credential(), true); // header 토큰 받을 수 있는지 확인 필요
-			redirectUrl = clientBaseUrl + "/home";
+			httpHeaders = authUtilService.createJwtHeader(loginResult.nickname(),
+				loginResult.credential(), true); // header 토큰 받을 수 있는지 확인 필요
+			redirectUrl = clientBaseUrl + "/";
 		}
 		if (loginResult.result() == LoginResult.NOT_JOINED
 			|| loginResult.result() == LoginResult.JOIN_IN_PROGRESS) {
