@@ -18,10 +18,10 @@ import lombok.NoArgsConstructor;
 @Getter
 public class OauthId {
 
-	@Column(nullable = false, name = "oauth_server_id")
+	@Column(name = "oauth_server_id")
 	private String oauthServerId;
 
 	@Enumerated(STRING)
-	@Column(nullable = false, name = "oauth_server")
+	@Column(name = "oauth_server")
 	private OauthServerType oauthServerType;
 }

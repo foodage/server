@@ -54,7 +54,7 @@ public class Member {
 	private Long id;
 
 	@Embedded
-	@Column(name = "oauth_id", nullable = false)
+	@Column(name = "oauth_id") // 탈퇴 시 null
 	private OauthId oauthId;
 
 	@Column(name = "account_email", nullable = false)
