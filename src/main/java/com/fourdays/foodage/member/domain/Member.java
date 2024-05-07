@@ -13,7 +13,6 @@ import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
-import com.fourdays.foodage.member.exception.MemberInvalidStateException;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
@@ -95,6 +94,7 @@ public class Member {
 	private Set<Authority> authorities;
 
 	public LoginResult getLoginResultByMemberState() {
+
 		switch (state) {
 			case TEMP_JOIN -> { // 가입 진행중
 				return LoginResult.JOIN_IN_PROGRESS;
@@ -114,16 +114,8 @@ public class Member {
 		}
 	}
 
-	public void validateMemberHasInvalidState() {
-		if (state == MemberState.BLOCK) {
-			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.BLOCKED);
-		}
-		if (state == MemberState.LEAVE) {
-			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.LEAVED);
-		}
-	}
-
 	public void validateMemberIsTempJoin() {
+
 		if (state != MemberState.TEMP_JOIN &&
 			nickname != null &&
 			character != null) {
