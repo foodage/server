@@ -20,7 +20,7 @@ import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.dto.MemberLoginResultDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
-import com.fourdays.foodage.member.exception.MemberJoinedException;
+import com.fourdays.foodage.member.exception.MemberInvalidStateException;
 import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
@@ -55,11 +55,42 @@ public class MemberCommandService {
 	}
 
 	@Transactional
+	public MemberLoginResultDto login(final OauthId oauthId, final String accountEmail) {
+
+		// 미가입 유저일 경우, login이 아닌 임시 회원가입 처리
+		if (notJoined(oauthId, accountEmail)) {
+			return tempJoin(oauthId, accountEmail);
+		}
+
+		Member findMember = memberQueryService.findByOauthIdAndAccountEmail(oauthId, accountEmail);
+		LoginResult loginResult = findMember.getLoginResultByMemberState();
+		// 블락, 휴면, 탈퇴 상태인지 확인
+		if (loginResult == LoginResult.BLOCKED
+			|| loginResult == LoginResult.LEAVED
+			|| loginResult == LoginResult.INVALID) {
+			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, loginResult);
+		}
+
+		// 약관 동의 여부 확인
+
+		// 로그인 히스토리 추가
+
+		// credential 교체 (새로 로그인했으므로)
+		String credential = authService.updateCredential(oauthId, accountEmail);
+
+		// 마지막 로그인 일시 업데이트
+		findMember.updateLastLoginAt();
+
+		return new MemberLoginResultDto(findMember.getOauthId(), findMember.getNickname(),
+			findMember.getAccountEmail(), loginResult,
+			credential);
+	}
+
+	@Transactional
 	public MemberLoginResultDto tempJoin(final OauthId oauthId, final String accountEmail) {
 
-		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
-		// 이미 가입된 유저인지 확인
-		validateMemberHasJoined(oauthId, accountEmail);
+		// 사용자 정보 임시 저장
+		// 이후 사용자의 추가 정보 입력받아 update 쿼리로 회원가입 완료 처리함
 
 		// 임시 회원가입 정보 생성
 		Authority authority = Authority.builder()
@@ -84,7 +115,9 @@ public class MemberCommandService {
 			accountEmail
 		);
 
-		return new MemberLoginResultDto(member.getNickname(), LoginResult.JOIN_IN_PROGRESS);
+		return new MemberLoginResultDto(member.getOauthId(), member.getNickname(),
+			member.getAccountEmail(), LoginResult.JOIN_IN_PROGRESS,
+			credential);
 	}
 
 	@Transactional
@@ -120,7 +153,7 @@ public class MemberCommandService {
 		log.debug("# credential (plain) : {}", credential);
 
 		member.completedJoin(nickname, character,
-				passwordEncoder.encode(credential));
+			passwordEncoder.encode(credential));
 
 		log.debug(
 			"\n#--------- updated member ---------#\nid : {}\naccountEmail : {}\nnickname : {}\n#--------------------------------#",
@@ -135,30 +168,6 @@ public class MemberCommandService {
 		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
 
 		return new MemberJoinResponseDto(member, jwt);
-	}
-
-	@Transactional
-	public MemberLoginResultDto login(final OauthId oauthId, final String accountEmail) {
-
-		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
-			oauthId.getOauthServerType(), accountEmail);
-
-		Member findMember = memberQueryService.findByOauthIdAndAccountEmail(oauthId, accountEmail);
-
-		// 가입 진행중인지 확인
-		LoginResult loginResult = findMember.getLoginResultByMemberState();
-
-		// 블락, 휴면, 탈퇴 상태인지 확인
-		findMember.validateMemberHasInvalidState();
-
-		// 약관 동의 여부 확인
-
-		// 로그인 히스토리 추가
-
-		// 마지막 로그인 일시 업데이트
-		findMember.updateLastLoginAt();
-
-		return new MemberLoginResultDto(findMember.getNickname(), loginResult);
 	}
 
 	@Transactional
@@ -184,11 +193,9 @@ public class MemberCommandService {
 		}
 	}
 
-	private void validateMemberHasJoined(OauthId oauthId, String accountEmail) {
+	private boolean notJoined(OauthId oauthId, String accountEmail) {
 
-		boolean isExist = memberQueryService.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
-		if (isExist) {
-			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
-		}
+		boolean isJoined = memberQueryService.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
+		return !isJoined;
 	}
 }

@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.jwt.service.AuthUtilService;
-import com.fourdays.foodage.oauth.dto.OauthLoginResponseDto;
+import com.fourdays.foodage.member.dto.MemberLoginResultDto;
+import com.fourdays.foodage.member.service.MemberCommandService;
+import com.fourdays.foodage.oauth.domain.OauthMember;
 import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
@@ -26,13 +27,16 @@ import lombok.extern.slf4j.Slf4j;
 public class OauthController {
 
 	private final OauthService oauthService;
+	private final MemberCommandService memberCommandService;
 	private final AuthUtilService authUtilService;
 
 	@Value("${application.client.base-url}")
 	private String clientBaseUrl;
 
-	public OauthController(OauthService oauthService, AuthUtilService authUtilService) {
+	public OauthController(OauthService oauthService, MemberCommandService memberCommandService,
+		AuthUtilService authUtilService) {
 		this.oauthService = oauthService;
+		this.memberCommandService = memberCommandService;
 		this.authUtilService = authUtilService;
 	}
 
@@ -53,24 +57,25 @@ public class OauthController {
 		log.debug("received auth code : {}", code);
 
 		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
-		OauthLoginResponseDto loginResult = oauthService.login(oauthServerType, code); // foodage 서비스 가입자인지 확인
+		OauthMember oauthMember = oauthService.getOauthMember(oauthServerType, code);
 
-		log.debug("{} : {}", loginResult.result().name(),
-			loginResult.result().getDetailMessage());
+		MemberLoginResultDto loginResult = memberCommandService.login(oauthMember.getOauthId(),
+			oauthMember.getAccountEmail());
 
+		// 정상 로그인일 경우, jwt 발급
 		HttpHeaders httpHeaders = new HttpHeaders();
 		String redirectUrl = "";
-		if (loginResult.result() == LoginResult.JOINED) {
-
-			httpHeaders = authUtilService.createJwtHeader(loginResult.oauthServerType(),
+		switch (loginResult.loginResult()) {
+			case JOINED -> {
+				httpHeaders = authUtilService.createJwtHeader(loginResult.oauthId().getOauthServerType(),
 					loginResult.accountEmail(), loginResult.credential(), true);
-			redirectUrl = clientBaseUrl + "/";
-		}
-		if (loginResult.result() == LoginResult.NOT_JOINED
-			|| loginResult.result() == LoginResult.JOIN_IN_PROGRESS) {
-
-			httpHeaders = authUtilService.createCookieHeader(loginResult.accessToken(), oauthServerName.toLowerCase());
-			redirectUrl = clientBaseUrl + "/signup";
+				redirectUrl = clientBaseUrl + "/";
+			}
+			case JOIN_IN_PROGRESS -> {
+				httpHeaders = authUtilService.createCookieHeader(oauthMember.getAccessToken(),
+					oauthServerType.name().toLowerCase());
+				redirectUrl = clientBaseUrl + "/signup";
+			}
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);
 
