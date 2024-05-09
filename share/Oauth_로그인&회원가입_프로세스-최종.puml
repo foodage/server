@@ -1,42 +1,102 @@
 @startuml
-!theme mars
-header last updated: 2023.03.11.
-footer Page %page% of %lastpage%
-title
-    <size:18> OAuth 회원가입 & 로그인 프로세스 </size>
-end title
+'!theme sketchy
 
 ''''''''
 ' skin '
 ''''''''
-skinparam backgroundColor #edf0f6
-skinparam defaultFontName Arial
-skinparam defaultFontSize 13
-skinparam defaultFontColor #1f2024
-skinparam sequenceGroupBackgroundColor transparent
-skinparam sequenceGroupBorderColor gray
-skinparam noteBackgroundColor #efefce
-skinparam noteBorderColor transparent
+skinparam padding 3
+
+skinparam backgroundColor #26272c
+skinparam roundCorner 40
+skinparam actorStyle awesome
+
+skinparam default {
+    FontColor White
+    FontName PT Sans, .AppleSystemUIFont
+    FontSize 13
+}
+
+skinparam title {
+    FontSize 14
+    FontColor #26272c
+    BackgroundColor #dbdde7
+    BorderThickness 0
+    BorderRoundCorner 40
+}
+
+skinparam participant {
+    FontSize 14
+    FontStyle bold
+    BorderThickness 0
+    BackgroundColor #fc7f3b
+}
+
+skinparam database {
+    FontSize 14
+    FontStyle bold
+    BackgroundColor #fc7f3b
+    BorderColor #2f3036
+}
+
+skinparam arrow {
+    Color #b5b8c3
+    Thickness 2
+    MessageAlignment center
+}
+
+skinparam sequence {
+    GroupBackgroundColor #f23761
+    GroupBodyBackgroundColor #18181b60
+    GroupBorderThickness 0
+
+    LifeLineBorderColor #91939c
+    LifeLineBorderThickness 1
+
+    BoxBackgroundColor #2f3036
+    BoxBorderColor #2f3036
+
+    DividerBackgroundColor #2f303680
+    DividerBorderColor Gray
+    DividerBorderThickness 1
+}
+skinparam BoxPadding 5
+
+skinparam note {
+    FontColor White
+    FontStyle bold
+    BackgroundColor #4d90ff
+    BorderThickness 0
+}
+
+
+''''''''
+' info '
+''''''''
+header last updated: 2023.03.11.
+footer Page %page% of %lastpage%
+title
+    OAuth 회원가입 & 로그인 프로세스
+end title
+
 
 '''''''
-'actor User as user
-box Foodage Client #e6f5d9
-    participant "Client" as client #cceab3
+box Foodage Client
+    participant "Client" as client #f2b120
 end box
 '''''''
-participant "Oauth Web" as a_client #f8f0ca
-participant "Oauth Server" as a_server #f8f0ca
+participant "Oauth Web" as a_client #68be00
+participant "Oauth Server" as a_server #68be00
 '''''''
-box Foodage Server #d9e1f5
-    participant "Server" as server #b3c2ea
-    database db #c3c6d1
+box Foodage Server
+    participant "Server" as server #f98c0b
+    database db #f98c0b
 end box
 '''''''
 autonumber
 
 
 |||
-== 회원가입 & 로그인==
+== ㅤ회원가입 & 로그인   ==
 
 client -> a_client: Oauth 로그인 sdk 실행
 
