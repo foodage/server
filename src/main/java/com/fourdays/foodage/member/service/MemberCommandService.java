@@ -21,7 +21,6 @@ import com.fourdays.foodage.member.dto.MemberLoginResultDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
 import com.fourdays.foodage.member.exception.MemberInvalidStateException;
-import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
@@ -121,7 +120,7 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken, String accountEmail,
+	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken,
 		String nickname, CharacterType character) {
 
 		//////////////////// validate ////////////////////
@@ -131,11 +130,6 @@ public class MemberCommandService {
 			oauthMember = oauthQueryService.getOauthMember(oauthServerType, accessToken);
 		} catch (Exception e) {
 			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_NOT_FOUND_OAUTH_MEMBER);
-		}
-
-		// 로그인한 oauth 계정의 이메일이 가입 요청 이메일과 다른 경우
-		if (!oauthMember.getAccountEmail().equals(accountEmail)) {
-			throw new MemberMismatchAccountEmailException(ResultCode.ERR_MISMATCH_ACCOUNT_EMAIL);
 		}
 
 		// oauth 로그인을 완료하지 않은 사용자일 경우 (temp_join 상태가 아닐 경우)

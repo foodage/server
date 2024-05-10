@@ -67,8 +67,7 @@ public class MemberController {
 
 		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(
 			memberCreateRequest.oauthServerType(), memberCreateRequest.accessToken(),
-			memberCreateRequest.accountEmail(), memberCreateRequest.nickname(),
-			memberCreateRequest.character()
+			memberCreateRequest.nickname(), memberCreateRequest.character()
 		);
 
 		HttpHeaders httpHeaders = authUtilService.createHeader(memberJoinResponseDto.jwt());
