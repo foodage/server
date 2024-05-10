@@ -152,7 +152,7 @@ public class MemberCommandService {
 		log.debug(
 			"\n#--------- updated member ---------#\nid : {}\naccountEmail : {}\nnickname : {}\n#--------------------------------#",
 			member.getId(),
-			accountEmail,
+			member.getAccountEmail(),
 			nickname
 		);
 
