@@ -120,8 +120,8 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken,
-		String nickname, CharacterType character) {
+	public MemberJoinResponseDto join(final OauthServerType oauthServerType, final String accessToken,
+		final String nickname, final CharacterType character) {
 
 		//////////////////// validate ////////////////////
 		// 로그인한 사용자의 oauth 정보 get
@@ -179,7 +179,7 @@ public class MemberCommandService {
 
 	//////////////////////////////////////////////////////////////////
 
-	private void validateNicknameIsDuplicate(String nickname) {
+	private void validateNicknameIsDuplicate(final String nickname) {
 
 		boolean isExist = memberQueryService.existByNickname(nickname);
 		if (isExist) {
@@ -187,7 +187,7 @@ public class MemberCommandService {
 		}
 	}
 
-	private boolean notJoined(OauthId oauthId, String accountEmail) {
+	private boolean notJoined(final OauthId oauthId, final String accountEmail) {
 
 		boolean isJoined = memberQueryService.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
 		return !isJoined;
