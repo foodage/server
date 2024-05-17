@@ -24,7 +24,7 @@ import com.fourdays.foodage.member.exception.MemberInvalidStateException;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
-import com.fourdays.foodage.oauth.service.OauthQueryService;
+import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,15 +41,15 @@ public class MemberCommandService {
 	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
 	private final AuthService authService;
-	private final OauthQueryService oauthQueryService;
+	private final OauthService oauthService;
 	private final PasswordEncoder passwordEncoder;
 
 	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository,
-		AuthService authService, OauthQueryService oauthQueryService, PasswordEncoder passwordEncoder) {
+		AuthService authService, OauthService oauthService, PasswordEncoder passwordEncoder) {
 		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
 		this.authService = authService;
-		this.oauthQueryService = oauthQueryService;
+		this.oauthService = oauthService;
 		this.passwordEncoder = passwordEncoder;
 	}
 
@@ -120,14 +120,15 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(final OauthServerType oauthServerType, final String accessToken,
-		final String nickname, final CharacterType character) {
+	public MemberJoinResponseDto join(final OauthServerType oauthServerType,
+		final String accessToken, final String nickname,
+		final CharacterType character) {
 
 		//////////////////// validate ////////////////////
 		// 로그인한 사용자의 oauth 정보 get
 		OauthMember oauthMember = null;
 		try {
-			oauthMember = oauthQueryService.getOauthMember(oauthServerType, accessToken);
+			oauthMember = oauthService.getOauthMemberByAccessToken(oauthServerType, accessToken);
 		} catch (Exception e) {
 			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_NOT_FOUND_OAUTH_MEMBER);
 		}
