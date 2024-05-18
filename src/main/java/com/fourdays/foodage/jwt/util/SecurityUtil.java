@@ -6,7 +6,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.enums.JwtClaim;
+import com.fourdays.foodage.jwt.exception.InvalidArgsException;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
@@ -48,6 +50,10 @@ public class SecurityUtil {
 			} catch (Exception e) {
 				log.debug("유효한 Jwt Claim을 찾을 수 없습니다.");
 			}
+		}
+
+		if (oauthServerType == null || accountEmail == null) {
+			throw new InvalidArgsException(ResultCode.ERR_MEMBER_ID_CREATE_FAILED);
 		}
 		return new MemberId(oauthServerType, accountEmail);
 	}
