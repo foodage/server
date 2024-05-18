@@ -1,7 +1,5 @@
 package com.fourdays.foodage.review.domain;
 
-import java.time.LocalDateTime;
-
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -33,22 +31,24 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "menu", nullable = false)
 	private String menu;
 
-	@Column(name = "price")
-	private Integer price;
+	@Column(name = "price", nullable = false)
+	private int price;
 
 	@Column(name = "rating", nullable = false)
-	private Integer rating;
+	private int rating;
 
-	@Column(name = "review", nullable = false)
-	private String review;
+	@Column(name = "contents", nullable = false)
+	private String contents;
 
-	@Column(name = "tag")
-	private String tag;
+	@Column(name = "tag_id", nullable = false)
+	private int tagId;
 
-	@Column(name = "image")
-	private String image;
+	@Column(name = "thumbnail_id")
+	private int thumbnailId;
 
-	@Column(name = "date")
-	private LocalDateTime date;
+	@Column(name = "last_eaten_food", nullable = false)
+	private String lastEatenFood;
 
+	@Column(name = "created_by_member_id", nullable = false)
+	private Long createdByMemberId;
 }
