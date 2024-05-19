@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.fourdays.foodage.home.dto.RecentReviewResponse;
 import com.fourdays.foodage.home.dto.WeeklyReviewResponse;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.querydsl.core.types.Projections;
@@ -42,6 +43,31 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				dateFilter(startDate, endDate)
 			)
 			.orderBy(review.createdAt.asc())
+			.fetch();
+
+		return reviewModel;
+	}
+
+	@Override
+	public List<RecentReviewResponse> findRecentReviews(MemberId memberId, int limit) {
+
+		List<RecentReviewResponse> reviewModel = query
+			.select(Projections.constructor(
+					RecentReviewResponse.class,
+					review.id,
+					review.restaurant,
+					review.address,
+					review.tagId,
+					review.createdAt
+				)
+			)
+			.from(review)
+			.innerJoin(member).on(review.createdByMemberId.eq(member.id))
+			.where(
+				memberIdEq(memberId)
+			)
+			.orderBy(review.createdAt.desc()) // 최신순 정렬
+			.limit(limit)
 			.fetch();
 
 		return reviewModel;

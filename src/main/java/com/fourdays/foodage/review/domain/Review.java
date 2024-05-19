@@ -25,8 +25,11 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "place")
-	private String place;
+	@Column(name = "restaurant")
+	private String restaurant;
+
+	@Column(name = "address")
+	private String address;
 
 	@Column(name = "menu", nullable = false)
 	private String menu;

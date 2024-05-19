@@ -6,11 +6,12 @@ import com.fourdays.foodage.review.domain.Review;
 
 public record ReviewDto(
 
-	String place,
+	String restaurant,
+	String address,
 	String menu,
 	Integer price,
 	Integer rating,
-	String review,
+	String contents,
 	int tagId,
 	int thumbnailId,
 	// List<String> images,
@@ -19,8 +20,8 @@ public record ReviewDto(
 ) {
 
 	public ReviewDto(Review review) {
-		this(review.getPlace(), review.getMenu(), review.getPrice(),
-			review.getRating(), review.getContents(), review.getTagId(),
-			review.getThumbnailId(), review.getCreatedAt());
+		this(review.getRestaurant(), review.getAddress(), review.getMenu(),
+			review.getPrice(), review.getRating(), review.getContents(),
+			review.getTagId(), review.getThumbnailId(), review.getCreatedAt());
 	}
 }
