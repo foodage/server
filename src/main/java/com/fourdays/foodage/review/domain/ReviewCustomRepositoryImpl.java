@@ -2,6 +2,7 @@ package com.fourdays.foodage.review.domain;
 
 import static com.fourdays.foodage.member.domain.QMember.*;
 import static com.fourdays.foodage.review.domain.QReview.*;
+import static com.fourdays.foodage.tag.domain.QTag.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +38,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				)
 			)
 			.from(review)
-			.innerJoin(member).on(review.createdByMemberId.eq(member.id))
+			.innerJoin(member).on(review.creatorId.eq(member.id))
 			.where(
 				memberIdEq(memberId),
 				dateFilter(startDate, endDate)
@@ -57,12 +58,14 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 					review.id,
 					review.restaurant,
 					review.address,
-					review.tagId,
+					tag.name,
+					tag.color,
 					review.createdAt
 				)
 			)
 			.from(review)
-			.innerJoin(member).on(review.createdByMemberId.eq(member.id))
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(tag).on(review.tagId.eq(tag.id))
 			.where(
 				memberIdEq(memberId)
 			)

@@ -11,16 +11,18 @@ public class RecentReviewResponse {
 	String restaurant;
 	String address;
 	String tagName;
+	String tagColor;
 	LocalDateTime createdAt;
 
 	public RecentReviewResponse(Long id, String restaurant, String address,
-		Integer tagName, LocalDateTime createdAt) {
+		String tagName, String tagColor, LocalDateTime createdAt) {
 
 		this.id = id;
 		this.restaurant = restaurant;
-		this.address = address.substring(0, address.indexOf(' ',
-			address.indexOf(' ') + 1)); // 전체 주소에서 시, 구 정보만 파싱 (ex. '서울특별시 영등포구')
-		this.tagName = "tag entity 개발 후 수정";
+		this.address = address.substring(0, address.indexOf(
+			' ', address.indexOf(' ') + 1)); // 전체 주소에서 시, 구 정보만 파싱 (ex. '서울특별시 영등포구')
+		this.tagName = tagName;
+		this.tagColor = tagColor;
 		this.createdAt = createdAt;
 	}
 }

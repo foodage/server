@@ -12,7 +12,7 @@ public record ReviewDto(
 	Integer price,
 	Integer rating,
 	String contents,
-	int tagId,
+	Long tagId,
 	int thumbnailId,
 	// List<String> images,
 	// String lastEatenFood,

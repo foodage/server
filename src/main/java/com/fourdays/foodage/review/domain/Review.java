@@ -44,7 +44,7 @@ public class Review extends BaseTimeEntity {
 	private String contents;
 
 	@Column(name = "tag_id", nullable = false)
-	private int tagId;
+	private Long tagId;
 
 	@Column(name = "thumbnail_id")
 	private int thumbnailId;
@@ -52,6 +52,6 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "last_eaten_food", nullable = false)
 	private String lastEatenFood;
 
-	@Column(name = "created_by_member_id", nullable = false)
-	private Long createdByMemberId;
+	@Column(name = "creator_id", nullable = false)
+	private Long creatorId; // memberId
 }
