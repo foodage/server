@@ -9,10 +9,13 @@ import lombok.Getter;
 @Getter
 public class WeeklyReviewResponse {
 
-	Long id;
-	LocalDateTime createdAt;
-	String dayOfWeek;
-	String lastEatenFood;
+	private Long id;
+
+	private LocalDateTime createdAt;
+
+	private String dayOfWeek;
+
+	private String lastEatenFood;
 
 	public WeeklyReviewResponse(Long id, LocalDateTime createdAt, String lastEatenFood) {
 		this.id = id;
