@@ -32,6 +32,7 @@ public enum ResultCode {
 	ERR_UNEXPECTED_JOIN(-10006, "비정상적인 접근입니다. 로그인 후 다시 시도해주세요.", HttpStatus.BAD_REQUEST),
 	ERR_JOIN_IN_PROGRESS(-10007, "가입 진행중인 사용자입니다.", HttpStatus.CONFLICT),
 	ERR_DUPLICATE_NICKNAME(-10008, "이미 사용중인 닉네임입니다.", HttpStatus.CONFLICT),
+	ERR_MEMBER_ID_CREATE_FAILED(-10009, "사용자 식별값을 생성할 수 없습니다.", HttpStatus.BAD_REQUEST),
 
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	// 10100~

@@ -54,7 +54,7 @@ public class OauthController {
 	public ResponseEntity login(@PathVariable String oauthServerName, @RequestParam String code,
 		HttpServletResponse response) {
 
-		log.debug("received auth code : {}", code);
+		log.debug("# received auth code : {}", code);
 
 		OauthServerType oauthServerType = OauthServerType.fromName(oauthServerName);
 		OauthMember oauthMember = oauthService.getOauthMember(oauthServerType, code);
