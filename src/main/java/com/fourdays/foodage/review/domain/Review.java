@@ -38,7 +38,7 @@ public class Review extends BaseTimeEntity {
 	private int price;
 
 	@Column(name = "rating", nullable = false)
-	private int rating;
+	private float rating;
 
 	@Column(name = "contents", nullable = false)
 	private String contents;
@@ -47,7 +47,7 @@ public class Review extends BaseTimeEntity {
 	private Long tagId;
 
 	@Column(name = "thumbnail_id")
-	private int thumbnailId;
+	private Long thumbnailId;
 
 	@Column(name = "last_eaten_food", nullable = false)
 	private String lastEatenFood;
