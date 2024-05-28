@@ -4,16 +4,13 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.common.enums.CharacterType;
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.domain.Authority;
-import com.fourdays.foodage.member.exception.MemberInvalidStateException;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.oauth.domain.OauthId;
@@ -21,7 +18,6 @@ import com.fourdays.foodage.oauth.domain.OauthId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -40,13 +36,12 @@ import lombok.NoArgsConstructor;
 
 @Table(name = "member")
 @Entity
-@EntityListeners(value = {AuditingEntityListener.class})
 @DynamicUpdate // 오버헤드 발생할 수 있으므로 변경이 자주 일어나지 않는 Entity에는 주의해서 사용
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Member {
+public class Member extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,7 +49,7 @@ public class Member {
 	private Long id;
 
 	@Embedded
-	@Column(name = "oauth_id", nullable = false)
+	@Column(name = "oauth_id") // 탈퇴 시 null
 	private OauthId oauthId;
 
 	@Column(name = "account_email", nullable = false)
@@ -66,9 +61,6 @@ public class Member {
 	@Column(name = "nickname", length = 64, unique = true)
 	private String nickname;
 
-	@Column(name = "profile_image")
-	private String profileImage;
-
 	@Column(name = "character_type")
 	@Enumerated(EnumType.STRING)
 	private CharacterType character;
@@ -78,26 +70,18 @@ public class Member {
 	@NotNull
 	private MemberState state;
 
-	@CreatedDate
-	@Column(name = "created_at", updatable = false)
-	@NotNull
-	private LocalDateTime createdAt;
-
-	@LastModifiedDate
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
-
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
 
 	@ManyToMany
 	@JoinTable(
-		name = "member_token_authority",
+		name = "member_authority",
 		joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
 		inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
 	private Set<Authority> authorities;
 
 	public LoginResult getLoginResultByMemberState() {
+
 		switch (state) {
 			case TEMP_JOIN -> { // 가입 진행중
 				return LoginResult.JOIN_IN_PROGRESS;
@@ -117,16 +101,8 @@ public class Member {
 		}
 	}
 
-	public void validateState() {
-		if (state == MemberState.BLOCK) {
-			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.BLOCKED);
-		}
-		if (state == MemberState.LEAVE) {
-			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, LoginResult.LEAVED);
-		}
-	}
+	public void validateMemberIsTempJoin() {
 
-	public void hasJoined() {
 		if (state != MemberState.TEMP_JOIN &&
 			nickname != null &&
 			character != null) {
@@ -142,11 +118,10 @@ public class Member {
 		lastLoginAt = LocalDateTime.now();
 	}
 
-	public void completedJoin(String nickname, String profileImage, CharacterType character,
+	public void completedJoin(String nickname, CharacterType character,
 		String credential) {
 		this.credential = credential;
 		this.nickname = nickname;
-		this.profileImage = profileImage;
 		this.character = character;
 		this.state = MemberState.NORMAL;
 		updateLastLoginAt();
@@ -158,7 +133,6 @@ public class Member {
 		}
 		oauthId = null;
 		nickname = "탈퇴한 사용자";
-		profileImage = null;
 		state = MemberState.LEAVE;
 	}
 }

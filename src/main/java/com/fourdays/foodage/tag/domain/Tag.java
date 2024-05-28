@@ -1,4 +1,6 @@
-package com.fourdays.foodage.jwt.domain;
+package com.fourdays.foodage.tag.domain;
+
+import com.fourdays.foodage.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,29 +10,30 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "member_token")
+@Table(name = "tag")
 @Entity
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class MemberToken {
+public class Tag extends BaseTimeEntity {
 
 	@Id
-	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "nickname", length = 50, unique = true)
-	private String nickname;
+	@Column(name = "tag_name", nullable = false, length = 32)
+	private String name;
 
-	@Column(name = "email")
-	private String email;
+	@Column(name = "tag_color", nullable = false)
+	private String color;
 
-	@Column(name = "activated")
-	private boolean activated;
+	@Column(name = "tag_description", length = 128)
+	private String description;
+
+	@Column(name = "creator_id", nullable = false)
+	private Long creatorId; // memberId
 }

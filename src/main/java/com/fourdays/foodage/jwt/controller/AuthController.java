@@ -14,13 +14,16 @@ import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberQueryService;
+import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
+@Tag(name = "인증 관련 API", description = "JWT 재발행 등, Foodage 사용자 인증과 관련된 작업 수행")
 public class AuthController {
 
 	private final TokenProvider tokenProvider;
@@ -37,13 +40,15 @@ public class AuthController {
 	@Operation(summary = "jwt 발급", hidden = true)
 	@PostMapping("/jwt/test-issue")
 	public ResponseEntity<TokenDto> issueToken(
-		@RequestParam("oauthServerType") OauthServerType oauthServerType,
+		@RequestParam("oauthServerName") String oauthServerName,
 		@RequestParam("accountEmail") String accountEmail) {
 
 		// 신규 토큰 발급
-		Member findMember = memberQueryService.getMember(oauthServerType, accountEmail);
+		OauthServerType oauthServerType = OauthServerType.from(oauthServerName);
+		Member findMember = memberQueryService.findByMemberId(MemberId.create(oauthServerType, accountEmail));
 		String credential = authService.updateCredential(findMember.getOauthId(), accountEmail);
-		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
+		TokenDto reissueJwt = authService.createToken(findMember.getOauthId().getOauthServerType(),
+			findMember.getAccountEmail(), credential);
 
 		return ResponseEntity.ok(reissueJwt);
 	}
@@ -62,10 +67,11 @@ public class AuthController {
 		}
 
 		// 신규 토큰 발급
-		Member findMember = memberQueryService.getMember(reissueTokenRequest.oauthServerType(),
-			reissueTokenRequest.accountEmail());
+		Member findMember = memberQueryService.findByMemberId(MemberId.create(
+			reissueTokenRequest.oauthServerType(), reissueTokenRequest.accountEmail()));
 		String credential = authService.updateCredential(findMember.getOauthId(), reissueTokenRequest.accountEmail());
-		TokenDto reissueJwt = authService.createToken(findMember.getNickname(), credential);
+		TokenDto reissueJwt = authService.createToken(findMember.getOauthId().getOauthServerType(),
+			findMember.getAccountEmail(), credential);
 
 		// 기존 refresh token은 만료 테이블에 추가
 		authService.addToBlacklist(refreshToken);

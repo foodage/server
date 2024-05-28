@@ -1,0 +1,252 @@
+@startuml
+'!theme sketchy
+
+'===========================================================
+' info
+'===========================================================
+header last updated: 2023.03.11.
+footer Page %page% of %lastpage%
+title
+    OAuth 회원가입 & 로그인 프로세스
+end title
+
+
+'===========================================================
+' skin
+'===========================================================
+skinparam padding 3
+
+skinparam roundCorner 40
+skinparam actorStyle awesome
+
+'-----------------------------------------------------------
+' ☀️ light
+'-----------------------------------------------------------
+skinparam default {
+    FontColor #26272c
+    FontName PT Sans, .AppleSystemUIFont
+    FontSize 13
+}
+
+skinparam title {
+    FontSize 14
+    FontColor #26272c
+    BackgroundColor #dbdde7
+    BorderThickness 0
+    BorderRoundCorner 40
+}
+
+skinparam participant {
+    FontSize 14
+    FontStyle bold
+    BorderThickness 0
+    BackgroundColor #ffaa7a
+}
+
+skinparam database {
+    FontSize 14
+    FontStyle bold
+    BackgroundColor #ffaa7a
+    BorderColor #2f3036
+}
+
+skinparam arrow {
+    Color #ff7aa4
+    Thickness 2
+    MessageAlignment center
+}
+
+skinparam sequence {
+    GroupBackgroundColor #ff7aa4
+    GroupBodyBackgroundColor #dbdde760
+    GroupBorderThickness 0
+
+    LifeLineBorderColor #91939c
+    LifeLineBorderThickness 1
+
+    BoxBackgroundColor #dbdde760
+    BoxBorderColor #2f3036
+
+    DividerBackgroundColor #dbdde230
+}
+skinparam BoxPadding 5
+
+skinparam note {
+    FontColor White
+    FontStyle bold
+
+    BackgroundColor #7c9fff
+    BorderThickness 0
+}
+
+'-----------------------------------------------------------
+' 🌘 dark
+'-----------------------------------------------------------
+'
+'skinparam backgroundColor #26272c
+'skinparam roundCorner 40
+'skinparam actorStyle awesome
+'
+'skinparam default {
+'    FontColor White
+'    FontName PT Sans, .AppleSystemUIFont
+'    FontSize 13
+'}
+'
+'skinparam title {
+'    FontSize 14
+'    FontColor #26272c
+'    BackgroundColor #dbdde7
+'    BorderThickness 0
+'    BorderRoundCorner 40
+'}
+'
+'skinparam participant {
+'    FontSize 14
+'    FontStyle bold
+'    BorderThickness 0
+'    BackgroundColor #fc7f3b
+'}
+'
+'skinparam database {
+'    FontSize 14
+'    FontStyle bold
+'    BackgroundColor #fc7f3b
+'    BorderColor #2f3036
+'}
+'
+'skinparam arrow {
+'    Color #b5b8c3
+'    Thickness 2
+'    MessageAlignment center
+'}
+'
+'skinparam sequence {
+'    GroupBackgroundColor #f23761
+'    GroupBodyBackgroundColor #18181b60
+'    GroupBorderThickness 0
+'
+'    LifeLineBorderColor #91939c
+'    LifeLineBorderThickness 1
+'
+'    BoxBackgroundColor #2f3036
+'    BoxBorderColor #2f3036
+'
+'    DividerBackgroundColor #2f303680
+'    DividerBorderColor Gray
+'    DividerBorderThickness 1
+'}
+'skinparam BoxPadding 5
+'
+'skinparam note {
+'    FontColor White
+'    FontStyle bold
+'    BackgroundColor #4d90ff
+'    BorderThickness 0
+'}
+
+
+'===========================================================
+' box
+'===========================================================
+'-----------------------------------------------------------
+' 🌘 dark
+'-----------------------------------------------------------
+'box Foodage Client
+'    participant "Client" as client #f2b120
+'end box
+
+'participant "Oauth Web" as a_client #68be00
+'participant "Oauth Server" as a_server #68be00
+
+'box Foodage Server
+'    participant "Server" as server #f98c0b
+'    database db #f98c0b
+'end box
+
+'-----------------------------------------------------------
+' ☀️ light
+'-----------------------------------------------------------
+box Foodage Client
+    participant "Client" as client #ffd451
+end box
+
+participant "Oauth Web" as a_client #83ea9d
+participant "Oauth Server" as a_server #83ea9d
+
+box Foodage Server
+    participant "Server" as server #ffb36f
+    database db #ffb36f
+end box
+
+autonumber
+
+
+'===========================================================
+' contents
+'===========================================================
+|||
+== ㅤ회원가입 & 로그인   ==
+
+client -> a_client: Oauth 로그인 sdk 실행
+
+'서비스 회원가입
+group 회원가입* [기존 가입자면 필요 X]
+    a_client -> a_server: 약관 동의 화면 요청
+    a_server --> a_client: 약관 동의 화면 출력
+    a_client -> a_server: 약관 동의 완료
+end
+
+a_client -> a_server: Oauth 로그인 완료
+
+a_server -> server: Redirect URI로 인가코드(auth code) 전달
+server --> server: Redirect URI와 매핑되는 get api 작성하여\n인가코드 receive
+
+group 토큰 발급*
+''' at 발급
+server -> a_server: 인가코드로 Oauth token 발급 요청
+a_server --> server: Oauth token 발급
+end
+
+''' at로 사용자 정보 확인
+server -> a_server: Oauth token으로 사용자 정보 요청
+a_server --> server: 사용자 정보 응답 (이메일, 이름 등)
+server -> db: 해당 사용자의 가입 여부 확인
+db --> db: 이메일 존재 여부 확인
+
+'서비스 로그인
+group 로그인* [case 1]
+    db --> server: 이미 존재하는 이메일(기존 가입자)일 경우
+    server --> server: 서버 Access Token(이하 A・T) 발급
+    server --> server: 서버 Refresh Token(이하 R・T) 발급
+    server --> client: 메인 페이지로 redirect\n& <Response Header Cookie>에 A・T, R・T 반환
+    client -> client: 로그인 성공
+end
+
+'서비스 회원가입
+group 회원가입* [case 2]
+    db --> server: 존재하지 않는 이메일(신규 회원)일 경우
+    server -> db: 사용자 임시 가입 요청
+    db --> db: insert oauth_id, account_email, state(TEMP_JOIN)
+    db --> server: 사용자 임시 가입 완료
+    server -> client: 회원가입 페이지로 redirect\n& <Response Header(Cookie)>에 Oauth 서버 종류와 Oauth token 반환
+    client --> client: 추가 가입 정보 입력 화면 노출
+      note right: ex. 마지막으로, 회원가입에 필요한 추가 정보를 입력해주세요 등
+    client -> server: 회원가입 완료 요청 (RequestBody : 사용자 이메일, 추가 정보, Oauth 서버 종류, Oauth token)
+    server -> a_server: Oauth token으로 사용자 정보 요청
+    a_server --> server: 사용자 정보 응답 (이메일, 이름 등)
+    server -> db: 해당 사용자의 임시 가입 상태 확인
+    db --> db: 사용자의 state가 TEMP_JOIN이 맞는지 확인
+    db --> server: 임시 가입 상태가 맞을 경우
+    server -> db: 추가 회원가입 정보로 사용자 정보 update
+    db --> db: nickname, character_type, last_login 등 update
+    db --> server: 정보 저장 완료
+    server --> server: 서버 Access Token(이하 A・T) 발급
+    server --> server: 서버 Refresh Token(이하 R・T) 발급
+    server -> client: A・T, R・T와 201 Created 반환
+    client -> client: 회원가입 완료 및 로그인 처리
+end
+
+|||
+
+@enduml

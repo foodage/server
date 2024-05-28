@@ -37,7 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 		log.debug("# authenticate() --...--> loadUserByUsername() execute");
 		log.debug("# username : {}", username);
 
-		return memberRepository.findOneWithAuthoritiesByNickname(username)
+		return memberRepository.findOneWithAuthoritiesByAccountEmail(username)
 			.map(member -> createUserDetails(member))
 			.orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
 	}
@@ -49,7 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 			.map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
 			.collect(Collectors.toList());
 
-		return new User(member.getNickname(), member.getCredential()
+		return new User(member.getAccountEmail(), member.getCredential()
 			, grantedAuthorities);
 	}
 }

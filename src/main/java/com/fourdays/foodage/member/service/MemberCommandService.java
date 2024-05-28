@@ -1,7 +1,6 @@
 package com.fourdays.foodage.member.service;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,13 +20,11 @@ import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.dto.MemberLoginResultDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
-import com.fourdays.foodage.member.exception.MemberJoinUnexpectedException;
-import com.fourdays.foodage.member.exception.MemberJoinedException;
-import com.fourdays.foodage.member.exception.MemberMismatchAccountEmailException;
-import com.fourdays.foodage.member.exception.MemberNotJoinedException;
+import com.fourdays.foodage.member.exception.MemberInvalidStateException;
+import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
-import com.fourdays.foodage.oauth.service.OauthQueryService;
+import com.fourdays.foodage.oauth.service.OauthService;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,28 +41,57 @@ public class MemberCommandService {
 	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
 	private final AuthService authService;
-	private final OauthQueryService oauthQueryService;
+	private final OauthService oauthService;
 	private final PasswordEncoder passwordEncoder;
 
 	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository,
-		AuthService authService, OauthQueryService oauthQueryService, PasswordEncoder passwordEncoder) {
+		AuthService authService, OauthService oauthService, PasswordEncoder passwordEncoder) {
 		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
 		this.authService = authService;
-		this.oauthQueryService = oauthQueryService;
+		this.oauthService = oauthService;
 		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Transactional
-	public MemberLoginResultDto tempJoin(OauthId oauthId, String accountEmail) {
+	public MemberLoginResultDto login(final OauthId oauthId, final String accountEmail) {
 
-		// 사용자 정보 임시 저장 후, 추가 정보 입력받아 join() 메소드에서 update로 회원가입 완료 처리
-		Optional<Member> findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail);
-		if (findMember.isPresent()) {
-			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+		// 미가입 유저일 경우, login이 아닌 임시 회원가입 처리
+		if (notJoined(oauthId, accountEmail)) {
+			return tempJoin(oauthId, accountEmail);
 		}
 
-		// create temp member info
+		Member findMember = memberQueryService.findByOauthIdAndAccountEmail(oauthId, accountEmail);
+		LoginResult loginResult = findMember.getLoginResultByMemberState();
+		// 블락, 휴면, 탈퇴 상태인지 확인
+		if (loginResult == LoginResult.BLOCKED
+			|| loginResult == LoginResult.LEAVED
+			|| loginResult == LoginResult.INVALID) {
+			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, loginResult);
+		}
+
+		// 약관 동의 여부 확인
+
+		// 로그인 히스토리 추가
+
+		// credential 교체 (새로 로그인했으므로)
+		String credential = authService.updateCredential(oauthId, accountEmail);
+
+		// 마지막 로그인 일시 업데이트
+		findMember.updateLastLoginAt();
+
+		return new MemberLoginResultDto(findMember.getOauthId(), findMember.getNickname(),
+			findMember.getAccountEmail(), loginResult,
+			credential);
+	}
+
+	@Transactional
+	public MemberLoginResultDto tempJoin(final OauthId oauthId, final String accountEmail) {
+
+		// 사용자 정보 임시 저장
+		// 이후 사용자의 추가 정보 입력받아 update 쿼리로 회원가입 완료 처리함
+
+		// 임시 회원가입 정보 생성
 		Authority authority = Authority.builder()
 			.authorityName(Role.MEMBER.getRole())
 			.build();
@@ -82,95 +108,67 @@ public class MemberCommandService {
 
 		Long id = memberRepository.save(member).getId();
 		log.debug(
-			"\n#--------- saved temp join member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#--------------------------------#",
+			"\n#--------- saved temp join member ---------#\nid : {}\ncredential : {}\naccountEmail : {}\n#------------------------------------------#",
 			id,
 			credential,
 			accountEmail
 		);
 
-		return new MemberLoginResultDto(member.getNickname(), LoginResult.JOIN_IN_PROGRESS);
+		return new MemberLoginResultDto(member.getOauthId(), member.getNickname(),
+			member.getAccountEmail(), LoginResult.JOIN_IN_PROGRESS,
+			credential);
 	}
 
 	@Transactional
-	public MemberJoinResponseDto join(OauthServerType oauthServerType, String accessToken, String accountEmail,
-		String nickname, String profileImage, CharacterType character) {
+	public MemberJoinResponseDto join(final OauthServerType oauthServerType,
+		final String accessToken, final String nickname,
+		final CharacterType character) {
 
 		//////////////////// validate ////////////////////
-		// 닉네임 존재 여부 확인 (이미 사용중일 시 exception 발생)
-		validateUsableNickname(nickname);
-
 		// 로그인한 사용자의 oauth 정보 get
 		OauthMember oauthMember = null;
 		try {
-			oauthMember = oauthQueryService.getOauthMember(oauthServerType, accessToken);
+			oauthMember = oauthService.getOauthMemberByAccessToken(oauthServerType, accessToken);
 		} catch (Exception e) {
 			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_NOT_FOUND_OAUTH_MEMBER);
 		}
 
-		// 로그인한 oauth 계정의 이메일이 가입 요청 이메일과 다른 경우
-		if (!oauthMember.getAccountEmail().equals(accountEmail)) {
-			throw new MemberMismatchAccountEmailException(ResultCode.ERR_MISMATCH_ACCOUNT_EMAIL);
-		}
-
 		// oauth 로그인을 완료하지 않은 사용자일 경우 (temp_join 상태가 아닐 경우)
-		Member member = memberRepository.findByOauthIdAndAccountEmail(oauthMember.getOauthId(),
-				oauthMember.getAccountEmail())
-			.orElseThrow(() -> new MemberJoinUnexpectedException(ResultCode.ERR_UNEXPECTED_JOIN));
+		Member member = memberQueryService.findByOauthIdAndAccountEmail(oauthMember.getOauthId(),
+			oauthMember.getAccountEmail());
 
-		// 이미 가입한 정보가 있는지 확인
-		member.hasJoined();
+		// 사용자가 임시 가입 상태가 맞는지 확인
+		member.validateMemberIsTempJoin();
+
+		// 이미 사용중인 닉네임인지 확인 (닉네임 중복 불가능)
+		validateNicknameIsDuplicate(nickname);
 
 		//////////////////// 회원가입 완료 처리 (update query) ////////////////////
 		String credential = authService.createCredential();
 		log.debug("# credential (plain) : {}", credential);
 
-		member.completedJoin(nickname, profileImage, character,
+		member.completedJoin(nickname, character,
 			passwordEncoder.encode(credential));
 
 		log.debug(
 			"\n#--------- updated member ---------#\nid : {}\naccountEmail : {}\nnickname : {}\n#--------------------------------#",
 			member.getId(),
-			accountEmail,
+			member.getAccountEmail(),
 			nickname
 		);
 
 		// jwt 발행 (at & rt)
-		TokenDto jwt = authService.createToken(member.getNickname(), credential);
+		TokenDto jwt = authService.createToken(member.getOauthId().getOauthServerType(),
+			member.getAccountEmail(), credential);
 		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
 
 		return new MemberJoinResponseDto(member, jwt);
 	}
 
 	@Transactional
-	public MemberLoginResultDto login(OauthId oauthId, String accountEmail) {
+	public void leave(final MemberId memberId) {
 
-		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}", oauthId.getOauthServerId(),
-			oauthId.getOauthServerType(), accountEmail);
-
-		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
-			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
-
-		// 가입 진행중인지 확인
-		LoginResult loginResult = findMember.getLoginResultByMemberState();
-
-		// 블락, 휴면, 탈퇴 상태인지 확인
-		findMember.validateState();
-
-		// 약관 동의 여부 확인
-
-		// 로그인 히스토리 추가
-
-		// 마지막 로그인 일시 업데이트
-		findMember.updateLastLoginAt();
-
-		return new MemberLoginResultDto(findMember.getNickname(), loginResult);
-	}
-
-	@Transactional
-	public void leave(long memberId) {
-
-		Member findMember = memberRepository.findById(memberId)
-			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		Member findMember = memberQueryService.findByMemberId(memberId);
 
 		findMember.leaved();
 
@@ -182,11 +180,17 @@ public class MemberCommandService {
 
 	//////////////////////////////////////////////////////////////////
 
-	public void validateUsableNickname(String nickname) {
+	private void validateNicknameIsDuplicate(final String nickname) {
 
-		Long id = memberRepository.findIdByNickname(nickname);
-		if (id != null) {
+		boolean isExist = memberQueryService.existByNickname(nickname);
+		if (isExist) {
 			throw new MemberDuplicateNicknameException(ResultCode.ERR_DUPLICATE_NICKNAME);
 		}
+	}
+
+	private boolean notJoined(final OauthId oauthId, final String accountEmail) {
+
+		boolean isJoined = memberQueryService.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
+		return !isJoined;
 	}
 }

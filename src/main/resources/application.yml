@@ -9,11 +9,11 @@ server:
       enabled: false
 
 application:
-  version: ${ext.appVersion}
+  version: '1.0.4'
 
 spring:
   profiles:
-    default: local
+    default: dev
 
 springdoc:
   swagger-ui:

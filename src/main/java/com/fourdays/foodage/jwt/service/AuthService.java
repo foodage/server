@@ -17,6 +17,7 @@ import com.fourdays.foodage.jwt.handler.TokenProvider;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberQueryService;
 import com.fourdays.foodage.oauth.domain.OauthId;
+import com.fourdays.foodage.oauth.util.OauthServerType;
 
 @Service
 public class AuthService {
@@ -59,7 +60,7 @@ public class AuthService {
 
 	public String updateCredential(OauthId oauthId, String accountEmail) {
 
-		Member member = memberQueryService.getMember(oauthId, accountEmail);
+		Member member = memberQueryService.findByOauthIdAndAccountEmail(oauthId, accountEmail);
 		String credential = createCredential();
 		member.updateCredential(passwordEncoder.encode(credential));
 
@@ -68,15 +69,16 @@ public class AuthService {
 
 	// createToken 전, member credential 초기화 하는 과정 반드시 필요함 (updateCredential 메소드 사용)
 	// 초기화 후 plain text를 두 번째 인자로 입력
-	public TokenDto createToken(String nickname, String plainCredential) {
+	public TokenDto createToken(OauthServerType oauthServerType, String accountEmail,
+		String plainCredential) {
 
 		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(nickname, plainCredential);
+			new UsernamePasswordAuthenticationToken(accountEmail, plainCredential);
 
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		TokenDto jwt = tokenProvider.createToken(authentication);
+		TokenDto jwt = tokenProvider.createToken(oauthServerType, authentication);
 		return jwt;
 	}
 }
