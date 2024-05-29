@@ -13,7 +13,7 @@ public class RecentReviewResponse {
 
 	private String address;
 
-	private Tag tag;
+	private TagInfo tagInfo;
 
 	private String thumbnailUrl;
 
@@ -27,19 +27,19 @@ public class RecentReviewResponse {
 		this.restaurant = restaurant;
 		this.address = address.substring(0, address.indexOf(
 			' ', address.indexOf(' ') + 1)); // 전체 주소에서 시, 구 정보만 파싱 (ex. '서울특별시 영등포구')
-		this.tag = new Tag(tagName, tagColor);
+		this.tagInfo = new TagInfo(tagName, tagColor);
 		this.thumbnailUrl = thumbnailUrl;
 		this.createdAt = createdAt;
 	}
 
 	@Getter
-	public static class Tag {
+	public static class TagInfo {
 
 		private String name;
 
 		private String color;
 
-		public Tag(String name, String color) {
+		public TagInfo(String name, String color) {
 			this.name = name;
 			this.color = color;
 		}
