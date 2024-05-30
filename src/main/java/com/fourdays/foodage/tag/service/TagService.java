@@ -24,19 +24,23 @@ public class TagService {
 	public List<TagUsageRankResponse> getTagUsageRank(MemberId memberId) {
 
 		List<TagUsageRankResponse> response = tagCustomRepository.findTagUsageRank(memberId);
-		response.sort(Comparator.comparingLong(
-			TagUsageRankResponse::getUsageCount
-		).reversed());
+
+		// tag 사용 횟수 desc 정렬
+		response.sort(Comparator.comparingLong(TagUsageRankResponse::getUsageCount)
+			.reversed());
+		updateRanks(response);
+
+		return response;
+	}
+
+	private void updateRanks(List<TagUsageRankResponse> response) {
 
 		int currentRank = 1;
 		for (int i = 0; i < response.size(); i++) {
-			if (i > 0 &&
-				response.get(i).getUsageCount() < response.get(i - 1).getUsageCount()) {
+			if (i > 0 && response.get(i).getUsageCount() < response.get(i - 1).getUsageCount()) {
 				currentRank = i + 1;
 			}
 			response.get(i).updateRank(currentRank);
 		}
-
-		return response;
 	}
 }
