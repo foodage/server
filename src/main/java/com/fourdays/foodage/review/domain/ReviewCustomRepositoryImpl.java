@@ -60,7 +60,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 					review.restaurant,
 					review.address,
 					tag.name,
-					tag.color,
+					tag.tagBgColor,
+					tag.tagTextColor,
 					reviewImage.imageUrl,
 					review.createdAt
 				)
