@@ -25,16 +25,16 @@ public class Tag extends BaseTimeEntity {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "tag_name", nullable = false, length = 32)
+	@Column(name = "name", nullable = false, length = 32)
 	private String name;
 
-	@Column(name = "tag_bg_color", nullable = false)
-	private String tagBgColor;
+	@Column(name = "bg_color", nullable = false)
+	private String bgColor;
 
-	@Column(name = "tag_text_color", nullable = false)
-	private String tagTextColor;
+	@Column(name = "text_color", nullable = false)
+	private String textColor;
 
-	@Column(name = "tag_description", length = 128)
+	@Column(name = "description", length = 128)
 	private String description;
 
 	@Column(name = "creator_id", nullable = false)
