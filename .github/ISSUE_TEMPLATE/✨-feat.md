@@ -1,8 +1,8 @@
 ---
-name: 이슈 제목
-about: 이슈 설명
+name: "✨ Feat"
+about: 새로운 기능 개발이 필요한가요?
 title: ''
-labels: BE
+labels: BE, ✨ Feat
 assignees: ''
 
 ---
