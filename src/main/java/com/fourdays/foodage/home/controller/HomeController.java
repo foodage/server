@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourdays.foodage.home.dto.RecentReviewResponse;
+import com.fourdays.foodage.home.dto.TagUsageRankResponse;
 import com.fourdays.foodage.home.dto.WeeklyReviewRequest;
 import com.fourdays.foodage.home.dto.WeeklyReviewResponse;
 import com.fourdays.foodage.home.service.HomeService;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.service.ReviewService;
+import com.fourdays.foodage.tag.service.TagService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,11 +28,15 @@ import lombok.extern.slf4j.Slf4j;
 public class HomeController {
 
 	private final HomeService homeService;
+
 	private final ReviewService reviewService;
 
-	public HomeController(HomeService homeService, ReviewService reviewService) {
+	private final TagService tagService;
+
+	public HomeController(HomeService homeService, ReviewService reviewService, TagService tagService) {
 		this.homeService = homeService;
 		this.reviewService = reviewService;
+		this.tagService = tagService;
 	}
 
 	@Operation(summary = "이번주 작성한 리뷰 목록 조회")
@@ -51,6 +57,16 @@ public class HomeController {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		List<RecentReviewResponse> response = reviewService.getRecentReviews(memberId, limit);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@Operation(summary = "태그 사용 순위 조회")
+	@GetMapping("/home/tag/usage-rank")
+	public ResponseEntity<List<TagUsageRankResponse>> getTagUsageRank() {
+
+		MemberId memberId = SecurityUtil.getCurrentMemberId();
+		List<TagUsageRankResponse> response = tagService.getTagUsageRank(memberId);
 
 		return ResponseEntity.ok().body(response);
 	}
