@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.fourdays.foodage.home.dto.PeriodReviewRequest;
 import com.fourdays.foodage.home.dto.RecentReviewResponse;
-import com.fourdays.foodage.home.dto.WeeklyReviewRequest;
 import com.fourdays.foodage.home.dto.WeeklyReviewResponse;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.ReviewCustomRepository;
@@ -22,7 +22,8 @@ public class ReviewService {
 		this.reviewCustomRepository = reviewCustomRepository;
 	}
 
-	public List<WeeklyReviewResponse> getWeeklyReviews(MemberId memberId, WeeklyReviewRequest request) {
+	public List<WeeklyReviewResponse> getReviewsByPeriod(final MemberId memberId,
+		final PeriodReviewRequest request) {
 
 		log.debug("# getWeeklyReviews() : {} ~ {}", request.getStartDate(),
 			request.getEndDate());
@@ -34,7 +35,8 @@ public class ReviewService {
 		return response;
 	}
 
-	public List<RecentReviewResponse> getRecentReviews(MemberId memberId, int limit) {
+	public List<RecentReviewResponse> getRecentReviews(final MemberId memberId,
+		final int limit) {
 
 		log.debug("# getRecentReviews() limit : {}", limit);
 

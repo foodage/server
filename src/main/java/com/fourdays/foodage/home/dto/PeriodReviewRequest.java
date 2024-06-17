@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class WeeklyReviewRequest {
+public class PeriodReviewRequest {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
@@ -13,7 +13,7 @@ public class WeeklyReviewRequest {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
 
-	public WeeklyReviewRequest(LocalDate startDate, LocalDate endDate) {
+	public PeriodReviewRequest(LocalDate startDate, LocalDate endDate) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}

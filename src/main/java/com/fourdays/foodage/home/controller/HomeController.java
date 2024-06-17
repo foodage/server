@@ -1,16 +1,21 @@
 package com.fourdays.foodage.home.controller;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.common.enums.ReviewViewType;
+import com.fourdays.foodage.home.dto.PeriodReviewRequest;
 import com.fourdays.foodage.home.dto.RecentReviewResponse;
 import com.fourdays.foodage.home.dto.TagUsageRankResponse;
-import com.fourdays.foodage.home.dto.WeeklyReviewRequest;
 import com.fourdays.foodage.home.dto.WeeklyReviewResponse;
 import com.fourdays.foodage.home.service.HomeService;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
@@ -24,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-@Tag(name = "Home API")
+@Tag(name = "home", description = "메인 홈 화면에서 사용하는 api")
 public class HomeController {
 
 	private final HomeService homeService;
@@ -39,19 +44,38 @@ public class HomeController {
 		this.tagService = tagService;
 	}
 
-	@Operation(summary = "이번주 작성한 리뷰 목록 조회")
-	@GetMapping("/home/weekly-review")
-	public ResponseEntity<List<WeeklyReviewResponse>> getWeeklyReviews(
-		@ParameterObject WeeklyReviewRequest request) {
+	@Operation(summary = "캘린더 내 리뷰 조회")
+	@GetMapping("/home/reviews/{viewType}")
+	public ResponseEntity<List<WeeklyReviewResponse>> getReviewsByPeriod(
+		@PathVariable("viewType") final String viewType) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
-		List<WeeklyReviewResponse> response = reviewService.getWeeklyReviews(memberId, request);
+		ReviewViewType viewType_ = ReviewViewType.of(viewType);
+
+		PeriodReviewRequest period = null;
+		switch (viewType_) {
+			case WEEKLY -> {
+				LocalDate now = LocalDate.now();
+				period = new PeriodReviewRequest(
+					now.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)), // startDate
+					now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)) // endDate
+				);
+			}
+			case MONTHLY -> {
+				YearMonth currentMonth = YearMonth.now();
+				period = new PeriodReviewRequest(
+					currentMonth.atDay(1), // startDate
+					currentMonth.atEndOfMonth()
+				); // endDate
+			}
+		}
+		List<WeeklyReviewResponse> response = reviewService.getReviewsByPeriod(memberId, period);
 
 		return ResponseEntity.ok().body(response);
 	}
 
 	@Operation(summary = "최근 작성한 리뷰 목록 조회")
-	@GetMapping("/home/recent-review")
+	@GetMapping("/home/reviews/recent")
 	public ResponseEntity<List<RecentReviewResponse>> getRecentReviews(
 		@RequestParam("limit") int limit) {
 
