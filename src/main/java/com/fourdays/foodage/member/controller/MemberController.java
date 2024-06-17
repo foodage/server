@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-@Tag(name = "회원 API", description = "회원 조회, 가입, 탈퇴 등 회원 관련 작업 수행")
+@Tag(name = "member", description = "회원가입, 사용자 정보 조회 등의 api")
 public class MemberController {
 
 	private final MemberCommandService memberCommandService;
