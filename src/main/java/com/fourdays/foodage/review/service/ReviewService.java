@@ -31,7 +31,6 @@ public class ReviewService {
 		List<WeeklyReviewResponse> response =
 			reviewCustomRepository.findWeeklyReview(memberId, request.getStartDate(),
 				request.getEndDate());
-
 		return response;
 	}
 
@@ -42,7 +41,6 @@ public class ReviewService {
 
 		List<RecentReviewResponse> response =
 			reviewCustomRepository.findRecentReviews(memberId, limit);
-
 		return response;
 	}
 }
