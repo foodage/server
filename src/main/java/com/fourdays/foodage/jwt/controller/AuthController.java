@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-@Tag(name = "인증 관련 API", description = "JWT 재발행 등, Foodage 사용자 인증과 관련된 작업 수행")
+@Tag(name = "authentication (jwt)", description = "jwt 재발행과 같은 인증 처리 api")
 public class AuthController {
 
 	private final TokenProvider tokenProvider;
