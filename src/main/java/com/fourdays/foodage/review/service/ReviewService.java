@@ -1,12 +1,16 @@
 package com.fourdays.foodage.review.service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.fourdays.foodage.home.dto.PeriodReviewGroup;
 import com.fourdays.foodage.home.dto.PeriodReviewRequest;
+import com.fourdays.foodage.home.dto.PeriodReviewResponse;
 import com.fourdays.foodage.home.dto.RecentReviewResponse;
-import com.fourdays.foodage.home.dto.WeeklyReviewResponse;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.ReviewCustomRepository;
 
@@ -22,15 +26,33 @@ public class ReviewService {
 		this.reviewCustomRepository = reviewCustomRepository;
 	}
 
-	public List<WeeklyReviewResponse> getReviewsByPeriod(final MemberId memberId,
+	public Map<LocalDate, PeriodReviewGroup> getReviewsByPeriod(final MemberId memberId,
 		final PeriodReviewRequest request) {
 
 		log.debug("# getWeeklyReviews() : {} ~ {}", request.getStartDate(),
 			request.getEndDate());
 
-		List<WeeklyReviewResponse> response =
-			reviewCustomRepository.findWeeklyReview(memberId, request.getStartDate(),
+		List<PeriodReviewResponse> weeklyReviews =
+			reviewCustomRepository.findWeeklyReviews(memberId, request.getStartDate(),
 				request.getEndDate());
+
+		// todo: refactoring
+		Map<LocalDate, PeriodReviewGroup> response = weeklyReviews.stream()
+			.collect(Collectors.groupingBy(PeriodReviewResponse::getCreatedAt,
+				Collectors.collectingAndThen(
+					Collectors.toList(),
+					list -> {
+						String dayOfWeek = list.get(0).getDayOfWeek();
+						String lastEatenFood = list.get(list.size() - 1).getLastEatenFood();
+						List<Long> reviewIds =
+							list.stream()
+								.map(PeriodReviewResponse::getId)
+								.collect(Collectors.toList());
+
+						return new PeriodReviewGroup(dayOfWeek, lastEatenFood, reviewIds);
+					}
+				)
+			));
 		return response;
 	}
 

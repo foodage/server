@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourdays.foodage.common.enums.ReviewViewType;
+import com.fourdays.foodage.home.dto.PeriodReviewGroup;
 import com.fourdays.foodage.home.dto.PeriodReviewRequest;
 import com.fourdays.foodage.home.dto.RecentReviewResponse;
-import com.fourdays.foodage.home.dto.WeeklyReviewResponse;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.service.ReviewService;
@@ -37,14 +38,13 @@ public class ReviewController {
 
 	@Operation(summary = "캘린더 내 리뷰 조회")
 	@GetMapping("/reviews/{viewType}")
-	public ResponseEntity<List<WeeklyReviewResponse>> getReviewsByPeriod(
-		@PathVariable("viewType") final String viewType) {
+	public ResponseEntity<Map<LocalDate, PeriodReviewGroup>> getReviewsByPeriod(
+		@PathVariable("viewType") final ReviewViewType viewType) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
-		ReviewViewType viewType_ = ReviewViewType.of(viewType);
 
 		PeriodReviewRequest period = null;
-		switch (viewType_) {
+		switch (viewType) {
 			case WEEKLY -> {
 				LocalDate now = LocalDate.now();
 				period = new PeriodReviewRequest(
@@ -60,7 +60,8 @@ public class ReviewController {
 				);
 			}
 		}
-		List<WeeklyReviewResponse> response = reviewService.getReviewsByPeriod(memberId, period);
+		Map<LocalDate, PeriodReviewGroup> response =
+			reviewService.getReviewsByPeriod(memberId, period);
 
 		return ResponseEntity.ok().body(response);
 	}
