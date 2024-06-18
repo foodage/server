@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.fourdays.foodage.home.dto.PeriodReviewGroup;
-import com.fourdays.foodage.home.dto.PeriodReviewRequest;
-import com.fourdays.foodage.home.dto.PeriodReviewResponse;
-import com.fourdays.foodage.home.dto.RecentReviewResponse;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.ReviewCustomRepository;
+import com.fourdays.foodage.review.dto.PeriodReviewGroup;
+import com.fourdays.foodage.review.dto.PeriodReviewRequest;
+import com.fourdays.foodage.review.dto.PeriodReviewResponse;
+import com.fourdays.foodage.review.dto.RecentReviewResponse;
 
 import lombok.extern.slf4j.Slf4j;
 

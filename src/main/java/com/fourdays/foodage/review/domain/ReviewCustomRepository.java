@@ -3,9 +3,9 @@ package com.fourdays.foodage.review.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fourdays.foodage.home.dto.PeriodReviewResponse;
-import com.fourdays.foodage.home.dto.RecentReviewResponse;
 import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.dto.PeriodReviewResponse;
+import com.fourdays.foodage.review.dto.RecentReviewResponse;
 
 public interface ReviewCustomRepository {
 

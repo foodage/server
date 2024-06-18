@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourdays.foodage.common.enums.ReviewViewType;
-import com.fourdays.foodage.home.dto.PeriodReviewGroup;
-import com.fourdays.foodage.home.dto.PeriodReviewRequest;
-import com.fourdays.foodage.home.dto.RecentReviewResponse;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.dto.PeriodReviewGroup;
+import com.fourdays.foodage.review.dto.PeriodReviewRequest;
+import com.fourdays.foodage.review.dto.RecentReviewResponse;
 import com.fourdays.foodage.review.service.ReviewService;
 
 import io.swagger.v3.oas.annotations.Operation;

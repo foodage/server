@@ -1,4 +1,4 @@
-package com.fourdays.foodage.home.dto;
+package com.fourdays.foodage.review.dto;
 
 import java.util.List;
 

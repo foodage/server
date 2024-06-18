@@ -10,9 +10,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.fourdays.foodage.home.dto.PeriodReviewResponse;
-import com.fourdays.foodage.home.dto.RecentReviewResponse;
 import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.dto.PeriodReviewResponse;
+import com.fourdays.foodage.review.dto.RecentReviewResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
