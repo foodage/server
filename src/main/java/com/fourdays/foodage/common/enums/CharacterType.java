@@ -38,7 +38,7 @@ public enum CharacterType {
 	}
 
 	@JsonCreator
-	public static CharacterType from(String jsonValue) {
+	public static CharacterType of(String jsonValue) {
 		for (CharacterType character : values()) {
 			if (character.name().equals(jsonValue.toUpperCase())) {
 				return character;

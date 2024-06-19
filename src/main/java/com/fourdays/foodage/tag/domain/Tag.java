@@ -28,10 +28,10 @@ public class Tag extends BaseTimeEntity {
 	@Column(name = "name", nullable = false, length = 32)
 	private String name;
 
-	@Column(name = "bg_color", nullable = false)
+	@Column(name = "bg_color", length = 128, nullable = false)
 	private String bgColor;
 
-	@Column(name = "text_color", nullable = false)
+	@Column(name = "text_color", length = 128, nullable = false)
 	private String textColor;
 
 	@Column(name = "description", length = 128)
