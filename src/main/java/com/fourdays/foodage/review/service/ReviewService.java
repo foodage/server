@@ -1,30 +1,32 @@
 package com.fourdays.foodage.review.service;
 
+import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.domain.Review;
+import com.fourdays.foodage.review.domain.ReviewCustomRepository;
+import com.fourdays.foodage.review.domain.ReviewRepository;
+import com.fourdays.foodage.review.dto.PeriodReviewGroup;
+import com.fourdays.foodage.review.dto.PeriodReviewRequest;
+import com.fourdays.foodage.review.dto.PeriodReviewResponse;
+import com.fourdays.foodage.review.dto.RecentReviewResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Service;
-
-import com.fourdays.foodage.member.vo.MemberId;
-import com.fourdays.foodage.review.domain.ReviewCustomRepository;
-import com.fourdays.foodage.review.dto.PeriodReviewGroup;
-import com.fourdays.foodage.review.dto.PeriodReviewRequest;
-import com.fourdays.foodage.review.dto.PeriodReviewResponse;
-import com.fourdays.foodage.review.dto.RecentReviewResponse;
-
-import lombok.extern.slf4j.Slf4j;
-
 @Service
 @Slf4j
 public class ReviewService {
 
 	private final ReviewCustomRepository reviewCustomRepository;
+	private final ReviewRepository reviewRepository;
 
-	public ReviewService(ReviewCustomRepository reviewCustomRepository) {
+	public ReviewService(ReviewCustomRepository reviewCustomRepository, ReviewRepository reviewRepository) {
 		this.reviewCustomRepository = reviewCustomRepository;
+		this.reviewRepository = reviewRepository;
 	}
 
 	public Map<LocalDate, PeriodReviewGroup> getReviewsByPeriod(final MemberId memberId,
@@ -66,5 +68,13 @@ public class ReviewService {
 		List<RecentReviewResponse> response =
 			reviewCustomRepository.findRecentReviews(memberId, limit);
 		return response;
+	}
+
+	public Review addReview(Review review) {
+		Review addReview = reviewRepository.save(review);
+
+		log.debug("\n# add review id : {}", addReview.getId());
+
+		return addReview;
 	}
 }
