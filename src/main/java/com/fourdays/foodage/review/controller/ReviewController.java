@@ -7,11 +7,10 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 
+import com.fourdays.foodage.review.domain.Review;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.fourdays.foodage.common.enums.ReviewViewType;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
@@ -75,5 +74,13 @@ public class ReviewController {
 		List<RecentReviewResponse> response = reviewService.getRecentReviews(memberId, limit);
 
 		return ResponseEntity.ok().body(response);
+	}
+
+	@Operation(summary = "리뷰 작성")
+	@PostMapping("/review/add")
+	public ResponseEntity<Review> addReview(@RequestBody Review review) {
+		Review addReview = reviewService.addReview(review);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(addReview);
 	}
 }

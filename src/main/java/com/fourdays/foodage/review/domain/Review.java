@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,25 +26,29 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "restaurant")
+	@Column(name = "restaurant", nullable = false)
+	@NotNull
 	private String restaurant;
 
-	@Column(name = "address")
+	@Column(name = "address", nullable = false)
+	@NotNull
 	private String address;
 
-	@Column(name = "menu", nullable = false)
+	@Column(name = "menu")
 	private String menu;
 
-	@Column(name = "price", nullable = false)
+	@Column(name = "price")
 	private int price;
 
 	@Column(name = "rating", nullable = false)
+	@NotNull
 	private float rating;
 
-	@Column(name = "contents", nullable = false)
+	@Column(name = "contents")
 	private String contents;
 
 	@Column(name = "tag_id", nullable = false)
+	@NotNull
 	private Long tagId;
 
 	@Column(name = "thumbnail_id")

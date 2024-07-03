@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import com.fourdays.foodage.review.domain.Review;
+import com.fourdays.foodage.review.domain.ReviewRepository;
+import com.fourdays.foodage.review.dto.*;
 import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.member.vo.MemberId;
@@ -22,9 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 public class ReviewService {
 
 	private final ReviewCustomRepository reviewCustomRepository;
+	private final ReviewRepository reviewRepository;
 
-	public ReviewService(ReviewCustomRepository reviewCustomRepository) {
+	public ReviewService(ReviewCustomRepository reviewCustomRepository,
+						 ReviewRepository reviewRepository) {
 		this.reviewCustomRepository = reviewCustomRepository;
+		this.reviewRepository = reviewRepository;
 	}
 
 	public Map<LocalDate, PeriodReviewGroup> getReviewsByPeriod(final MemberId memberId,
@@ -66,5 +72,14 @@ public class ReviewService {
 		List<RecentReviewResponse> response =
 			reviewCustomRepository.findRecentReviews(memberId, limit);
 		return response;
+	}
+
+	public Review addReview(Review review) {
+
+		Review addReview = reviewRepository.save(review);
+
+		log.debug("\n# add review id : {}", addReview.getId());
+
+		return addReview;
 	}
 }
