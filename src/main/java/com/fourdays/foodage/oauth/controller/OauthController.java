@@ -18,7 +18,6 @@ import com.fourdays.foodage.oauth.util.OauthServerType;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -51,8 +50,8 @@ public class OauthController {
 
 	@Operation(summary = "redirect url에 대한 api. auth code receive 후 로그인 절차 수행", hidden = true)
 	@GetMapping("/oauth/{oauthServerName}/login")
-	public ResponseEntity login(@PathVariable String oauthServerName, @RequestParam String code,
-		HttpServletResponse response) {
+	public ResponseEntity login(@PathVariable(value = "oauthServerName") String oauthServerName,
+		@RequestParam String code) {
 
 		log.debug("# received auth code : {}", code);
 

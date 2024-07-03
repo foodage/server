@@ -10,9 +10,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.fourdays.foodage.home.dto.RecentReviewResponse;
-import com.fourdays.foodage.home.dto.WeeklyReviewResponse;
 import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.dto.PeriodReviewResponse;
+import com.fourdays.foodage.review.dto.RecentReviewResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -27,12 +27,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
-	public List<WeeklyReviewResponse> findWeeklyReview(MemberId memberId,
+	public List<PeriodReviewResponse> findWeeklyReviews(MemberId memberId,
 		LocalDateTime startDate, LocalDateTime endDate) {
 
-		List<WeeklyReviewResponse> reviewModel = query
+		List<PeriodReviewResponse> reviewModel = query
 			.select(Projections.constructor(
-					WeeklyReviewResponse.class,
+					PeriodReviewResponse.class,
 					review.id,
 					review.createdAt,
 					review.lastEatenFood
