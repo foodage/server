@@ -51,5 +51,5 @@ public class ReviewImage extends BaseTimeEntity {
 		nullable = false,
 		columnDefinition = "TINYINT(1)"
 	)
-	private boolean use_thumbnail;
+	private boolean useThumbnail;
 }

@@ -1,21 +1,25 @@
 package com.fourdays.foodage.review.service;
 
-import com.fourdays.foodage.member.vo.MemberId;
-import com.fourdays.foodage.review.domain.Review;
-import com.fourdays.foodage.review.domain.ReviewCustomRepository;
-import com.fourdays.foodage.review.domain.ReviewRepository;
-import com.fourdays.foodage.review.dto.PeriodReviewGroup;
-import com.fourdays.foodage.review.dto.PeriodReviewRequest;
-import com.fourdays.foodage.review.dto.PeriodReviewResponse;
-import com.fourdays.foodage.review.dto.RecentReviewResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.domain.Review;
+import com.fourdays.foodage.review.domain.ReviewCustomRepository;
+import com.fourdays.foodage.review.domain.ReviewRepository;
+import com.fourdays.foodage.review.domain.model.ReviewModel;
+import com.fourdays.foodage.review.dto.DateReviewResponse;
+import com.fourdays.foodage.review.dto.PeriodReviewGroup;
+import com.fourdays.foodage.review.dto.PeriodReviewRequest;
+import com.fourdays.foodage.review.dto.PeriodReviewResponse;
+import com.fourdays.foodage.review.dto.RecentReviewResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -36,7 +40,7 @@ public class ReviewService {
 			request.getEndDate());
 
 		List<PeriodReviewResponse> weeklyReviews =
-			reviewCustomRepository.findWeeklyReviews(memberId, request.getStartDate(),
+			reviewCustomRepository.findReviewsByPeriod(memberId, request.getStartDate(),
 				request.getEndDate());
 
 		// todo: refactoring
@@ -57,7 +61,19 @@ public class ReviewService {
 					}
 				)
 			));
+
 		return response;
+	}
+
+	public DateReviewResponse getReviewsByDate(final MemberId memberId,
+		final LocalDate date) {
+
+		log.debug("# getReviewsByDate() : {}", date);
+
+		List<ReviewModel> reviewModels =
+			reviewCustomRepository.findReviewsByDate(memberId, date);
+
+		return new DateReviewResponse(reviewModels, date);
 	}
 
 	public List<RecentReviewResponse> getRecentReviews(final MemberId memberId,
@@ -65,12 +81,11 @@ public class ReviewService {
 
 		log.debug("# getRecentReviews() limit : {}", limit);
 
-		List<RecentReviewResponse> response =
-			reviewCustomRepository.findRecentReviews(memberId, limit);
-		return response;
+		return reviewCustomRepository.findRecentReviews(memberId, limit);
 	}
 
 	public Review addReview(Review review) {
+
 		Review addReview = reviewRepository.save(review);
 
 		log.debug("\n# add review id : {}", addReview.getId());

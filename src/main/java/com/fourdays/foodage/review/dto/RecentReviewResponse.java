@@ -2,6 +2,8 @@ package com.fourdays.foodage.review.dto;
 
 import java.time.LocalDateTime;
 
+import com.fourdays.foodage.tag.dto.TagInfo;
+
 import lombok.Getter;
 
 @Getter
@@ -30,21 +32,5 @@ public class RecentReviewResponse {
 		this.tag = new TagInfo(tagName, tagBgColor, tagTextColor);
 		this.thumbnailUrl = thumbnailUrl;
 		this.createdAt = createdAt;
-	}
-
-	@Getter
-	public static class TagInfo {
-
-		private String name;
-
-		private String bgColor;
-
-		private String textColor;
-
-		public TagInfo(String name, String bgColor, String textColor) {
-			this.name = name;
-			this.bgColor = bgColor;
-			this.textColor = textColor;
-		}
 	}
 }

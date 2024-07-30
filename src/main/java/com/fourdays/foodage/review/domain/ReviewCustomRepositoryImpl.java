@@ -4,13 +4,18 @@ import static com.fourdays.foodage.member.domain.QMember.*;
 import static com.fourdays.foodage.review.domain.QReview.*;
 import static com.fourdays.foodage.review.domain.QReviewImage.*;
 import static com.fourdays.foodage.tag.domain.QTag.*;
+import static com.querydsl.core.group.GroupBy.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.domain.model.ReviewImageModel;
+import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
 import com.querydsl.core.types.Projections;
@@ -27,7 +32,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
-	public List<PeriodReviewResponse> findWeeklyReviews(MemberId memberId,
+	public List<PeriodReviewResponse> findReviewsByPeriod(MemberId memberId,
 		LocalDateTime startDate, LocalDateTime endDate) {
 
 		List<PeriodReviewResponse> reviewModel = query
@@ -46,6 +51,61 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			)
 			.orderBy(review.createdAt.asc())
 			.fetch();
+
+		return reviewModel;
+	}
+
+	@Override
+	public List<ReviewModel> findReviewsByDate(MemberId memberId, LocalDate date) {
+
+		List<ReviewModel> reviewModel = query
+			.select(
+				review.id,
+				review.restaurant,
+				review.contents,
+				review.rating,
+				tag.name,
+				tag.bgColor,
+				tag.textColor,
+				reviewImage.sequence,
+				reviewImage.imageUrl,
+				reviewImage.useThumbnail
+			)
+			.from(review)
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(tag).on(review.tagId.eq(tag.id))
+			.leftJoin(reviewImage).on(
+				review.id.eq(reviewImage.reviewId)
+			)
+			.where(
+				memberIdEq(memberId),
+				createdAtEq(date)
+			)
+			.orderBy(
+				review.id.desc(), // 최신순 정렬
+				reviewImage.sequence.asc() // 먼저 등록된 순으로 정렬
+			)
+			.transform(
+				groupBy(review.id).list(
+					Projections.constructor(
+						ReviewModel.class,
+						review.id,
+						review.restaurant,
+						review.contents,
+						review.rating,
+						tag.name,
+						tag.bgColor,
+						tag.textColor,
+						list(Projections.constructor(
+								ReviewImageModel.class,
+								reviewImage.sequence,
+								reviewImage.imageUrl,
+								reviewImage.useThumbnail
+							).skipNulls()
+						)
+					)
+				)
+			);
 
 		return reviewModel;
 	}
@@ -104,5 +164,11 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			return false;
 		}
 		return startDate.isBefore(endDate); // ex. 05-23 ~ 05-30
+	}
+
+	private BooleanExpression createdAtEq(LocalDate date) {
+
+		return review.createdAt
+			.between(date.atStartOfDay(), date.atTime(LocalTime.MAX));
 	}
 }

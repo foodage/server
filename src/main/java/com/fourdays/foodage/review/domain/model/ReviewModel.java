@@ -1,32 +1,39 @@
 package com.fourdays.foodage.review.domain.model;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fourdays.foodage.tag.dto.TagInfo;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 public class ReviewModel {
 
+	@JsonIgnore
+	private static final int CONTENT_PREVIEW_LENGTH = 30;
+
 	private Long id;
 
-	private String place;
+	private String restaurant;
 
-	private String menu;
+	private String content;
 
-	private Integer price;
+	private float rating;
 
-	private Integer rating;
+	private TagInfo tag;
 
-	private String review;
+	private List<ReviewImageModel> thumbnails;
 
-	private String tag;
+	public ReviewModel(Long id, String restaurant, String content, Float rating,
+		String name, String bgColor, String textColor,
+		List<ReviewImageModel> thumbnails) {
 
-	private String thumbnail;
-
-	private LocalDateTime createdAt;
+		this.id = id;
+		this.restaurant = restaurant;
+		this.content = content.substring(0, CONTENT_PREVIEW_LENGTH);
+		this.rating = rating;
+		this.thumbnails = thumbnails;
+		this.tag = new TagInfo(name, bgColor, textColor);
+	}
 }
