@@ -21,19 +21,22 @@ public class ReviewModel {
 
 	private float rating;
 
-	private TagInfo tag;
+	private List<TagInfo> tags;
 
 	private List<ReviewImageModel> thumbnails;
 
 	public ReviewModel(Long id, String restaurant, String content, Float rating,
-		String name, String bgColor, String textColor,
-		List<ReviewImageModel> thumbnails) {
+		List<TagInfo> tags, List<ReviewImageModel> thumbnails) {
 
 		this.id = id;
 		this.restaurant = restaurant;
-		this.content = content.substring(0, CONTENT_PREVIEW_LENGTH);
+		if (content != null && content.length() > 30) {
+			this.content = content.substring(0, CONTENT_PREVIEW_LENGTH);
+		} else {
+			this.content = content;
+		}
 		this.rating = rating;
-		this.thumbnails = thumbnails;
-		this.tag = new TagInfo(name, bgColor, textColor);
+		this.tags = tags.stream().distinct().toList();
+		this.thumbnails = thumbnails.stream().distinct().toList();
 	}
 }

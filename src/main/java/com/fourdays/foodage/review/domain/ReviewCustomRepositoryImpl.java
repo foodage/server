@@ -3,7 +3,7 @@ package com.fourdays.foodage.review.domain;
 import static com.fourdays.foodage.member.domain.QMember.*;
 import static com.fourdays.foodage.review.domain.QReview.*;
 import static com.fourdays.foodage.review.domain.QReviewImage.*;
-import static com.fourdays.foodage.tag.domain.QTag.*;
+import static com.fourdays.foodage.tag.domain.QReviewTag.*;
 import static com.querydsl.core.group.GroupBy.*;
 
 import java.time.LocalDate;
@@ -18,6 +18,7 @@ import com.fourdays.foodage.review.domain.model.ReviewImageModel;
 import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
+import com.fourdays.foodage.tag.dto.TagInfo;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -64,16 +65,17 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				review.restaurant,
 				review.contents,
 				review.rating,
-				tag.name,
-				tag.bgColor,
-				tag.textColor,
+				reviewTag.tagId,
+				reviewTag.tagName,
+				reviewTag.tagBgColor,
+				reviewTag.tagTextColor,
 				reviewImage.sequence,
 				reviewImage.imageUrl,
 				reviewImage.useThumbnail
 			)
 			.from(review)
 			.innerJoin(member).on(review.creatorId.eq(member.id))
-			.innerJoin(tag).on(review.tagId.eq(tag.id))
+			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.leftJoin(reviewImage).on(
 				review.id.eq(reviewImage.reviewId)
 			)
@@ -83,28 +85,36 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			)
 			.orderBy(
 				review.id.desc(), // 최신순 정렬
+				reviewTag.tagId.asc(),
 				reviewImage.sequence.asc() // 먼저 등록된 순으로 정렬
 			)
 			.transform(
-				groupBy(review.id).list(
-					Projections.constructor(
-						ReviewModel.class,
-						review.id,
-						review.restaurant,
-						review.contents,
-						review.rating,
-						tag.name,
-						tag.bgColor,
-						tag.textColor,
-						list(Projections.constructor(
-								ReviewImageModel.class,
-								reviewImage.sequence,
-								reviewImage.imageUrl,
-								reviewImage.useThumbnail
-							).skipNulls()
+				groupBy(review.id)
+					.list(
+						Projections.constructor(
+							ReviewModel.class,
+							review.id,
+							review.restaurant,
+							review.contents,
+							review.rating,
+							list(Projections.constructor(
+									TagInfo.class,
+									reviewTag.id,
+									reviewTag.tagName,
+									reviewTag.tagBgColor,
+									reviewTag.tagTextColor
+								).skipNulls()
+							),
+							list(Projections.constructor(
+									ReviewImageModel.class,
+									reviewImage.id,
+									reviewImage.sequence,
+									reviewImage.imageUrl,
+									reviewImage.useThumbnail
+								).skipNulls()
+							)
 						)
 					)
-				)
 			);
 
 		return reviewModel;
@@ -119,16 +129,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 					review.id,
 					review.restaurant,
 					review.address,
-					tag.name,
-					tag.bgColor,
-					tag.textColor,
 					reviewImage.imageUrl,
 					review.createdAt
 				)
 			)
 			.from(review)
 			.innerJoin(member).on(review.creatorId.eq(member.id))
-			.innerJoin(tag).on(review.tagId.eq(tag.id))
 			.innerJoin(reviewImage).on(
 				review.id.eq(reviewImage.reviewId),
 				review.thumbnailId.eq(reviewImage.id)

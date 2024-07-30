@@ -43,9 +43,6 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "contents", nullable = false)
 	private String contents;
 
-	@Column(name = "tag_id", nullable = false)
-	private Long tagId;
-
 	@Column(name = "thumbnail_id")
 	private Long thumbnailId;
 

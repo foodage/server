@@ -13,27 +13,30 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "tag")
+@Table(name = "review_tag")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Tag extends BaseTimeEntity {
+public class ReviewTag extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "name", nullable = false, length = 32)
-	private String name;
+	@Column(name = "review_id", nullable = false)
+	private Long reviewId;
+
+	@Column(name = "tag_id", nullable = false)
+	private Long tagId;
 
 	@Column(name = "bg_color", length = 128, nullable = false)
-	private String bgColor;
+	private String tagBgColor;
 
 	@Column(name = "text_color", length = 128, nullable = false)
-	private String textColor;
+	private String tagTextColor;
 
-	@Column(name = "description", length = 128)
-	private String description;
+	@Column(name = "name", length = 128)
+	private String tagName;
 }
