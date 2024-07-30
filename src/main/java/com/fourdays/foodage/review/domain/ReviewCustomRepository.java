@@ -11,6 +11,8 @@ import com.fourdays.foodage.review.dto.RecentReviewResponse;
 
 public interface ReviewCustomRepository {
 
+	List<ReviewModel> findReviews(MemberId memberId);
+
 	List<PeriodReviewResponse> findReviewsByPeriod(MemberId memberId,
 		LocalDateTime startDate, LocalDateTime endDate);
 

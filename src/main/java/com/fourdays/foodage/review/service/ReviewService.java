@@ -18,6 +18,7 @@ import com.fourdays.foodage.review.dto.PeriodReviewGroup;
 import com.fourdays.foodage.review.dto.PeriodReviewRequest;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
+import com.fourdays.foodage.review.dto.ReviewResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +64,14 @@ public class ReviewService {
 			));
 
 		return response;
+	}
+
+	public ReviewResponse getReviews(final MemberId memberId) {
+
+		List<ReviewModel> reviewModels =
+			reviewCustomRepository.findReviews(memberId);
+
+		return new ReviewResponse(reviewModels);
 	}
 
 	public DateReviewResponse getReviewsByDate(final MemberId memberId,

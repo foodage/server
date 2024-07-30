@@ -57,6 +57,69 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
+	public List<ReviewModel> findReviews(MemberId memberId) {
+
+		List<ReviewModel> reviewModel = query
+			.select(
+				review.id,
+				review.restaurant,
+				review.contents,
+				review.rating,
+				reviewTag.tagId,
+				reviewTag.tagName,
+				reviewTag.tagBgColor,
+				reviewTag.tagTextColor,
+				reviewImage.sequence,
+				reviewImage.imageUrl,
+				reviewImage.useThumbnail
+			)
+			.from(review)
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
+			.leftJoin(reviewImage).on(
+				review.id.eq(reviewImage.reviewId)
+			)
+			.where(
+				memberIdEq(memberId)
+			)
+			.orderBy(
+				review.id.desc(), // 최신순 정렬
+				reviewTag.tagId.asc(),
+				reviewImage.sequence.asc() // 먼저 등록된 순으로 정렬
+			)
+			.transform(
+				groupBy(review.id)
+					.list(
+						Projections.constructor(
+							ReviewModel.class,
+							review.id,
+							review.restaurant,
+							review.contents,
+							review.rating,
+							list(Projections.constructor(
+									TagInfo.class,
+									reviewTag.id,
+									reviewTag.tagName,
+									reviewTag.tagBgColor,
+									reviewTag.tagTextColor
+								).skipNulls()
+							),
+							list(Projections.constructor(
+									ReviewImageModel.class,
+									reviewImage.id,
+									reviewImage.sequence,
+									reviewImage.imageUrl,
+									reviewImage.useThumbnail
+								).skipNulls()
+							)
+						)
+					)
+			);
+
+		return reviewModel;
+	}
+
+	@Override
 	public List<ReviewModel> findReviewsByDate(MemberId memberId, LocalDate date) {
 
 		List<ReviewModel> reviewModel = query

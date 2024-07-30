@@ -24,6 +24,7 @@ import com.fourdays.foodage.review.dto.DateReviewResponse;
 import com.fourdays.foodage.review.dto.PeriodReviewGroup;
 import com.fourdays.foodage.review.dto.PeriodReviewRequest;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
+import com.fourdays.foodage.review.dto.ReviewResponse;
 import com.fourdays.foodage.review.service.ReviewService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,10 +72,20 @@ public class ReviewController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@Operation(summary = "특정일의 리뷰 목록 조회")
+	@Operation(summary = "전체 리뷰 목록 조회")
 	@GetMapping("/reviews")
+	public ResponseEntity<ReviewResponse> getReviews() {
+
+		MemberId memberId = SecurityUtil.getCurrentMemberId();
+		ReviewResponse response = reviewService.getReviews(memberId);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@Operation(summary = "특정일의 리뷰 목록 조회")
+	@GetMapping("/reviews/date")
 	public ResponseEntity<DateReviewResponse> getReviewsByDate(
-		@RequestParam("date") LocalDate date) {
+		@RequestParam("on") LocalDate date) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		DateReviewResponse response = reviewService.getReviewsByDate(memberId, date);
@@ -100,5 +111,4 @@ public class ReviewController {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(addReview);
 	}
-
 }
