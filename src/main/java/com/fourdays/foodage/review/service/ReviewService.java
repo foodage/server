@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.member.vo.MemberId;
@@ -66,12 +68,16 @@ public class ReviewService {
 		return response;
 	}
 
-	public ReviewResponse getReviews(final MemberId memberId) {
+	public ReviewResponse getReviews(final Long idx, final MemberId memberId,
+		final Pageable pageable) {
 
-		List<ReviewModel> reviewModels =
-			reviewCustomRepository.findReviews(memberId);
+		Slice<Long> reviewIds =
+			reviewCustomRepository.findReviewIds(idx, memberId, pageable);
 
-		return new ReviewResponse(reviewModels);
+		List<ReviewModel> reviews =
+			reviewCustomRepository.findReviews(reviewIds.getContent(), memberId, pageable);
+
+		return new ReviewResponse(reviewIds, reviews);
 	}
 
 	public DateReviewResponse getReviewsByDate(final MemberId memberId,

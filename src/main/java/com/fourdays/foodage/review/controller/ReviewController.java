@@ -7,8 +7,12 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,12 +76,15 @@ public class ReviewController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	// 정렬 조건 적용 필요
 	@Operation(summary = "전체 리뷰 목록 조회")
 	@GetMapping("/reviews")
-	public ResponseEntity<ReviewResponse> getReviews() {
-
+	public ResponseEntity<ReviewResponse> getReviews(
+		@RequestParam("idx") @Nullable Long lastReviewId,
+		@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
+	) {
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
-		ReviewResponse response = reviewService.getReviews(memberId);
+		ReviewResponse response = reviewService.getReviews(lastReviewId, memberId, pageable);
 
 		return ResponseEntity.ok().body(response);
 	}

@@ -9,8 +9,13 @@ import static com.querydsl.core.group.GroupBy.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import com.fourdays.foodage.member.vo.MemberId;
@@ -19,6 +24,8 @@ import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
 import com.fourdays.foodage.tag.dto.TagInfo;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -57,7 +64,32 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
-	public List<ReviewModel> findReviews(MemberId memberId) {
+	public Slice<Long> findReviewIds(Long idx, MemberId memberId, Pageable pageable) {
+
+		List<Long> reviewModel = query
+			.select(review.id)
+			.from(review)
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
+			.leftJoin(reviewImage).on(
+				review.id.eq(reviewImage.reviewId)
+			)
+			.where(
+				memberIdEq(memberId),
+				reviewIdLt(idx)
+			)
+			.groupBy(review.id)
+			.orderBy(
+				sort(pageable.getSort())
+			)
+			.limit(pageable.getPageSize() + 1)
+			.fetch();
+
+		return checkLastPage(pageable, reviewModel);
+	}
+
+	@Override
+	public List<ReviewModel> findReviews(List<Long> ids, MemberId memberId, Pageable pageable) {
 
 		List<ReviewModel> reviewModel = query
 			.select(
@@ -65,6 +97,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				review.restaurant,
 				review.contents,
 				review.rating,
+				review.createdAt,
 				reviewTag.tagId,
 				reviewTag.tagName,
 				reviewTag.tagBgColor,
@@ -80,12 +113,11 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				review.id.eq(reviewImage.reviewId)
 			)
 			.where(
-				memberIdEq(memberId)
+				memberIdEq(memberId),
+				reviewIdIn(ids)
 			)
 			.orderBy(
-				review.id.desc(), // 최신순 정렬
-				reviewTag.tagId.asc(),
-				reviewImage.sequence.asc() // 먼저 등록된 순으로 정렬
+				sort(pageable.getSort())
 			)
 			.transform(
 				groupBy(review.id)
@@ -96,6 +128,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 							review.restaurant,
 							review.contents,
 							review.rating,
+							review.createdAt,
 							list(Projections.constructor(
 									TagInfo.class,
 									reviewTag.id,
@@ -218,6 +251,20 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			.and(member.oauthId.oauthServerType.eq(memberId.oauthServerType()));
 	}
 
+	private BooleanExpression reviewIdLt(Long reviewId) {
+
+		return reviewId != null
+			? review.id.lt(reviewId)
+			: null;
+	}
+
+	private BooleanExpression reviewIdIn(List<Long> reviewId) {
+
+		return reviewId != null
+			? review.id.in(reviewId)
+			: null;
+	}
+
 	private BooleanExpression dateFilter(LocalDateTime startDate, LocalDateTime endDate) {
 
 		if (!isValidDateRange(startDate, endDate)) {
@@ -239,5 +286,44 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
 		return review.createdAt
 			.between(date.atStartOfDay(), date.atTime(LocalTime.MAX));
+	}
+
+	// pagination
+	private <T> Slice<T> checkLastPage(Pageable pageable, List<T> results) {
+
+		boolean hasNext = false;
+
+		// 조회된 개수(ex. 10) > 요청 페이지 사이즈(ex. 5)면 뒤에 조회될 페이지가 남아 있다는 것
+		if (results.size() > pageable.getPageSize()) {
+			hasNext = true;
+			results.remove(pageable.getPageSize());
+		}
+
+		return new SliceImpl<>(results, pageable, hasNext);
+	}
+
+	private OrderSpecifier[] sort(Sort sort) {
+
+		List<OrderSpecifier> result = new ArrayList<>();
+
+		if (sort.isSorted()) {
+			if (sort.getOrderFor("rating").isDescending()) {
+				result.add(new OrderSpecifier(Order.DESC, review.rating));
+			} else {
+				result.add(new OrderSpecifier(Order.ASC, review.rating));
+			}
+
+			if (sort.getOrderFor("created_at").isDescending()) {
+				result.add(new OrderSpecifier(Order.DESC, review.createdAt));
+			} else {
+				result.add(new OrderSpecifier(Order.ASC, review.createdAt));
+			}
+		}
+		// default
+		result.add(new OrderSpecifier(Order.ASC, reviewTag.tagId)); // 먼저 등록된 순
+		result.add(new OrderSpecifier(Order.ASC, reviewImage.sequence)); // 먼저 등록된 순
+		result.add(new OrderSpecifier(Order.DESC, review.id));
+		
+		return result.toArray(new OrderSpecifier[result.size()]);
 	}
 }

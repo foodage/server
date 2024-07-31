@@ -1,5 +1,6 @@
 package com.fourdays.foodage.review.domain.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,12 +22,14 @@ public class ReviewModel {
 
 	private float rating;
 
+	private LocalDateTime createdAt;
+
 	private List<TagInfo> tags;
 
 	private List<ReviewImageModel> thumbnails;
 
 	public ReviewModel(Long id, String restaurant, String content, Float rating,
-		List<TagInfo> tags, List<ReviewImageModel> thumbnails) {
+		LocalDateTime createdAt, List<TagInfo> tags, List<ReviewImageModel> thumbnails) {
 
 		this.id = id;
 		this.restaurant = restaurant;
@@ -36,6 +39,7 @@ public class ReviewModel {
 			this.content = content;
 		}
 		this.rating = rating;
+		this.createdAt = createdAt;
 		this.tags = tags.stream().distinct().toList();
 		this.thumbnails = thumbnails.stream().distinct().toList();
 	}
