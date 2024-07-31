@@ -89,6 +89,23 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
+	public int countByReviewId(MemberId memberId) {
+
+		int totalCount = query
+			.select(review.id)
+			.from(review)
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
+			.where(
+				memberIdEq(memberId)
+			)
+			.groupBy(review.id)
+			.fetch().size();
+
+		return totalCount;
+	}
+
+	@Override
 	public List<ReviewModel> findReviews(List<Long> ids, MemberId memberId, Pageable pageable) {
 
 		List<ReviewModel> reviewModel = query
@@ -161,6 +178,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				review.restaurant,
 				review.contents,
 				review.rating,
+				review.createdAt,
 				reviewTag.tagId,
 				reviewTag.tagName,
 				reviewTag.tagBgColor,
@@ -193,6 +211,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 							review.restaurant,
 							review.contents,
 							review.rating,
+							review.createdAt,
 							list(Projections.constructor(
 									TagInfo.class,
 									reviewTag.id,
@@ -323,7 +342,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 		result.add(new OrderSpecifier(Order.ASC, reviewTag.tagId)); // 먼저 등록된 순
 		result.add(new OrderSpecifier(Order.ASC, reviewImage.sequence)); // 먼저 등록된 순
 		result.add(new OrderSpecifier(Order.DESC, review.id));
-		
+
 		return result.toArray(new OrderSpecifier[result.size()]);
 	}
 }

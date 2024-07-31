@@ -71,13 +71,15 @@ public class ReviewService {
 	public ReviewResponse getReviews(final Long idx, final MemberId memberId,
 		final Pageable pageable) {
 
+		int totalCount = reviewCustomRepository.countByReviewId(memberId);
+
 		Slice<Long> reviewIds =
 			reviewCustomRepository.findReviewIds(idx, memberId, pageable);
 
 		List<ReviewModel> reviews =
 			reviewCustomRepository.findReviews(reviewIds.getContent(), memberId, pageable);
 
-		return new ReviewResponse(reviewIds, reviews);
+		return new ReviewResponse(reviewIds, reviews, totalCount);
 	}
 
 	public DateReviewResponse getReviewsByDate(final MemberId memberId,

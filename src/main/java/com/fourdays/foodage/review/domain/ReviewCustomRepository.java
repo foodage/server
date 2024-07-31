@@ -16,6 +16,8 @@ public interface ReviewCustomRepository {
 
 	Slice<Long> findReviewIds(Long idx, MemberId memberId, Pageable pageable);
 
+	int countByReviewId(MemberId memberId);
+
 	List<ReviewModel> findReviews(List<Long> ids, MemberId memberId, Pageable pageable);
 
 	List<PeriodReviewResponse> findReviewsByPeriod(MemberId memberId,

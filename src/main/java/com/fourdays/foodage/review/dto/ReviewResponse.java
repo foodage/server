@@ -13,15 +13,21 @@ import lombok.Getter;
 @Getter
 public class ReviewResponse {
 
+	private int totalCount;
+
 	private Paging paging;
 
 	private List<ReviewModel> reviews;
 
-	public ReviewResponse(Slice<Long> reviewIds, List<ReviewModel> reviews) {
+	public ReviewResponse(Slice<Long> reviewIds, List<ReviewModel> reviews,
+		int totalCount) {
+
+		this.totalCount = totalCount;
 
 		Long nextId = reviews.isEmpty() ? null : reviews.get(reviews.size() - 1).getId();
 		this.paging = new Paging(reviewIds.getPageable().getPageSize(),
 			reviewIds.hasNext(), nextId);
+
 		this.reviews = reviews;
 	}
 
