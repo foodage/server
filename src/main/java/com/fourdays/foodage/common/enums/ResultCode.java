@@ -38,6 +38,10 @@ public enum ResultCode {
 	// 10500~
 	ERR_NOT_SUPPORTED_VIEW_TYPE(-10500, "지원하지 않는 조회 종류입니다.", HttpStatus.BAD_REQUEST),
 
+	// REVIEW //////////////////////////////////////////////////////////////////////////////////////
+	// 11000~
+	ERR_THUMBNAIL_NOT_FOUND(-11000, "썸네일 정보가 없습니다.", HttpStatus.NOT_FOUND),
+
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	// 10100~
 	ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE(-10100, "지원하지 않는 간편 로그인 종류입니다.", HttpStatus.BAD_REQUEST),

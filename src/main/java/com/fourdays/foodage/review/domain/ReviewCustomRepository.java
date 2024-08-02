@@ -9,6 +9,7 @@ import org.springframework.data.domain.Slice;
 
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.model.ReviewModel;
+import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
 
@@ -18,7 +19,7 @@ public interface ReviewCustomRepository {
 
 	int countByReviewId(MemberId memberId);
 
-	List<ReviewModel> findReviews(List<Long> ids, MemberId memberId, Pageable pageable);
+	List<ReviewModelWithThumbnail> findReviews(List<Long> ids, MemberId memberId, Pageable pageable);
 
 	List<PeriodReviewResponse> findReviewsByPeriod(MemberId memberId,
 		LocalDateTime startDate, LocalDateTime endDate);

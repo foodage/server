@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fourdays.foodage.tag.dto.TagInfo;
+import com.fourdays.foodage.tag.domain.model.TagModel;
 
 import lombok.Getter;
 
@@ -24,12 +24,12 @@ public class ReviewModel {
 
 	private LocalDateTime createdAt;
 
-	private List<TagInfo> tags;
+	private List<TagModel> tags;
 
-	private List<ReviewImageModel> thumbnails;
+	private List<ReviewImageModel> images;
 
 	public ReviewModel(Long id, String restaurant, String content, Float rating,
-		LocalDateTime createdAt, List<TagInfo> tags, List<ReviewImageModel> thumbnails) {
+		LocalDateTime createdAt, List<TagModel> tags, List<ReviewImageModel> images) {
 
 		this.id = id;
 		this.restaurant = restaurant;
@@ -41,6 +41,6 @@ public class ReviewModel {
 		this.rating = rating;
 		this.createdAt = createdAt;
 		this.tags = tags.stream().distinct().toList();
-		this.thumbnails = thumbnails.stream().distinct().toList();
+		this.images = images.stream().distinct().toList();
 	}
 }

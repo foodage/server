@@ -15,12 +15,13 @@ import com.fourdays.foodage.review.domain.Review;
 import com.fourdays.foodage.review.domain.ReviewCustomRepository;
 import com.fourdays.foodage.review.domain.ReviewRepository;
 import com.fourdays.foodage.review.domain.model.ReviewModel;
+import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 import com.fourdays.foodage.review.dto.DateReviewResponse;
 import com.fourdays.foodage.review.dto.PeriodReviewGroup;
 import com.fourdays.foodage.review.dto.PeriodReviewRequest;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
-import com.fourdays.foodage.review.dto.ReviewResponse;
+import com.fourdays.foodage.review.dto.ReviewResponseWithThumbnail;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -68,7 +69,7 @@ public class ReviewService {
 		return response;
 	}
 
-	public ReviewResponse getReviews(final Long idx, final MemberId memberId,
+	public ReviewResponseWithThumbnail getReviews(final Long idx, final MemberId memberId,
 		final Pageable pageable) {
 
 		int totalCount = reviewCustomRepository.countByReviewId(memberId);
@@ -76,10 +77,10 @@ public class ReviewService {
 		Slice<Long> reviewIds =
 			reviewCustomRepository.findReviewIds(idx, memberId, pageable);
 
-		List<ReviewModel> reviews =
+		List<ReviewModelWithThumbnail> reviews =
 			reviewCustomRepository.findReviews(reviewIds.getContent(), memberId, pageable);
 
-		return new ReviewResponse(reviewIds, reviews, totalCount);
+		return new ReviewResponseWithThumbnail(reviewIds, reviews, totalCount);
 	}
 
 	public DateReviewResponse getReviewsByDate(final MemberId memberId,

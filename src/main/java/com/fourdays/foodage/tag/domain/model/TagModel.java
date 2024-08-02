@@ -1,4 +1,4 @@
-package com.fourdays.foodage.tag.dto;
+package com.fourdays.foodage.tag.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class TagInfo {
+public class TagModel {
 
 	@EqualsAndHashCode.Include
 	@JsonIgnore

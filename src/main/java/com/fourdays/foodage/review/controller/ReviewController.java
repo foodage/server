@@ -28,7 +28,7 @@ import com.fourdays.foodage.review.dto.DateReviewResponse;
 import com.fourdays.foodage.review.dto.PeriodReviewGroup;
 import com.fourdays.foodage.review.dto.PeriodReviewRequest;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
-import com.fourdays.foodage.review.dto.ReviewResponse;
+import com.fourdays.foodage.review.dto.ReviewResponseWithThumbnail;
 import com.fourdays.foodage.review.service.ReviewService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,12 +79,13 @@ public class ReviewController {
 	// 정렬 조건 적용 필요
 	@Operation(summary = "전체 리뷰 목록 조회")
 	@GetMapping("/reviews")
-	public ResponseEntity<ReviewResponse> getReviews(
+	public ResponseEntity<ReviewResponseWithThumbnail> getReviews(
 		@RequestParam("idx") @Nullable Long lastReviewId,
 		@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
-		ReviewResponse response = reviewService.getReviews(lastReviewId, memberId, pageable);
+		ReviewResponseWithThumbnail response =
+			reviewService.getReviews(lastReviewId, memberId, pageable);
 
 		return ResponseEntity.ok().body(response);
 	}
