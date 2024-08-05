@@ -6,6 +6,7 @@ import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -96,7 +97,8 @@ public class ReviewController {
 	@Operation(summary = "캘린더 내 리뷰 조회")
 	@GetMapping("/reviews/{viewType}")
 	public ResponseEntity<Map<LocalDate, PeriodReviewGroup>> getReviewsByPeriod(
-		@PathVariable("viewType") final ReviewViewType viewType) {
+		@PathVariable("viewType") ReviewViewType viewType,
+		@RequestParam("date") @Nullable YearMonth requestDate) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 
@@ -110,10 +112,10 @@ public class ReviewController {
 				);
 			}
 			case MONTHLY -> {
-				YearMonth currentMonth = YearMonth.now();
+				YearMonth baseMonth = Objects.requireNonNullElseGet(requestDate, YearMonth::now);
 				period = new PeriodReviewRequest(
-					currentMonth.atDay(1), // startDate
-					currentMonth.atEndOfMonth() // endDate
+					baseMonth.atDay(1), // startDate
+					baseMonth.atEndOfMonth() // endDate
 				);
 			}
 		}

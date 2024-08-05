@@ -95,12 +95,12 @@ public class ReviewService {
 					list -> {
 						String dayOfWeek = list.get(0).getDayOfWeek();
 						// String lastEatenFood = list.get(list.size() - 1).getLastEatenFood();
-						List<Long> reviewIds =
+						int count =
 							list.stream()
 								.map(PeriodReviewResponse::getId)
-								.collect(Collectors.toList());
+								.collect(Collectors.toList()).size();
 
-						return new PeriodReviewGroup(dayOfWeek, reviewIds);
+						return new PeriodReviewGroup(dayOfWeek, count);
 					}
 				)
 			));
