@@ -25,7 +25,7 @@ public class Tag extends BaseTimeEntity {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "name", nullable = false, length = 32)
+	@Column(name = "name", length = 32, nullable = false)
 	private String name;
 
 	@Column(name = "bg_color", length = 128, nullable = false)

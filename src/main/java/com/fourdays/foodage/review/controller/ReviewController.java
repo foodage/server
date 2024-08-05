@@ -24,6 +24,7 @@ import com.fourdays.foodage.common.enums.ReviewViewType;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.Review;
+import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.dto.DateReviewResponse;
 import com.fourdays.foodage.review.dto.PeriodReviewGroup;
 import com.fourdays.foodage.review.dto.PeriodReviewRequest;
@@ -33,6 +34,7 @@ import com.fourdays.foodage.review.service.ReviewService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -46,37 +48,16 @@ public class ReviewController {
 		this.reviewService = reviewService;
 	}
 
-	@Operation(summary = "캘린더 내 리뷰 조회")
-	@GetMapping("/reviews/{viewType}")
-	public ResponseEntity<Map<LocalDate, PeriodReviewGroup>> getReviewsByPeriod(
-		@PathVariable("viewType") final ReviewViewType viewType) {
+	@Operation(summary = "리뷰 상세 조회")
+	@GetMapping("/review/{id}")
+	public ResponseEntity<ReviewModel> getReview(@PathVariable("id") @NotNull Long reviewId) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
-
-		PeriodReviewRequest period = null;
-		switch (viewType) {
-			case WEEKLY -> {
-				LocalDate now = LocalDate.now();
-				period = new PeriodReviewRequest(
-					now.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)), // startDate
-					now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)) // endDate
-				);
-			}
-			case MONTHLY -> {
-				YearMonth currentMonth = YearMonth.now();
-				period = new PeriodReviewRequest(
-					currentMonth.atDay(1), // startDate
-					currentMonth.atEndOfMonth() // endDate
-				);
-			}
-		}
-		Map<LocalDate, PeriodReviewGroup> response =
-			reviewService.getReviewsByPeriod(memberId, period);
+		ReviewModel response = reviewService.getReview(memberId, reviewId);
 
 		return ResponseEntity.ok().body(response);
 	}
 
-	// 정렬 조건 적용 필요
 	@Operation(summary = "전체 리뷰 목록 조회")
 	@GetMapping("/reviews")
 	public ResponseEntity<ReviewResponse> getReviews(
@@ -108,6 +89,36 @@ public class ReviewController {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		List<RecentReviewResponse> response = reviewService.getRecentReviews(memberId, limit);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@Operation(summary = "캘린더 내 리뷰 조회")
+	@GetMapping("/reviews/{viewType}")
+	public ResponseEntity<Map<LocalDate, PeriodReviewGroup>> getReviewsByPeriod(
+		@PathVariable("viewType") final ReviewViewType viewType) {
+
+		MemberId memberId = SecurityUtil.getCurrentMemberId();
+
+		PeriodReviewRequest period = null;
+		switch (viewType) {
+			case WEEKLY -> {
+				LocalDate now = LocalDate.now();
+				period = new PeriodReviewRequest(
+					now.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)), // startDate
+					now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)) // endDate
+				);
+			}
+			case MONTHLY -> {
+				YearMonth currentMonth = YearMonth.now();
+				period = new PeriodReviewRequest(
+					currentMonth.atDay(1), // startDate
+					currentMonth.atEndOfMonth() // endDate
+				);
+			}
+		}
+		Map<LocalDate, PeriodReviewGroup> response =
+			reviewService.getReviewsByPeriod(memberId, period);
 
 		return ResponseEntity.ok().body(response);
 	}

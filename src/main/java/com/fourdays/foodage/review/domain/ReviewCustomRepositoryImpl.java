@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.model.ReviewImageModel;
+import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
@@ -40,75 +41,9 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
-	public List<PeriodReviewResponse> findReviewsByPeriod(MemberId memberId,
-		LocalDateTime startDate, LocalDateTime endDate) {
+	public ReviewModel findReviewById(MemberId memberId, Long reviewId) {
 
-		List<PeriodReviewResponse> reviewModel = query
-			.select(Projections.constructor(
-					PeriodReviewResponse.class,
-					review.id,
-					review.createdAt,
-					review.lastEatenFood
-				)
-			)
-			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
-			.where(
-				memberIdEq(memberId),
-				dateFilter(startDate, endDate)
-			)
-			.orderBy(review.createdAt.asc())
-			.fetch();
-
-		return reviewModel;
-	}
-
-	@Override
-	public Slice<Long> findReviewIds(Long idx, MemberId memberId, Pageable pageable) {
-
-		List<Long> reviewModel = query
-			.select(review.id)
-			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
-			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
-			.leftJoin(reviewImage).on(
-				review.id.eq(reviewImage.reviewId)
-			)
-			.where(
-				memberIdEq(memberId),
-				reviewIdLt(idx)
-			)
-			.groupBy(review.id)
-			.orderBy(
-				sort(pageable.getSort())
-			)
-			.limit(pageable.getPageSize() + 1)
-			.fetch();
-
-		return checkLastPage(pageable, reviewModel);
-	}
-
-	@Override
-	public int countByReviewId(MemberId memberId) {
-
-		int totalCount = query
-			.select(review.id)
-			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
-			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
-			.where(
-				memberIdEq(memberId)
-			)
-			.groupBy(review.id)
-			.fetch().size();
-
-		return totalCount;
-	}
-
-	@Override
-	public List<ReviewModelWithThumbnail> findReviews(List<Long> ids, MemberId memberId, Pageable pageable) {
-
-		List<ReviewModelWithThumbnail> reviewModel = query
+		ReviewModel reviewModel = query
 			.select(
 				review.id,
 				review.restaurant,
@@ -131,16 +66,18 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			)
 			.where(
 				memberIdEq(memberId),
-				reviewIdIn(ids)
+				reviewIdEq(reviewId)
 			)
 			.orderBy(
-				sort(pageable.getSort())
+				review.id.desc(), // 최신순 정렬
+				reviewTag.tagId.asc(),
+				reviewImage.sequence.asc() // 먼저 등록된 순으로 정렬
 			)
 			.transform(
 				groupBy(review.id)
 					.list(
 						Projections.constructor(
-							ReviewModelWithThumbnail.class,
+							ReviewModel.class,
 							review.id,
 							review.restaurant,
 							review.contents,
@@ -164,7 +101,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 							)
 						)
 					)
-			);
+			).get(0);
 
 		return reviewModel;
 	}
@@ -236,6 +173,93 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
+	public List<PeriodReviewResponse> findReviewsByPeriod(MemberId memberId,
+		LocalDateTime startDate, LocalDateTime endDate) {
+
+		List<PeriodReviewResponse> reviewModel = query
+			.select(Projections.constructor(
+					PeriodReviewResponse.class,
+					review.id,
+					review.createdAt
+				)
+			)
+			.from(review)
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.where(
+				memberIdEq(memberId),
+				dateFilter(startDate, endDate)
+			)
+			.orderBy(review.createdAt.asc())
+			.fetch();
+
+		return reviewModel;
+	}
+
+	@Override
+	public List<ReviewModelWithThumbnail> findReviews(List<Long> ids, MemberId memberId, Pageable pageable) {
+
+		List<ReviewModelWithThumbnail> reviewModel = query
+			.select(
+				review.id,
+				review.restaurant,
+				review.contents,
+				review.rating,
+				review.createdAt,
+				reviewTag.tagId,
+				reviewTag.tagName,
+				reviewTag.tagBgColor,
+				reviewTag.tagTextColor,
+				reviewImage.sequence,
+				reviewImage.imageUrl,
+				reviewImage.useThumbnail
+			)
+			.from(review)
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
+			.leftJoin(reviewImage).on(
+				review.id.eq(reviewImage.reviewId)
+			)
+			.where(
+				memberIdEq(memberId),
+				reviewIdIn(ids)
+			)
+			.orderBy(
+				sort(pageable.getSort())
+			)
+			.transform(
+				groupBy(review.id)
+					.list(
+						Projections.constructor(
+							ReviewModelWithThumbnail.class,
+							review.id,
+							review.restaurant,
+							review.contents,
+							review.rating,
+							review.createdAt,
+							list(Projections.constructor(
+									TagModel.class,
+									reviewTag.id,
+									reviewTag.tagName,
+									reviewTag.tagBgColor,
+									reviewTag.tagTextColor
+								).skipNulls()
+							),
+							list(Projections.constructor(
+									ReviewImageModel.class,
+									reviewImage.id,
+									reviewImage.sequence,
+									reviewImage.imageUrl,
+									reviewImage.useThumbnail
+								).skipNulls()
+							)
+						)
+					)
+			);
+
+		return reviewModel;
+	}
+
+	@Override
 	public List<RecentReviewResponse> findRecentReviews(MemberId memberId, int limit) {
 
 		List<RecentReviewResponse> reviewModel = query
@@ -264,10 +288,61 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 		return reviewModel;
 	}
 
+	@Override
+	public Slice<Long> findReviewIds(Long idx, MemberId memberId, Pageable pageable) {
+
+		List<Long> reviewModel = query
+			.select(review.id)
+			.from(review)
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
+			.leftJoin(reviewImage).on(
+				review.id.eq(reviewImage.reviewId)
+			)
+			.where(
+				memberIdEq(memberId),
+				reviewIdLt(idx)
+			)
+			.groupBy(review.id)
+			.orderBy(
+				sort(pageable.getSort())
+			)
+			.limit(pageable.getPageSize() + 1)
+			.fetch();
+
+		return checkLastPage(pageable, reviewModel);
+	}
+
+	@Override
+	public int countByReviewId(MemberId memberId) {
+
+		int totalCount = query
+			.select(review.id)
+			.from(review)
+			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
+			.where(
+				memberIdEq(memberId)
+			)
+			.groupBy(review.id)
+			.fetch().size();
+
+		return totalCount;
+	}
+
+	//////////////////////////////////////////////////////////////////
+
 	private BooleanExpression memberIdEq(MemberId memberId) {
 
 		return member.accountEmail.eq(memberId.accountEmail())
 			.and(member.oauthId.oauthServerType.eq(memberId.oauthServerType()));
+	}
+
+	private BooleanExpression reviewIdEq(Long reviewId) {
+
+		return reviewId != null
+			? review.id.eq(reviewId)
+			: null;
 	}
 
 	private BooleanExpression reviewIdLt(Long reviewId) {

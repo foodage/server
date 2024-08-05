@@ -14,6 +14,7 @@ import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.Review;
 import com.fourdays.foodage.review.domain.ReviewCustomRepository;
 import com.fourdays.foodage.review.domain.ReviewRepository;
+import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 import com.fourdays.foodage.review.dto.DateReviewResponse;
 import com.fourdays.foodage.review.dto.PeriodReviewGroup;
@@ -36,36 +37,10 @@ public class ReviewService {
 		this.reviewRepository = reviewRepository;
 	}
 
-	public Map<LocalDate, PeriodReviewGroup> getReviewsByPeriod(final MemberId memberId,
-		final PeriodReviewRequest request) {
+	public ReviewModel getReview(final MemberId memberId,
+		final Long reviewId) {
 
-		log.debug("# getWeeklyReviews() : {} ~ {}", request.getStartDate(),
-			request.getEndDate());
-
-		List<PeriodReviewResponse> weeklyReviews =
-			reviewCustomRepository.findReviewsByPeriod(memberId, request.getStartDate(),
-				request.getEndDate());
-
-		// todo: refactoring
-		Map<LocalDate, PeriodReviewGroup> response = weeklyReviews.stream()
-			.collect(Collectors.groupingBy(PeriodReviewResponse::getCreatedAt,
-				TreeMap::new,
-				Collectors.collectingAndThen(
-					Collectors.toList(),
-					list -> {
-						String dayOfWeek = list.get(0).getDayOfWeek();
-						String lastEatenFood = list.get(list.size() - 1).getLastEatenFood();
-						List<Long> reviewIds =
-							list.stream()
-								.map(PeriodReviewResponse::getId)
-								.collect(Collectors.toList());
-
-						return new PeriodReviewGroup(dayOfWeek, lastEatenFood, reviewIds);
-					}
-				)
-			));
-
-		return response;
+		return reviewCustomRepository.findReviewById(memberId, reviewId);
 	}
 
 	public ReviewResponse getReviews(final Long idx, final MemberId memberId,
@@ -99,6 +74,38 @@ public class ReviewService {
 		log.debug("# getRecentReviews() limit : {}", limit);
 
 		return reviewCustomRepository.findRecentReviews(memberId, limit);
+	}
+
+	public Map<LocalDate, PeriodReviewGroup> getReviewsByPeriod(final MemberId memberId,
+		final PeriodReviewRequest request) {
+
+		log.debug("# getReviewsByPeriod() : {} ~ {}", request.getStartDate(),
+			request.getEndDate());
+
+		List<PeriodReviewResponse> weeklyReviews =
+			reviewCustomRepository.findReviewsByPeriod(memberId, request.getStartDate(),
+				request.getEndDate());
+
+		// todo: refactoring
+		Map<LocalDate, PeriodReviewGroup> response = weeklyReviews.stream()
+			.collect(Collectors.groupingBy(PeriodReviewResponse::getCreatedAt,
+				TreeMap::new,
+				Collectors.collectingAndThen(
+					Collectors.toList(),
+					list -> {
+						String dayOfWeek = list.get(0).getDayOfWeek();
+						// String lastEatenFood = list.get(list.size() - 1).getLastEatenFood();
+						List<Long> reviewIds =
+							list.stream()
+								.map(PeriodReviewResponse::getId)
+								.collect(Collectors.toList());
+
+						return new PeriodReviewGroup(dayOfWeek, reviewIds);
+					}
+				)
+			));
+
+		return response;
 	}
 
 	public Review addReview(Review review) {

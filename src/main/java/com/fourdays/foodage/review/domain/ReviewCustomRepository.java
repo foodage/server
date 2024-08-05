@@ -8,22 +8,28 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
 
 public interface ReviewCustomRepository {
 
-	Slice<Long> findReviewIds(Long idx, MemberId memberId, Pageable pageable);
+	// by ~
+	ReviewModel findReviewById(MemberId memberId, Long reviewId);
 
-	int countByReviewId(MemberId memberId);
-
-	List<ReviewModelWithThumbnail> findReviews(List<Long> ids, MemberId memberId, Pageable pageable);
+	List<ReviewModelWithThumbnail> findReviewsByDate(MemberId memberId, LocalDate date);
 
 	List<PeriodReviewResponse> findReviewsByPeriod(MemberId memberId,
 		LocalDateTime startDate, LocalDateTime endDate);
 
-	List<ReviewModelWithThumbnail> findReviewsByDate(MemberId memberId, LocalDate date);
+	// list
+	List<ReviewModelWithThumbnail> findReviews(List<Long> ids, MemberId memberId, Pageable pageable);
 
 	List<RecentReviewResponse> findRecentReviews(MemberId memberId, int limit);
+
+	// reviewId
+	Slice<Long> findReviewIds(Long idx, MemberId memberId, Pageable pageable);
+
+	int countByReviewId(MemberId memberId);
 }
