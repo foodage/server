@@ -41,7 +41,14 @@ public class ReviewMenu extends BaseTimeEntity {
 		name = "price",
 		nullable = false
 	)
-	@Min(1)
-	@Max(5)
 	private int price;
+
+	@Column(
+		name = "sequence",
+		nullable = false,
+		columnDefinition = "TINYINT(1)"
+	)
+	@Min(1)
+	@Max(20)
+	private int sequence; // 메뉴 등록 순서
 }

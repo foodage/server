@@ -18,6 +18,8 @@ public class ReviewModel {
 
 	private String restaurant;
 
+	private String address;
+
 	private String content;
 
 	private float rating;
@@ -26,13 +28,17 @@ public class ReviewModel {
 
 	private List<TagModel> tags;
 
+	private List<ReviewMenuModel> menus;
+
 	private List<ReviewImageModel> images;
 
-	public ReviewModel(Long id, String restaurant, String content, Float rating,
-		LocalDateTime createdAt, List<TagModel> tags, List<ReviewImageModel> images) {
+	public ReviewModel(Long id, String restaurant, String address,
+		String content, Float rating, LocalDateTime createdAt,
+		List<TagModel> tags, List<ReviewMenuModel> menus, List<ReviewImageModel> images) {
 
 		this.id = id;
 		this.restaurant = restaurant;
+		this.address = address;
 		if (content != null && content.length() > 30) {
 			this.content = content.substring(0, CONTENT_PREVIEW_LENGTH);
 		} else {
@@ -41,6 +47,7 @@ public class ReviewModel {
 		this.rating = rating;
 		this.createdAt = createdAt;
 		this.tags = tags.stream().distinct().toList();
+		this.menus = menus.stream().distinct().toList();
 		this.images = images.stream().distinct().toList();
 	}
 }

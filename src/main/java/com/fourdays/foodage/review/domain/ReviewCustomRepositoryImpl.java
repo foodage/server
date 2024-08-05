@@ -3,6 +3,7 @@ package com.fourdays.foodage.review.domain;
 import static com.fourdays.foodage.member.domain.QMember.*;
 import static com.fourdays.foodage.review.domain.QReview.*;
 import static com.fourdays.foodage.review.domain.QReviewImage.*;
+import static com.fourdays.foodage.review.domain.QReviewMenu.*;
 import static com.fourdays.foodage.tag.domain.QReviewTag.*;
 import static com.querydsl.core.group.GroupBy.*;
 
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.model.ReviewImageModel;
+import com.fourdays.foodage.review.domain.model.ReviewMenuModel;
 import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
@@ -47,6 +49,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			.select(
 				review.id,
 				review.restaurant,
+				review.address,
 				review.contents,
 				review.rating,
 				review.createdAt,
@@ -54,6 +57,9 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewTag.tagName,
 				reviewTag.tagBgColor,
 				reviewTag.tagTextColor,
+				reviewMenu.id,
+				reviewMenu.menu,
+				reviewMenu.price,
 				reviewImage.sequence,
 				reviewImage.imageUrl,
 				reviewImage.useThumbnail
@@ -61,9 +67,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			.from(review)
 			.innerJoin(member).on(review.creatorId.eq(member.id))
 			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
-			.leftJoin(reviewImage).on(
-				review.id.eq(reviewImage.reviewId)
-			)
+			.leftJoin(reviewMenu).on(review.id.eq(reviewMenu.reviewId))
+			.leftJoin(reviewImage).on(review.id.eq(reviewImage.reviewId))
 			.where(
 				memberIdEq(memberId),
 				reviewIdEq(reviewId)
@@ -71,6 +76,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			.orderBy(
 				review.id.desc(), // 최신순 정렬
 				reviewTag.tagId.asc(),
+				reviewMenu.sequence.asc(), // 먼저 등록된 순으로 정렬
 				reviewImage.sequence.asc() // 먼저 등록된 순으로 정렬
 			)
 			.transform(
@@ -80,6 +86,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 							ReviewModel.class,
 							review.id,
 							review.restaurant,
+							review.address,
 							review.contents,
 							review.rating,
 							review.createdAt,
@@ -89,6 +96,13 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 									reviewTag.tagName,
 									reviewTag.tagBgColor,
 									reviewTag.tagTextColor
+								).skipNulls()
+							),
+							list(Projections.constructor(
+									ReviewMenuModel.class,
+									reviewMenu.id,
+									reviewMenu.menu,
+									reviewMenu.price
 								).skipNulls()
 							),
 							list(Projections.constructor(
