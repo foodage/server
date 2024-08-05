@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.model.ReviewImageModel;
-import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 import com.fourdays.foodage.review.dto.PeriodReviewResponse;
 import com.fourdays.foodage.review.dto.RecentReviewResponse;
@@ -171,9 +170,9 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
-	public List<ReviewModel> findReviewsByDate(MemberId memberId, LocalDate date) {
+	public List<ReviewModelWithThumbnail> findReviewsByDate(MemberId memberId, LocalDate date) {
 
-		List<ReviewModel> reviewModel = query
+		List<ReviewModelWithThumbnail> reviewModel = query
 			.select(
 				review.id,
 				review.restaurant,
@@ -207,7 +206,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				groupBy(review.id)
 					.list(
 						Projections.constructor(
-							ReviewModel.class,
+							ReviewModelWithThumbnail.class,
 							review.id,
 							review.restaurant,
 							review.contents,

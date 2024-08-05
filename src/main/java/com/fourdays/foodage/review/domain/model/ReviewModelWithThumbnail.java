@@ -53,17 +53,18 @@ public class ReviewModelWithThumbnail {
 
 		private int totalCount;
 
-		private ReviewImageModel thumbnail;
+		private String imageUrl;
 
 		public ReviewThumbnail(List<ReviewImageModel> thumbnail) {
 			this.totalCount = !CollectionUtils.isEmpty(thumbnail)
 				? thumbnail.size()
 				: 0;
-			this.thumbnail = !CollectionUtils.isEmpty(thumbnail)
+			this.imageUrl = !CollectionUtils.isEmpty(thumbnail)
 				? thumbnail.stream()
 				.filter(ReviewImageModel::getUseThumbnail)
 				.findFirst()
 				.orElseThrow(() -> new ThumbnailNotFoundException(ResultCode.ERR_THUMBNAIL_NOT_FOUND))
+				.getImageUrl()
 				: null;
 		}
 	}

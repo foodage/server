@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Slice;
 
-import com.fourdays.foodage.review.domain.model.ReviewModel;
+import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,10 +17,10 @@ public class ReviewResponse {
 
 	private Paging paging;
 
-	private List<ReviewModel> reviews;
+	private List<ReviewModelWithThumbnail> reviews;
 
-	public ReviewResponse(Slice<Long> reviewIds, List<ReviewModel> reviews,
-		int totalCount) {
+	public ReviewResponse(Slice<Long> reviewIds,
+		List<ReviewModelWithThumbnail> reviews, int totalCount) {
 
 		this.totalCount = totalCount;
 
