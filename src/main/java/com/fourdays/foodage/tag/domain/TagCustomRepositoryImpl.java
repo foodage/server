@@ -2,6 +2,7 @@ package com.fourdays.foodage.tag.domain;
 
 import static com.fourdays.foodage.member.domain.QMember.*;
 import static com.fourdays.foodage.review.domain.QReview.*;
+import static com.fourdays.foodage.tag.domain.QReviewTag.*;
 import static com.fourdays.foodage.tag.domain.QTag.*;
 
 import java.util.List;
@@ -31,16 +32,16 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
 					TagUsageRankResponse.class,
 					tag.id,
 					tag.name,
-					review.tagId.count().as("usage_count")
+					reviewTag.tagId.count().as("usage_count")
 				)
 			)
 			.from(review)
 			.innerJoin(member).on(review.creatorId.eq(member.id))
-			.leftJoin(tag).on(review.tagId.eq(tag.id))
+			.leftJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.where(
 				memberIdEq(memberId)
 			)
-			.groupBy(review.tagId)
+			.groupBy(reviewTag.tagId)
 			.fetch();
 
 		return response;

@@ -19,13 +19,11 @@ public class PeriodReviewResponse {
 
 	private String dayOfWeek;
 
-	private String lastEatenFood;
-
-	public PeriodReviewResponse(Long id, LocalDateTime createdAt, String lastEatenFood) {
+	public PeriodReviewResponse(Long id, LocalDateTime createdAt) {
 
 		this.createdAt = createdAt.toLocalDate();
 		this.id = id;
-		this.dayOfWeek = createdAt.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
-		this.lastEatenFood = lastEatenFood;
+		this.dayOfWeek = createdAt.getDayOfWeek()
+			.getDisplayName(TextStyle.FULL, Locale.KOREAN);
 	}
 }

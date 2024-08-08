@@ -8,38 +8,47 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "review")
+@Table(name = "review_menu")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Review extends BaseTimeEntity {
+public class ReviewMenu extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "restaurant")
-	private String restaurant;
+	@Column(name = "review_id", nullable = false)
+	private Long reviewId;
 
-	@Column(name = "address")
-	private String address;
+	@Column(
+		name = "menu",
+		nullable = false,
+		length = 48
+	)
+	private String menu;
 
-	@Column(name = "rating", nullable = false)
-	private float rating;
+	@Column(
+		name = "price",
+		nullable = false
+	)
+	private int price;
 
-	@Column(name = "contents", nullable = false)
-	private String contents;
-
-	@Column(name = "thumbnail_id")
-	private Long thumbnailId;
-	
-	@Column(name = "creator_id", nullable = false)
-	private Long creatorId; // memberId
+	@Column(
+		name = "sequence",
+		nullable = false,
+		columnDefinition = "TINYINT(1)"
+	)
+	@Min(1)
+	@Max(20)
+	private int sequence; // 메뉴 등록 순서
 }

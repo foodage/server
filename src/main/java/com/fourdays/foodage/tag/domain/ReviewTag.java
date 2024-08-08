@@ -1,4 +1,4 @@
-package com.fourdays.foodage.review.domain;
+package com.fourdays.foodage.tag.domain;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
 
@@ -13,33 +13,30 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "review")
+@Table(name = "review_tag")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Review extends BaseTimeEntity {
+public class ReviewTag extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "restaurant")
-	private String restaurant;
+	@Column(name = "review_id", nullable = false)
+	private Long reviewId;
 
-	@Column(name = "address")
-	private String address;
+	@Column(name = "tag_id", nullable = false)
+	private Long tagId;
 
-	@Column(name = "rating", nullable = false)
-	private float rating;
+	@Column(name = "bg_color", length = 128, nullable = false)
+	private String tagBgColor;
 
-	@Column(name = "contents", nullable = false)
-	private String contents;
+	@Column(name = "text_color", length = 128, nullable = false)
+	private String tagTextColor;
 
-	@Column(name = "thumbnail_id")
-	private Long thumbnailId;
-	
-	@Column(name = "creator_id", nullable = false)
-	private Long creatorId; // memberId
+	@Column(name = "name", length = 128)
+	private String tagName;
 }
