@@ -1,9 +1,7 @@
 package com.fourdays.foodage.review.controller;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fourdays.foodage.common.enums.ReviewViewType;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.Review;
@@ -95,30 +92,18 @@ public class ReviewController {
 	}
 
 	@Operation(summary = "캘린더 내 리뷰 조회")
-	@GetMapping("/reviews/{viewType}")
+	@GetMapping("/reviews/calendar")
 	public ResponseEntity<Map<LocalDate, PeriodReviewGroup>> getReviewsByPeriod(
-		@PathVariable("viewType") ReviewViewType viewType,
-		@RequestParam("date") @Nullable YearMonth requestDate) {
+		@RequestParam("on") @Nullable YearMonth requestDate) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 
-		PeriodReviewRequest period = null;
-		switch (viewType) {
-			case WEEKLY -> {
-				LocalDate now = LocalDate.now();
-				period = new PeriodReviewRequest(
-					now.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)), // startDate
-					now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)) // endDate
-				);
-			}
-			case MONTHLY -> {
-				YearMonth baseMonth = Objects.requireNonNullElseGet(requestDate, YearMonth::now);
-				period = new PeriodReviewRequest(
-					baseMonth.atDay(1), // startDate
-					baseMonth.atEndOfMonth() // endDate
-				);
-			}
-		}
+		YearMonth baseMonth = Objects.requireNonNullElseGet(requestDate, YearMonth::now);
+		PeriodReviewRequest period = new PeriodReviewRequest(
+			baseMonth.atDay(1), // startDate
+			baseMonth.atEndOfMonth() // endDate
+		);
+
 		Map<LocalDate, PeriodReviewGroup> response =
 			reviewService.getReviewsByPeriod(memberId, period);
 
