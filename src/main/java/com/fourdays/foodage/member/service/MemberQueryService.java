@@ -5,8 +5,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.member.domain.Member;
+import com.fourdays.foodage.member.domain.MemberCustomRepository;
 import com.fourdays.foodage.member.domain.MemberRepository;
-import com.fourdays.foodage.member.dto.MemberResponseDto;
+import com.fourdays.foodage.member.dto.MemberProfileResponseDto;
 import com.fourdays.foodage.member.exception.MemberNotFoundException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.member.vo.MemberId;
@@ -26,8 +27,11 @@ public class MemberQueryService {
 
 	private final MemberRepository memberRepository;
 
-	public MemberQueryService(MemberRepository memberRepository) {
+	private final MemberCustomRepository memberCustomRepository;
+
+	public MemberQueryService(MemberRepository memberRepository, MemberCustomRepository memberCustomRepository) {
 		this.memberRepository = memberRepository;
+		this.memberCustomRepository = memberCustomRepository;
 	}
 
 	public Member findById(final Long id) {
@@ -44,7 +48,8 @@ public class MemberQueryService {
 
 	public Member findByOauthIdAndAccountEmail(final OauthId oauthId, final String accountEmail) {
 
-		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
+		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
+				oauthId.getOauthServerType(), accountEmail)
 			.orElseThrow(() -> new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
 
 		log.debug(
@@ -101,8 +106,13 @@ public class MemberQueryService {
 
 	//////////////////////////////////////////////////////////////////
 
-	public MemberResponseDto getMemberById(final Long id) {
+	public MemberProfileResponseDto getMemberProfile(final MemberId memberId) {
 
-		return new MemberResponseDto(findById(id));
+		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
+				memberId.oauthServerType(), memberId.accountEmail())
+			.orElseThrow(() -> new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
+		int foodageCount = memberCustomRepository.findReviewCountByMemberId(memberId);
+
+		return new MemberProfileResponseDto(findMember, foodageCount);
 	}
 }

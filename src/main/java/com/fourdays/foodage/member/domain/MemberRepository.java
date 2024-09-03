@@ -14,8 +14,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	boolean existsByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail);
 
-	Optional<Member> findByOauthIdAndAccountEmail(OauthId oauthId, String accountEmail);
-
 	Optional<Member> findByOauthIdOauthServerTypeAndAccountEmail(OauthServerType oauthServer, String accountEmail);
 
 	@EntityGraph(attributePaths = "authorities")

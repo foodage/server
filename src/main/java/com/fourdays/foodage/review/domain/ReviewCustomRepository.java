@@ -15,6 +15,7 @@ import com.fourdays.foodage.review.dto.RecentReviewResponse;
 
 public interface ReviewCustomRepository {
 
+	// todo : repository에서는 model만 반환하도록 처리
 	// by ~
 	ReviewModel findReviewById(MemberId memberId, Long reviewId);
 

@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +39,13 @@ public class ReviewImage extends BaseTimeEntity {
 	private String imageUrl;
 
 	@Column(
+		nullable = false,
+		updatable = false
+	)
+	@Size(max = 64)
+	private String format;
+
+	@Column(
 		name = "sequence",
 		nullable = false,
 		columnDefinition = "TINYINT(1)"
@@ -52,4 +60,16 @@ public class ReviewImage extends BaseTimeEntity {
 		columnDefinition = "TINYINT(1)"
 	)
 	private boolean useThumbnail;
+
+	private String domain;
+
+	public ReviewImage(Long reviewId, String uploadPath, String fileFormat,
+		int sequence, boolean useThumbnail) {
+
+		this.reviewId = reviewId;
+		this.imageUrl = domain + uploadPath;
+		this.format = fileFormat;
+		this.sequence = sequence;
+		this.useThumbnail = useThumbnail;
+	}
 }

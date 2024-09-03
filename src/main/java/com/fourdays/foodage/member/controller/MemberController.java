@@ -14,6 +14,7 @@ import com.fourdays.foodage.jwt.service.AuthUtilService;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.dto.MemberJoinRequestDto;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
+import com.fourdays.foodage.member.dto.MemberProfileResponseDto;
 import com.fourdays.foodage.member.dto.MemberResponseDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
 import com.fourdays.foodage.member.service.MemberQueryService;
@@ -72,6 +73,18 @@ public class MemberController {
 
 		HttpHeaders httpHeaders = authUtilService.createHeader(memberJoinResponseDto.jwt());
 		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
+	}
+
+	//////////////////// my page ////////////////////
+
+	@Operation(summary = "사용자 프로필 조회")
+	@GetMapping("/member/profile")
+	public ResponseEntity<MemberProfileResponseDto> getMemberProfile() {
+
+		MemberId memberId = SecurityUtil.getCurrentMemberId();
+
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(memberQueryService.getMemberProfile(memberId));
 	}
 
 	@Operation(summary = "회원 탈퇴")
