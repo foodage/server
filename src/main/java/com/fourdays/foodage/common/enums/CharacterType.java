@@ -22,8 +22,9 @@ public enum CharacterType {
 	HAMSTER("햄스터"),
 	RACCOON("너구리"),
 	SEAL("물개"),
-	SEAOTTER("해달"), // 수달?
-	PANDA("팬더");
+	OTTER("수달"),
+	PANDA("팬더"),
+	;
 
 	private final String krName;
 

@@ -18,6 +18,7 @@ import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
 import com.fourdays.foodage.member.dto.MemberLoginResultDto;
+import com.fourdays.foodage.member.dto.MemberProfileUpdateRequestDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
 import com.fourdays.foodage.member.exception.MemberInvalidStateException;
@@ -192,5 +193,15 @@ public class MemberCommandService {
 
 		boolean isJoined = memberQueryService.existsByOauthIdAndAccountEmail(oauthId, accountEmail);
 		return !isJoined;
+	}
+
+	//////////////////////////////////////////////////////////////////
+
+	@Transactional
+	public void updateMemberProfile(final MemberId memberId,
+		final MemberProfileUpdateRequestDto request) {
+
+		Member findMember = memberQueryService.findByMemberId(memberId);
+		findMember.updateProfile(request.characterType(), request.nickname());
 	}
 }

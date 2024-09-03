@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.util.StringUtils;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.common.enums.CharacterType;
@@ -110,7 +111,7 @@ public class Member extends BaseTimeEntity {
 		}
 	}
 
-	public void updateCredential(String encCredential) {
+	public void updateCredential(final String encCredential) {
 		credential = encCredential;
 	}
 
@@ -118,8 +119,18 @@ public class Member extends BaseTimeEntity {
 		lastLoginAt = LocalDateTime.now();
 	}
 
-	public void completedJoin(String nickname, CharacterType character,
-		String credential) {
+	public void updateProfile(final CharacterType character, final String nickname) {
+		if (character != null) {
+			this.character = character;
+		}
+		if (StringUtils.hasText(nickname)) {
+			this.nickname = nickname;
+		}
+	}
+
+	public void completedJoin(final String nickname, final CharacterType character,
+		final String credential) {
+
 		this.credential = credential;
 		this.nickname = nickname;
 		this.character = character;
