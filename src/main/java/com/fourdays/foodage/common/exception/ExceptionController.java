@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fourdays.foodage.common.dto.ErrorResponseDto;
-import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,7 @@ public class ExceptionController {
 	public ResponseEntity<ErrorResponseDto<?>> handleException(Exception e) {
 
 		log.error("handleException : {}", e);
-		ErrorResponseDto<?> res = ErrorResponseDto.error(ResultCode.ERR_INTERNAL, e.getMessage());
+		ErrorResponseDto<?> res = ErrorResponseDto.error(ExceptionInfo.ERR_INTERNAL, e.getMessage());
 
 		return new ResponseEntity<>(res, res.getHttpStatus());
 	}
@@ -29,7 +28,7 @@ public class ExceptionController {
 	public ResponseEntity<ErrorResponseDto<?>> handleException(IllegalArgumentException e) {
 
 		log.error("handleException : {}", e);
-		ErrorResponseDto<?> res = ErrorResponseDto.error(ResultCode.ERR_REQUIRED_FIELD, e.getMessage());
+		ErrorResponseDto<?> res = ErrorResponseDto.error(ExceptionInfo.ERR_REQUIRED_FIELD, e.getMessage());
 
 		return new ResponseEntity<>(res, res.getHttpStatus());
 	}
@@ -38,7 +37,7 @@ public class ExceptionController {
 	public Object handleException(DataIntegrityViolationException e) {
 
 		log.debug("handleException : {}", e.getMessage());
-		ErrorResponseDto<?> res = ErrorResponseDto.error(ResultCode.ERR_REQUIRED_FIELD, e.getMessage());
+		ErrorResponseDto<?> res = ErrorResponseDto.error(ExceptionInfo.ERR_REQUIRED_FIELD, e.getMessage());
 
 		return new ResponseEntity<>(res, res.getHttpStatus());
 	}
@@ -50,7 +49,7 @@ public class ExceptionController {
 			.getDefaultMessage();
 
 		log.debug("handleException : {}", message);
-		ErrorResponseDto<?> res = ErrorResponseDto.error(ResultCode.ERR_REQUIRED_FIELD, message);
+		ErrorResponseDto<?> res = ErrorResponseDto.error(ExceptionInfo.ERR_REQUIRED_FIELD, message);
 
 		return new ResponseEntity<>(res, res.getHttpStatus());
 	}

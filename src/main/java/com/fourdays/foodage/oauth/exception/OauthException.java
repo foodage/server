@@ -1,6 +1,6 @@
 package com.fourdays.foodage.oauth.exception;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 
 import lombok.Getter;
 
@@ -12,9 +12,9 @@ import lombok.Getter;
 @Getter
 public class OauthException extends RuntimeException {
 
-	private ResultCode errCode;
+	private ExceptionInfo errCode;
 
-	public OauthException(ResultCode errCode) {
+	public OauthException(ExceptionInfo errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}

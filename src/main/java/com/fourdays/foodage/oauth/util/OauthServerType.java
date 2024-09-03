@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.oauth.exception.NotSupportedOauthServerTypeException;
 
 public enum OauthServerType {
@@ -26,7 +26,7 @@ public enum OauthServerType {
 				return oauthServerType;
 			}
 		}
-		throw new NotSupportedOauthServerTypeException(ResultCode.ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE);
+		throw new NotSupportedOauthServerTypeException(ExceptionInfo.ERR_NOT_SUPPORTED_OAUTH_SERVER_TYPE);
 	}
 
 	@JsonValue

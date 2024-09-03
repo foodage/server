@@ -1,15 +1,15 @@
 package com.fourdays.foodage.oauth.exception;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 
 import lombok.Getter;
 
 @Getter
 public class NotSupportedOauthServerTypeException extends RuntimeException {
 
-	private ResultCode errCode;
+	private ExceptionInfo errCode;
 
-	public NotSupportedOauthServerTypeException(ResultCode errCode) {
+	public NotSupportedOauthServerTypeException(ExceptionInfo errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}

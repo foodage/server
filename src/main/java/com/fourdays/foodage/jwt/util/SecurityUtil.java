@@ -6,7 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.jwt.enums.JwtClaim;
 import com.fourdays.foodage.jwt.exception.InvalidArgsException;
 import com.fourdays.foodage.member.vo.MemberId;
@@ -53,7 +53,7 @@ public class SecurityUtil {
 		}
 
 		if (oauthServerType == null || accountEmail == null) {
-			throw new InvalidArgsException(ResultCode.ERR_MEMBER_ID_CREATE_FAILED);
+			throw new InvalidArgsException(ExceptionInfo.ERR_MEMBER_ID_CREATE_FAILED);
 		}
 		return new MemberId(oauthServerType, accountEmail);
 	}

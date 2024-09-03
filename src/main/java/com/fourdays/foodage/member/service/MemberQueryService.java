@@ -3,7 +3,7 @@ package com.fourdays.foodage.member.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberResponseDto;
@@ -32,7 +32,7 @@ public class MemberQueryService {
 
 	public Member findById(final Long id) {
 		Member findMember = memberRepository.findById(id)
-			.orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new MemberNotFoundException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
 		log.debug(
 			"findById (param | id : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
 			id, findMember.getId(), findMember.getAccountEmail(),
@@ -45,7 +45,7 @@ public class MemberQueryService {
 	public Member findByOauthIdAndAccountEmail(final OauthId oauthId, final String accountEmail) {
 
 		Member findMember = memberRepository.findByOauthIdAndAccountEmail(oauthId, accountEmail)
-			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
 
 		log.debug(
 			"findByOauthIdAndAccountEmail (param | oauthId : {} {}, accountEmail : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
@@ -61,7 +61,7 @@ public class MemberQueryService {
 
 		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
 				memberId.oauthServerType(), memberId.accountEmail())
-			.orElseThrow(() -> new MemberNotJoinedException(ResultCode.ERR_MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
 
 		log.debug(
 			"findByOauthServerTypeAndAccountEmail (param | oauthServerType : {}, accountEmail : {})\n#--------- find member info ---------#\nid : {}\naccountEmail : {}\noauthServerType : {}\ncredential : {}\nstate : {}\n#------------------------------------#",
@@ -77,7 +77,7 @@ public class MemberQueryService {
 
 		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
 			memberId.oauthServerType(), memberId.accountEmail()
-		).orElseThrow(() -> new MemberNotFoundException(ResultCode.ERR_MEMBER_NOT_FOUND));
+		).orElseThrow(() -> new MemberNotFoundException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
 		String findAccountEmail = findMember.getAccountEmail();
 
 		log.debug(

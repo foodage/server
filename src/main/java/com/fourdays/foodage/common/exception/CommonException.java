@@ -1,7 +1,5 @@
 package com.fourdays.foodage.common.exception;
 
-import com.fourdays.foodage.common.enums.ResultCode;
-
 import lombok.Getter;
 
 /**
@@ -12,9 +10,9 @@ import lombok.Getter;
 @Getter
 public class CommonException extends Exception {
 
-	private ResultCode errCode;
+	private ExceptionInfo errCode;
 
-	public CommonException(ResultCode errCode) {
+	public CommonException(ExceptionInfo errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}

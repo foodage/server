@@ -1,7 +1,5 @@
 package com.fourdays.foodage.common.exception;
 
-import com.fourdays.foodage.common.enums.ResultCode;
-
 import lombok.Getter;
 
 /**
@@ -12,9 +10,9 @@ import lombok.Getter;
 @Getter
 public class IIllegalArgumentException extends Exception {
 
-	private ResultCode errCode;
+	private ExceptionInfo errCode;
 
-	public IIllegalArgumentException(ResultCode errCode) {
+	public IIllegalArgumentException(ExceptionInfo errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}
