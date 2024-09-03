@@ -1,6 +1,6 @@
 package com.fourdays.foodage.jwt.exception;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 
 import lombok.Getter;
 
@@ -12,9 +12,9 @@ import lombok.Getter;
 @Getter
 public class InvalidArgsException extends RuntimeException {
 
-	private ResultCode errCode;
+	private ExceptionInfo errCode;
 
-	public InvalidArgsException(ResultCode errCode) {
+	public InvalidArgsException(ExceptionInfo errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}

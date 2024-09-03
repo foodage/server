@@ -1,6 +1,6 @@
 package com.fourdays.foodage.review.exception;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 
 import lombok.Getter;
 
@@ -12,9 +12,9 @@ import lombok.Getter;
 @Getter
 public class ThumbnailNotFoundException extends RuntimeException {
 
-	private ResultCode errCode;
+	private ExceptionInfo errCode;
 
-	public ThumbnailNotFoundException(ResultCode errCode) {
+	public ThumbnailNotFoundException(ExceptionInfo errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}

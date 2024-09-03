@@ -2,7 +2,7 @@ package com.fourdays.foodage.common.dto;
 
 import org.springframework.http.HttpStatus;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +16,7 @@ public class ErrorResponseDto<T> {
 	private final HttpStatus httpStatus;
 	private T data;
 
-	public static <T> ErrorResponseDto<T> error(ResultCode errorCode) {
+	public static <T> ErrorResponseDto<T> error(ExceptionInfo errorCode) {
 		return ErrorResponseDto.<T>builder()
 			.code(errorCode.getCode())
 			.message(errorCode.getMessage())
@@ -24,7 +24,7 @@ public class ErrorResponseDto<T> {
 			.build();
 	}
 
-	public static <T> ErrorResponseDto<T> error(ResultCode errorCode, String errorMsg) {
+	public static <T> ErrorResponseDto<T> error(ExceptionInfo errorCode, String errorMsg) {
 		return ErrorResponseDto.<T>builder()
 			.code(errorCode.getCode())
 			.message(errorMsg)
@@ -32,7 +32,7 @@ public class ErrorResponseDto<T> {
 			.build();
 	}
 
-	public static <T> ErrorResponseDto<T> error(ResultCode errorCode, String errorMsg, Object... args) {
+	public static <T> ErrorResponseDto<T> error(ExceptionInfo errorCode, String errorMsg, Object... args) {
 		return ErrorResponseDto.<T>builder()
 			.code(errorCode.getCode())
 			.message(String.format(errorMsg, args))

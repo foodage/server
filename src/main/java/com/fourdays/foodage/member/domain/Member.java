@@ -9,7 +9,7 @@ import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.common.enums.CharacterType;
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
@@ -106,7 +106,7 @@ public class Member extends BaseTimeEntity {
 		if (state != MemberState.TEMP_JOIN &&
 			nickname != null &&
 			character != null) {
-			throw new MemberJoinedException(ResultCode.ERR_MEMBER_ALREADY_JOINED);
+			throw new MemberJoinedException(ExceptionInfo.ERR_MEMBER_ALREADY_JOINED);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class Member extends BaseTimeEntity {
 
 	public void leaved() {
 		if (state == MemberState.LEAVE) {
-			throw new MemberNotJoinedException(ResultCode.ERR_MEMBER_ALREADY_LEAVED);
+			throw new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_ALREADY_LEAVED);
 		}
 		oauthId = null;
 		nickname = "탈퇴한 사용자";

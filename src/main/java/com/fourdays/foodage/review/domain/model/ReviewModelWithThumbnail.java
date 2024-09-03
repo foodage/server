@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.review.exception.ThumbnailNotFoundException;
 import com.fourdays.foodage.tag.domain.model.TagModel;
 
@@ -63,7 +63,7 @@ public class ReviewModelWithThumbnail {
 				? thumbnail.stream()
 				.filter(ReviewImageModel::getUseThumbnail)
 				.findFirst()
-				.orElseThrow(() -> new ThumbnailNotFoundException(ResultCode.ERR_THUMBNAIL_NOT_FOUND))
+				.orElseThrow(() -> new ThumbnailNotFoundException(ExceptionInfo.ERR_THUMBNAIL_NOT_FOUND))
 				.getImageUrl()
 				: null;
 		}

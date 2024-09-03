@@ -1,7 +1,7 @@
 package com.fourdays.foodage.member.exception;
 
 import com.fourdays.foodage.common.enums.LoginResult;
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 
 import lombok.Getter;
 
@@ -13,10 +13,10 @@ import lombok.Getter;
 @Getter
 public class MemberInvalidStateException extends RuntimeException {
 
-	private ResultCode errCode;
+	private ExceptionInfo errCode;
 	private LoginResult loginResult;
 
-	public MemberInvalidStateException(ResultCode errCode, LoginResult loginResult) {
+	public MemberInvalidStateException(ExceptionInfo errCode, LoginResult loginResult) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 		this.loginResult = loginResult;

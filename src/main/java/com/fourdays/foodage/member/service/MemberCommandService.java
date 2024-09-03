@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fourdays.foodage.common.enums.CharacterType;
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.Role;
@@ -67,7 +67,7 @@ public class MemberCommandService {
 		if (loginResult == LoginResult.BLOCKED
 			|| loginResult == LoginResult.LEAVED
 			|| loginResult == LoginResult.INVALID) {
-			throw new MemberInvalidStateException(ResultCode.ERR_MEMBER_INVALID, loginResult);
+			throw new MemberInvalidStateException(ExceptionInfo.ERR_MEMBER_INVALID, loginResult);
 		}
 
 		// 약관 동의 여부 확인
@@ -130,7 +130,7 @@ public class MemberCommandService {
 		try {
 			oauthMember = oauthService.getOauthMemberByAccessToken(oauthServerType, accessToken);
 		} catch (Exception e) {
-			throw new MemberInvalidOauthServerTypeException(ResultCode.ERR_NOT_FOUND_OAUTH_MEMBER);
+			throw new MemberInvalidOauthServerTypeException(ExceptionInfo.ERR_NOT_FOUND_OAUTH_MEMBER);
 		}
 
 		// oauth 로그인을 완료하지 않은 사용자일 경우 (temp_join 상태가 아닐 경우)
@@ -184,7 +184,7 @@ public class MemberCommandService {
 
 		boolean isExist = memberQueryService.existByNickname(nickname);
 		if (isExist) {
-			throw new MemberDuplicateNicknameException(ResultCode.ERR_DUPLICATE_NICKNAME);
+			throw new MemberDuplicateNicknameException(ExceptionInfo.ERR_DUPLICATE_NICKNAME);
 		}
 	}
 

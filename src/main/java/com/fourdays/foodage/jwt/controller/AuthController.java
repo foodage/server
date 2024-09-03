@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.jwt.dto.ReissueTokenRequestDto;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
@@ -63,7 +63,7 @@ public class AuthController {
 		// 만료된 refresh token인지 확인 (만료된 rt는 blacklist 테이블에 추가됨)
 		tokenProvider.validateToken(refreshToken);
 		if (authService.isBlacklisted(refreshToken)) {
-			throw new BlockedRefreshTokenException(ResultCode.ERR_BLOCKED_REFRESH_TOKEN);
+			throw new BlockedRefreshTokenException(ExceptionInfo.ERR_BLOCKED_REFRESH_TOKEN);
 		}
 
 		// 신규 토큰 발급

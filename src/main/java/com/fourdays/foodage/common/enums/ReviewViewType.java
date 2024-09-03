@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.home.exception.NotSupportedViewTypeException;
 
 import lombok.Getter;
@@ -21,7 +22,7 @@ public enum ReviewViewType {
 				return viewType;
 			}
 		}
-		throw new NotSupportedViewTypeException(ResultCode.ERR_NOT_SUPPORTED_CHARACTER_TYPE);
+		throw new NotSupportedViewTypeException(ExceptionInfo.ERR_NOT_SUPPORTED_CHARACTER_TYPE);
 	}
 
 	@JsonValue

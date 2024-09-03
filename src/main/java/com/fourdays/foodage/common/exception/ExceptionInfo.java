@@ -1,11 +1,11 @@
-package com.fourdays.foodage.common.enums;
+package com.fourdays.foodage.common.exception;
 
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.springframework.http.HttpStatus;
 
-public enum ResultCode {
+public enum ExceptionInfo {
 
 	SUCCESS(0, "요청 성공", HttpStatus.OK),
 	CREATED(1, "생성 성공", HttpStatus.CREATED),
@@ -51,7 +51,7 @@ public enum ResultCode {
 	private final String message; // 클라이언트 반환 메시지
 	private final HttpStatus httpStatus; // 반환 응답 코드
 
-	ResultCode(int code, String message, HttpStatus httpStatus) {
+	ExceptionInfo(int code, String message, HttpStatus httpStatus) {
 		this.code = code;
 		this.message = message;
 		this.httpStatus = httpStatus;

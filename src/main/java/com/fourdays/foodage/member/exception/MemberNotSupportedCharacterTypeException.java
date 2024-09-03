@@ -1,6 +1,6 @@
 package com.fourdays.foodage.member.exception;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 
 import lombok.Getter;
 
@@ -12,9 +12,9 @@ import lombok.Getter;
 @Getter
 public class MemberNotSupportedCharacterTypeException extends RuntimeException {
 
-	private ResultCode errCode;
+	private ExceptionInfo errCode;
 
-	public MemberNotSupportedCharacterTypeException(ResultCode errCode) {
+	public MemberNotSupportedCharacterTypeException(ExceptionInfo errCode) {
 		super(errCode.getMessage());
 		this.errCode = errCode;
 	}
