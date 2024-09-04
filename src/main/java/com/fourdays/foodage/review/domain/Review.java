@@ -1,6 +1,7 @@
 package com.fourdays.foodage.review.domain;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
+import com.fourdays.foodage.review.dto.CreateReviewRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,15 +32,25 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "address")
 	private String address;
 
-	@Column(name = "rating", nullable = false)
+	@Column(
+		name = "rating",
+		nullable = false
+	)
 	private float rating;
 
-	@Column(name = "contents", nullable = false)
+	@Column(
+		name = "contents",
+		nullable = false,
+		length = 1024
+	)
 	private String contents;
 
 	@Column(name = "thumbnail_id")
 	private Long thumbnailId;
-	
-	@Column(name = "creator_id", nullable = false)
+
+	@Column(
+		name = "creator_id",
+		nullable = false
+	)
 	private Long creatorId; // memberId
 }

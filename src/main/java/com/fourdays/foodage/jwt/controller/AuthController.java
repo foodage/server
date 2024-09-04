@@ -73,7 +73,7 @@ public class AuthController {
 		TokenDto reissueJwt = authService.createToken(findMember.getOauthId().getOauthServerType(),
 			findMember.getAccountEmail(), credential);
 
-		// 기존 refresh token은 만료 테이블에 추가
+		// 기존 refresh token은 redis 만료 테이블에 추가
 		authService.addToBlacklist(refreshToken);
 
 		return ResponseEntity.ok(reissueJwt);
