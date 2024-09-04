@@ -3,7 +3,6 @@ package com.fourdays.foodage.member.controller;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,7 +44,7 @@ public class MemberController {
 
 	@Operation(summary = "사용자 상세 정보 조회")
 	@GetMapping("/member/detail")
-	public ResponseEntity<MemberResponseDto> getMemberInfo(Authentication authentication) {
+	public ResponseEntity<MemberResponseDto> getMemberInfo() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		MemberResponseDto memberResponseDto = new MemberResponseDto(
@@ -57,7 +56,7 @@ public class MemberController {
 
 	@Operation(summary = "사용자 이메일 조회 (id 기반)")
 	@GetMapping("/member/account-email")
-	public ResponseEntity<String> getMemberAccountEmail(Authentication authentication) {
+	public ResponseEntity<String> getMemberAccountEmail() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 
@@ -103,10 +102,20 @@ public class MemberController {
 
 	@Operation(summary = "회원 탈퇴")
 	@PutMapping("/member/leave")
-	public ResponseEntity leaveMember(Authentication authentication) {
+	public ResponseEntity leaveMember() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		memberCommandService.leave(memberId);
+
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@Operation(summary = "회원 계정 복구")
+	@PutMapping("/member/restore")
+	public ResponseEntity restoreMember() {
+
+		MemberId memberId = SecurityUtil.getCurrentMemberId();
+		memberCommandService.restore(memberId);
 
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

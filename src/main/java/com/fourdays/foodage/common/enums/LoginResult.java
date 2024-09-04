@@ -8,14 +8,14 @@ import lombok.Getter;
 public enum LoginResult {
 
 	// SUCCESS CASE
-	JOINED(0, "로그인에 성공하였습니다."),
+	SUCCESS(0, "로그인에 성공하였습니다."),
 
 	// FAILED CASE
 	JOIN_IN_PROGRESS(-1, "가입 진행중인 사용자입니다."),
-	NOT_JOINED(-2, "가입되지 않은 사용자입니다."),
-	BLOCKED(-3, "제한된 사용자입니다."),
-	LEAVED(-4, "탈퇴한 사용자입니다."),
-	INVALID(-5, "유효하지 않은 사용자입니다.");
+	DORMANT_MEMBER(-2, "휴면 처리된 사용자입니다."),
+	LEAVE_IN_PROGRESS(-3, "탈퇴 후 30일이 지나지 않은 사용자입니다."),
+	FAILED(-99, "유효하지 않은 사용자입니다."),
+	;
 
 	private final int code;
 	private final String detailMessage;

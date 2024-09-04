@@ -1,5 +1,6 @@
 package com.fourdays.foodage.member.service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ import com.fourdays.foodage.jwt.service.AuthService;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
+import com.fourdays.foodage.member.dto.MemberLeaveResponseDto;
 import com.fourdays.foodage.member.dto.MemberLoginResultDto;
 import com.fourdays.foodage.member.dto.MemberProfileUpdateRequestDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
@@ -64,11 +66,8 @@ public class MemberCommandService {
 
 		Member findMember = memberQueryService.findByOauthIdAndAccountEmail(oauthId, accountEmail);
 		LoginResult loginResult = findMember.getLoginResultByMemberState();
-		// 블락, 휴면, 탈퇴 상태인지 확인
-		if (loginResult == LoginResult.BLOCKED
-			|| loginResult == LoginResult.LEAVED
-			|| loginResult == LoginResult.INVALID) {
-			throw new MemberInvalidStateException(ExceptionInfo.ERR_MEMBER_INVALID, loginResult);
+		if (loginResult == LoginResult.FAILED) { // DORMANT, LEAVE, BLOCK state -> INVALID
+			throw new MemberInvalidStateException(ExceptionInfo.ERR_MEMBER_INVALID_STATE, loginResult);
 		}
 
 		// 약관 동의 여부 확인
@@ -167,16 +166,38 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public void leave(final MemberId memberId) {
+	public MemberLeaveResponseDto leave(final MemberId memberId) {
 
 		Member findMember = memberQueryService.findByMemberId(memberId);
 
-		findMember.leaved();
+		// 탈퇴 요청을 한 적이 있는지 확인
+		// * 정책 : 탈퇴 후 30일 이내 계정 복구 요청 시 복구 가능 / 30일 이후 탈퇴 처리
+		if (findMember.getState() == MemberState.PENDING_LEAVE) {
+			log.debug(
+				"\n#--- member has already requested leave ---#\nid : {}\nstate : {}\nleaveRequestedAt : {}\n#--------------------#",
+				findMember.getId(),
+				findMember.getState(),
+				findMember.getLeaveRequestedAt()
+			);
+			return new MemberLeaveResponseDto(true,
+				findMember.getLeaveRequestedAt());
+		}
 
-		log.debug("\n#--- leaved member ---#\nid : {}\nnickname : {}\n#--------------------#",
-			findMember.getId(),
-			findMember.getNickname()
-		);
+		findMember.approveLeaveRequest();
+		// 스케쥴러 등록
+
+		// message ex: 2024-09-04 AM 11:33 회원님의 탈퇴 요청이 처리되었어요.
+		return new MemberLeaveResponseDto(false,
+			LocalDateTime.now());
+	}
+
+	@Transactional
+	public void restore(final MemberId memberId) {
+
+		Member findMember = memberQueryService.findByMemberId(memberId);
+
+		findMember.cancelLeaveRequest();
+		// 스케쥴러 삭제
 	}
 
 	//////////////////////////////////////////////////////////////////

@@ -61,19 +61,28 @@ public class OauthController {
 		MemberLoginResultDto loginResult = memberCommandService.login(oauthMember.getOauthId(),
 			oauthMember.getAccountEmail());
 
-		// 정상 로그인일 경우, jwt 발급
 		HttpHeaders httpHeaders = new HttpHeaders();
 		String redirectUrl = "";
 		switch (loginResult.loginResult()) {
-			case JOINED -> {
+			case SUCCESS -> { // 이미 가입된 상태. 정상 로그인 처리
 				httpHeaders = authUtilService.createJwtHeader(loginResult.oauthId().getOauthServerType(),
 					loginResult.accountEmail(), loginResult.credential(), true);
 				redirectUrl = clientBaseUrl + "/";
 			}
-			case JOIN_IN_PROGRESS -> {
+			case JOIN_IN_PROGRESS -> { // 가입 진행중인 상태로 로그인 불가. 회원가입을 위한 추가 정보 입력 요청
 				httpHeaders = authUtilService.createCookieHeader(oauthMember.getAccessToken(),
 					oauthServerType.name().toLowerCase());
 				redirectUrl = clientBaseUrl + "/signup";
+			}
+			case LEAVE_IN_PROGRESS -> { // 탈퇴 후 30일이 지나지 않아 계정 복구가 가능한 상태
+				httpHeaders = authUtilService.createCookieHeader(oauthMember.getAccessToken(),
+					oauthServerType.name().toLowerCase());
+				redirectUrl = clientBaseUrl + "/restore";
+			}
+			case DORMANT_MEMBER -> { // 휴면 상태. 휴면 해지를 위한 페이지로 이동
+				httpHeaders = authUtilService.createCookieHeader(oauthMember.getAccessToken(),
+					oauthServerType.name().toLowerCase());
+				redirectUrl = clientBaseUrl + "/dormant";
 			}
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);
