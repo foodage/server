@@ -153,4 +153,17 @@ public class Member extends BaseTimeEntity {
 		state = MemberState.NORMAL;
 		leaveRequestedAt = null;
 	}
+
+	public void completeLeave() {
+
+		if (state != MemberState.PENDING_LEAVE) {
+			throw new MemberLeaveException(ExceptionInfo.ERR_MEMBER_NOT_IN_PENDING_LEAVE);
+		}
+		state = MemberState.LEAVE;
+		oauthId = null;
+		accountEmail = "";
+		credential = "";
+		nickname = "탈퇴한 사용자";
+		character = null;
+	}
 }

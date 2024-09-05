@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.common.dto.ResponseDto;
 import com.fourdays.foodage.jwt.service.AuthUtilService;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.dto.MemberJoinRequestDto;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
+import com.fourdays.foodage.member.dto.MemberLeaveResponseDto;
 import com.fourdays.foodage.member.dto.MemberProfileResponseDto;
 import com.fourdays.foodage.member.dto.MemberProfileUpdateRequestDto;
 import com.fourdays.foodage.member.dto.MemberResponseDto;
@@ -105,9 +107,10 @@ public class MemberController {
 	public ResponseEntity leaveMember() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
-		memberCommandService.leave(memberId);
+		MemberLeaveResponseDto response = memberCommandService.leave(memberId);
 
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "회원 계정 복구")
@@ -117,6 +120,7 @@ public class MemberController {
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		memberCommandService.restore(memberId);
 
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(ResponseDto.success());
 	}
 }

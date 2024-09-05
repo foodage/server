@@ -15,6 +15,7 @@ import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.Role;
 import com.fourdays.foodage.jwt.service.AuthService;
+import com.fourdays.foodage.member.domain.LeaveRequestRepository;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
@@ -24,6 +25,8 @@ import com.fourdays.foodage.member.dto.MemberProfileUpdateRequestDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
 import com.fourdays.foodage.member.exception.MemberInvalidStateException;
+import com.fourdays.foodage.member.exception.MemberLeaveException;
+import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
@@ -43,14 +46,17 @@ public class MemberCommandService {
 
 	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
+	private final LeaveRequestRepository leaveRequestRepository;
 	private final AuthService authService;
 	private final OauthService oauthService;
 	private final PasswordEncoder passwordEncoder;
 
 	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository,
-		AuthService authService, OauthService oauthService, PasswordEncoder passwordEncoder) {
+		LeaveRequestRepository leaveRequestRepository, AuthService authService, OauthService oauthService,
+		PasswordEncoder passwordEncoder) {
 		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
+		this.leaveRequestRepository = leaveRequestRepository;
 		this.authService = authService;
 		this.oauthService = oauthService;
 		this.passwordEncoder = passwordEncoder;
@@ -173,22 +179,41 @@ public class MemberCommandService {
 		// 탈퇴 요청을 한 적이 있는지 확인
 		// * 정책 : 탈퇴 후 30일 이내 계정 복구 요청 시 복구 가능 / 30일 이후 탈퇴 처리
 		if (findMember.getState() == MemberState.PENDING_LEAVE) {
-			log.debug(
-				"\n#--- member has already requested leave ---#\nid : {}\nstate : {}\nleaveRequestedAt : {}\n#--------------------#",
-				findMember.getId(),
-				findMember.getState(),
-				findMember.getLeaveRequestedAt()
-			);
-			return new MemberLeaveResponseDto(true,
-				findMember.getLeaveRequestedAt());
+			log.warn("@ member has already requested leave!");
+			throw new MemberLeaveException(ExceptionInfo.MEMBER_ALREADY_REQUESTED_LEAVE);
 		}
 
 		findMember.approveLeaveRequest();
-		// 스케쥴러 등록
+
+		/*
+		 * redis에 탈퇴 요청 30일간 저장
+		 * expired 되면 key expired listener에 의해 실제 탈퇴 처리됨 (completeLeave)
+		 * 탈퇴 요청으로부터 30일 이내에는 계정 복구 가능
+		 */
+		leaveRequestRepository.save(memberId);
 
 		// message ex: 2024-09-04 AM 11:33 회원님의 탈퇴 요청이 처리되었어요.
 		return new MemberLeaveResponseDto(false,
 			LocalDateTime.now());
+	}
+
+	/*
+	 * 회원 탈퇴 요청으로부터 30일 경과 시, redis key expired event를 통해
+	 * 실제 회원 탈퇴가 진행됨 (soft delete)
+	 */
+	@Transactional
+	public void completeLeave(final MemberId memberId) {
+
+		Member findMember = null;
+		try {
+			findMember = memberQueryService.findByMemberId(memberId);
+		} catch (MemberNotJoinedException e) {
+			// redis에 실패 history 저장
+		}
+		findMember.completeLeave();
+
+		// 사용자와 연관된 모든 데이터 삭제
+		// todo
 	}
 
 	@Transactional
@@ -197,7 +222,7 @@ public class MemberCommandService {
 		Member findMember = memberQueryService.findByMemberId(memberId);
 
 		findMember.cancelLeaveRequest();
-		// 스케쥴러 삭제
+		leaveRequestRepository.delete(memberId);
 	}
 
 	//////////////////////////////////////////////////////////////////

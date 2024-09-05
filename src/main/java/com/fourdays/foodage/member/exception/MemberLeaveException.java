@@ -6,8 +6,7 @@ import lombok.Getter;
 
 /**
  * author         : ebkim <br/>
- * date           : 2023/10/19 <br/>
- * description    : Member와 관련된 Exception  <br/>
+ * date           : 2024/09/05 <br/>
  */
 @Getter
 public class MemberLeaveException extends RuntimeException {
