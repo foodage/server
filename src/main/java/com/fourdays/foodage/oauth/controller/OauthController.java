@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.common.dto.ResponseDto;
 import com.fourdays.foodage.jwt.service.AuthUtilService;
 import com.fourdays.foodage.member.dto.MemberLoginResultDto;
 import com.fourdays.foodage.member.service.MemberCommandService;
@@ -41,11 +42,12 @@ public class OauthController {
 
 	@Operation(summary = "oauth 서비스 연동 url 조회 (테스트용)", hidden = true)
 	@GetMapping("/oauth/{oauthServerType}")
-	public ResponseEntity<String> getRequestUrl(@PathVariable OauthServerType oauthServerType
+	public ResponseEntity<ResponseDto<String>> getRequestUrl(
+		@PathVariable OauthServerType oauthServerType
 	) {
-
 		String redirectUrl = oauthService.getRequestUri(oauthServerType);
-		return ResponseEntity.ok().body(redirectUrl);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(redirectUrl));
 	}
 
 	@Operation(summary = "redirect url에 대한 api. auth code receive 후 로그인 절차 수행", hidden = true)
@@ -87,7 +89,9 @@ public class OauthController {
 		}
 		httpHeaders.add(HttpHeaders.LOCATION, redirectUrl);
 
-		return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-			.headers(httpHeaders).build();
+		return ResponseEntity
+			.status(HttpStatus.TEMPORARY_REDIRECT)
+			.headers(httpHeaders)
+			.build();
 	}
 }

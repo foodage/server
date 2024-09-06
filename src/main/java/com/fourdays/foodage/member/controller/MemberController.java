@@ -46,49 +46,54 @@ public class MemberController {
 
 	@Operation(summary = "사용자 상세 정보 조회")
 	@GetMapping("/member/detail")
-	public ResponseEntity<MemberResponseDto> getMemberInfo() {
+	public ResponseEntity<ResponseDto<MemberResponseDto>> getMemberInfo() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
-		MemberResponseDto memberResponseDto = new MemberResponseDto(
+		MemberResponseDto response = new MemberResponseDto(
 			memberQueryService.findByMemberId(memberId));
 
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(memberResponseDto);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "사용자 이메일 조회 (id 기반)")
 	@GetMapping("/member/account-email")
-	public ResponseEntity<String> getMemberAccountEmail() {
+	public ResponseEntity<ResponseDto<String>> getMemberAccountEmail() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
+		String response = memberQueryService.findAccountEmailByMemberId(memberId);
 
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(memberQueryService.findAccountEmailByMemberId(memberId));
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "foodage 서비스 회원가입 완료 요청 (추가 정보 필수)")
 	@PostMapping("/member/join")
-	public ResponseEntity<MemberJoinResponseDto> join(@RequestBody MemberJoinRequestDto memberCreateRequest) {
+	public ResponseEntity<ResponseDto<MemberJoinResponseDto>> join(
+		@RequestBody MemberJoinRequestDto memberCreateRequest) {
 
-		MemberJoinResponseDto memberJoinResponseDto = memberCommandService.join(
+		MemberJoinResponseDto response = memberCommandService.join(
 			memberCreateRequest.oauthServerType(), memberCreateRequest.accessToken(),
 			memberCreateRequest.nickname(), memberCreateRequest.character()
 		);
+		HttpHeaders httpHeaders = authUtilService.createHeader(response.jwt());
 
-		HttpHeaders httpHeaders = authUtilService.createHeader(memberJoinResponseDto.jwt());
-		return new ResponseEntity<>(memberJoinResponseDto, httpHeaders, HttpStatus.CREATED);
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.headers(httpHeaders)
+			.body(ResponseDto.success(response));
 	}
 
 	//////////////////// my page ////////////////////
 
 	@Operation(summary = "사용자 프로필 조회")
 	@GetMapping("/member/profile")
-	public ResponseEntity<MemberProfileResponseDto> getMemberProfile() {
+	public ResponseEntity<ResponseDto<MemberProfileResponseDto>> getMemberProfile() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
+		MemberProfileResponseDto response = memberQueryService.getMemberProfile(memberId);
 
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(memberQueryService.getMemberProfile(memberId));
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "사용자 프로필 수정")
@@ -99,17 +104,18 @@ public class MemberController {
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		memberCommandService.updateMemberProfile(memberId, request);
 
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.ok()
+			.body(ResponseDto.success());
 	}
 
 	@Operation(summary = "회원 탈퇴")
 	@PutMapping("/member/leave")
-	public ResponseEntity leaveMember() {
+	public ResponseEntity<ResponseDto<MemberLeaveResponseDto>> leaveMember() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		MemberLeaveResponseDto response = memberCommandService.leave(memberId);
 
-		return ResponseEntity.status(HttpStatus.OK)
+		return ResponseEntity.ok()
 			.body(ResponseDto.success(response));
 	}
 
@@ -120,7 +126,7 @@ public class MemberController {
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		memberCommandService.restore(memberId);
 
-		return ResponseEntity.status(HttpStatus.OK)
+		return ResponseEntity.ok()
 			.body(ResponseDto.success());
 	}
 }
