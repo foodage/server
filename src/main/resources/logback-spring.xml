@@ -1,0 +1,17 @@
+<configuration>
+    <include resource="./log/default-appender.xml"/>
+    <include resource="./log/attention-appender.xml"/>
+
+    <root level="INFO">
+        <springProfile name="!prod">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </springProfile>
+    </root>
+
+    <root level="INFO">
+        <springProfile name="prod">
+            <appender-ref ref="FILE"/>
+        </springProfile>
+    </root>
+</configuration>

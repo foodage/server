@@ -1,0 +1,24 @@
+<included>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <variable name="DIR" value="./logs"/>
+    <variable name="BACKUP_DIR" value="./logs/backup"/>
+    <variable name="FILE_NAME" value="omnione-nft-center.log"/>
+    <variable name="FILE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level ${PID:-unknown} --- [%thread] %-45logger{45} : %msg%n"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${DIR}/${FILE_NAME}</file>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${BACKUP_DIR}/${FILE_NAME}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap> <!-- 로그 파일 전체 용량이 1GB를 초과하면 오래된 백업 로그부터 삭제 -->
+        </rollingPolicy>
+    </appender>
+</included>
