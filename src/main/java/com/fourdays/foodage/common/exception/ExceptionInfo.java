@@ -40,7 +40,7 @@ public enum ExceptionInfo {
 	ERR_DUPLICATE_NICKNAME(-1508, "이미 사용중인 닉네임입니다.", HttpStatus.CONFLICT),
 	ERR_MEMBER_ID_CREATE_FAILED(-1509, "사용자 식별값을 생성할 수 없습니다.", HttpStatus.BAD_REQUEST),
 	ERR_MEMBER_NOT_IN_PENDING_LEAVE(-1510, "탈퇴 처리가 진행 중이지 않은 사용자입니다.", HttpStatus.BAD_REQUEST),
-	MEMBER_ALREADY_REQUESTED_LEAVE(-1510, "이미 탈퇴를 요청한 사용자입니다.", HttpStatus.BAD_REQUEST),
+	ERR_MEMBER_LEAVE_FAILED(-1511, "탈퇴 처리 중 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
 	// HOME /////////////////////////////////////////////////////////////////////////////////////////
 	// 1800~
