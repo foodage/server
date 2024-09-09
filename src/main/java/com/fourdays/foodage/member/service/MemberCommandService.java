@@ -1,5 +1,6 @@
 package com.fourdays.foodage.member.service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,13 +11,16 @@ import com.fourdays.foodage.common.enums.CharacterType;
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
+import com.fourdays.foodage.common.exception.FoodageException;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.jwt.dto.TokenDto;
 import com.fourdays.foodage.jwt.enums.Role;
 import com.fourdays.foodage.jwt.service.AuthService;
+import com.fourdays.foodage.member.domain.LeaveRequestRepository;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.domain.MemberRepository;
 import com.fourdays.foodage.member.dto.MemberJoinResponseDto;
+import com.fourdays.foodage.member.dto.MemberLeaveResponseDto;
 import com.fourdays.foodage.member.dto.MemberLoginResultDto;
 import com.fourdays.foodage.member.dto.MemberProfileUpdateRequestDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
@@ -41,14 +45,17 @@ public class MemberCommandService {
 
 	private final MemberQueryService memberQueryService;
 	private final MemberRepository memberRepository;
+	private final LeaveRequestRepository leaveRequestRepository;
 	private final AuthService authService;
 	private final OauthService oauthService;
 	private final PasswordEncoder passwordEncoder;
 
 	public MemberCommandService(MemberQueryService memberQueryService, MemberRepository memberRepository,
-		AuthService authService, OauthService oauthService, PasswordEncoder passwordEncoder) {
+		LeaveRequestRepository leaveRequestRepository, AuthService authService, OauthService oauthService,
+		PasswordEncoder passwordEncoder) {
 		this.memberQueryService = memberQueryService;
 		this.memberRepository = memberRepository;
+		this.leaveRequestRepository = leaveRequestRepository;
 		this.authService = authService;
 		this.oauthService = oauthService;
 		this.passwordEncoder = passwordEncoder;
@@ -64,11 +71,8 @@ public class MemberCommandService {
 
 		Member findMember = memberQueryService.findByOauthIdAndAccountEmail(oauthId, accountEmail);
 		LoginResult loginResult = findMember.getLoginResultByMemberState();
-		// 블락, 휴면, 탈퇴 상태인지 확인
-		if (loginResult == LoginResult.BLOCKED
-			|| loginResult == LoginResult.LEAVED
-			|| loginResult == LoginResult.INVALID) {
-			throw new MemberInvalidStateException(ExceptionInfo.ERR_MEMBER_INVALID, loginResult);
+		if (loginResult == LoginResult.FAILED) { // DORMANT, LEAVE, BLOCK state -> INVALID
+			throw new MemberInvalidStateException(ExceptionInfo.ERR_MEMBER_INVALID_STATE, loginResult);
 		}
 
 		// 약관 동의 여부 확인
@@ -167,16 +171,58 @@ public class MemberCommandService {
 	}
 
 	@Transactional
-	public void leave(final MemberId memberId) {
+	public MemberLeaveResponseDto leave(final MemberId memberId) {
 
 		Member findMember = memberQueryService.findByMemberId(memberId);
 
-		findMember.leaved();
+		// 탈퇴 요청 진행 중인 사용자인지 확인
+		// * 정책 : 탈퇴 후 30일 이내 계정 복구 요청 시 복구 가능 / 30일 이후 탈퇴 완료 처리
+		if (findMember.getState() == MemberState.PENDING_LEAVE) {
+			log.warn("@ member has already requested leave!");
+			// message ex: 2024-09-04 AM 11:33에 탈퇴를 요청하신 내역이 있어요.
+			return new MemberLeaveResponseDto(true,
+				findMember.getLeaveRequestedAt());
+		}
 
-		log.debug("\n#--- leaved member ---#\nid : {}\nnickname : {}\n#--------------------#",
-			findMember.getId(),
-			findMember.getNickname()
-		);
+		findMember.approveLeaveRequest();
+
+		/*
+		 * redis에 탈퇴 요청 30일간 저장
+		 * expired 되면 key expired listener에 의해 실제 탈퇴 처리됨 (completeLeave)
+		 * 탈퇴 요청으로부터 30일 이내에는 계정 복구 가능
+		 */
+		leaveRequestRepository.save(memberId);
+
+		// message ex: 2024-09-04 AM 11:33 회원님의 탈퇴 요청이 처리되었어요.
+		return new MemberLeaveResponseDto(false,
+			LocalDateTime.now());
+	}
+
+	/*
+	 * 회원 탈퇴 요청으로부터 30일 경과 시, redis key expired event를 통해
+	 * 실제 회원 탈퇴가 진행됨 (soft delete)
+	 */
+	@Transactional
+	public void completeLeave(final MemberId memberId) throws FoodageException {
+
+		Member findMember = null;
+		try {
+			findMember = memberQueryService.findByMemberId(memberId);
+		} catch (Exception e) {
+			throw new FoodageException(ExceptionInfo.ERR_MEMBER_LEAVE_FAILED);
+		}
+		findMember.completeLeave();
+
+		// todo: 사용자와 연관된 모든 데이터 삭제
+	}
+
+	@Transactional
+	public void restore(final MemberId memberId) {
+
+		Member findMember = memberQueryService.findByMemberId(memberId);
+
+		findMember.cancelLeaveRequest();
+		leaveRequestRepository.delete(memberId);
 	}
 
 	//////////////////////////////////////////////////////////////////

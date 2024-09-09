@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.common.dto.ResponseDto;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.Review;
@@ -48,17 +49,19 @@ public class ReviewController {
 
 	@Operation(summary = "리뷰 상세 조회")
 	@GetMapping("/review/{id}")
-	public ResponseEntity<ReviewModel> getReview(@PathVariable("id") @NotNull Long reviewId) {
+	public ResponseEntity<ResponseDto<ReviewModel>> getReview(
+		@PathVariable("id") @NotNull Long reviewId) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		ReviewModel response = reviewService.getReview(memberId, reviewId);
 
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "전체 리뷰 목록 조회")
 	@GetMapping("/reviews")
-	public ResponseEntity<ReviewResponse> getReviews(
+	public ResponseEntity<ResponseDto<ReviewResponse>> getReviews(
 		@RequestParam("idx") @Nullable Long lastReviewId,
 		@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
 	) {
@@ -66,34 +69,37 @@ public class ReviewController {
 		ReviewResponse response =
 			reviewService.getReviews(lastReviewId, memberId, pageable);
 
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "특정일의 리뷰 목록 조회")
 	@GetMapping("/reviews/date")
-	public ResponseEntity<DateReviewResponse> getReviewsByDate(
+	public ResponseEntity<ResponseDto<DateReviewResponse>> getReviewsByDate(
 		@RequestParam("on") LocalDate date) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		DateReviewResponse response = reviewService.getReviewsByDate(memberId, date);
 
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "최근 작성한 리뷰 목록 조회")
 	@GetMapping("/reviews/recent")
-	public ResponseEntity<List<RecentReviewResponse>> getRecentReviews(
+	public ResponseEntity<ResponseDto<List<RecentReviewResponse>>> getRecentReviews(
 		@RequestParam("limit") int limit) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		List<RecentReviewResponse> response = reviewService.getRecentReviews(memberId, limit);
 
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "캘린더 내 리뷰 조회")
 	@GetMapping("/reviews/calendar")
-	public ResponseEntity<Map<LocalDate, PeriodReviewGroup>> getReviewsByPeriod(
+	public ResponseEntity<ResponseDto<Map<LocalDate, PeriodReviewGroup>>> getReviewsByPeriod(
 		@RequestParam("on") @Nullable YearMonth requestDate) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
@@ -107,7 +113,8 @@ public class ReviewController {
 		Map<LocalDate, PeriodReviewGroup> response =
 			reviewService.getReviewsByPeriod(memberId, period);
 
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 
 	@Operation(summary = "리뷰 작성")
@@ -115,6 +122,7 @@ public class ReviewController {
 	public ResponseEntity<Review> addReview(@RequestBody Review review) {
 		Review addReview = reviewService.addReview(review);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(addReview);
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(addReview);
 	}
 }

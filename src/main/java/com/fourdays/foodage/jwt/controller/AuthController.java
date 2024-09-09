@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.common.dto.ResponseDto;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.jwt.dto.ReissueTokenRequestDto;
 import com.fourdays.foodage.jwt.dto.TokenDto;
@@ -39,7 +40,7 @@ public class AuthController {
 	// 개발 테스트용 api
 	@Operation(summary = "jwt 발급", hidden = true)
 	@PostMapping("/jwt/test-issue")
-	public ResponseEntity<TokenDto> issueToken(
+	public ResponseEntity<ResponseDto<TokenDto>> issueToken(
 		@RequestParam("oauthServerName") String oauthServerName,
 		@RequestParam("accountEmail") String accountEmail) {
 
@@ -50,12 +51,13 @@ public class AuthController {
 		TokenDto reissueJwt = authService.createToken(findMember.getOauthId().getOauthServerType(),
 			findMember.getAccountEmail(), credential);
 
-		return ResponseEntity.ok(reissueJwt);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(reissueJwt));
 	}
 
 	@Operation(summary = "jwt 재발급")
 	@PostMapping("/jwt/reissue")
-	public ResponseEntity<TokenDto> reissueToken(
+	public ResponseEntity<ResponseDto<TokenDto>> reissueToken(
 		@RequestBody ReissueTokenRequestDto reissueTokenRequest) {
 
 		String refreshToken = reissueTokenRequest.refreshToken();
@@ -76,6 +78,7 @@ public class AuthController {
 		// 기존 refresh token은 redis 만료 테이블에 추가
 		authService.addToBlacklist(refreshToken);
 
-		return ResponseEntity.ok(reissueJwt);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(reissueJwt));
 	}
 }

@@ -11,9 +11,9 @@ import com.fourdays.foodage.jwt.exception.BlockedRefreshTokenException;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ControllerAdvice
-public class ExceptionController {
+@Slf4j
+public class CommonExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponseDto<?>> handleException(Exception e) {

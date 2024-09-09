@@ -13,7 +13,7 @@ import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.member.exception.MemberJoinedException;
-import com.fourdays.foodage.member.exception.MemberNotJoinedException;
+import com.fourdays.foodage.member.exception.MemberLeaveException;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
 import jakarta.persistence.Column;
@@ -74,6 +74,9 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
 
+	@Column(name = "leave_request_at")
+	private LocalDateTime leaveRequestedAt;
+
 	@ManyToMany
 	@JoinTable(
 		name = "member_authority",
@@ -84,20 +87,17 @@ public class Member extends BaseTimeEntity {
 	public LoginResult getLoginResultByMemberState() {
 
 		switch (state) {
+			case NORMAL -> { // 정상 유저
+				return LoginResult.SUCCESS;
+			}
 			case TEMP_JOIN -> { // 가입 진행중
 				return LoginResult.JOIN_IN_PROGRESS;
 			}
-			case NORMAL -> { // 정상 유저
-				return LoginResult.JOINED;
-			}
-			case BLOCK -> { // 제한된 사용자
-				return LoginResult.BLOCKED;
-			}
-			case LEAVE -> { // 탈퇴한 사용자
-				return LoginResult.LEAVED;
+			case PENDING_LEAVE -> { // 계정 복구 가능
+				return LoginResult.LEAVE_IN_PROGRESS;
 			}
 			default -> {
-				return LoginResult.INVALID;
+				return LoginResult.FAILED;
 			}
 		}
 	}
@@ -120,6 +120,8 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public void updateProfile(final CharacterType character, final String nickname) {
+		// todo: 획득한 character로만 업데이트 가능하게 처리
+
 		if (character != null) {
 			this.character = character;
 		}
@@ -138,12 +140,32 @@ public class Member extends BaseTimeEntity {
 		updateLastLoginAt();
 	}
 
-	public void leaved() {
+	public void approveLeaveRequest() {
 		if (state == MemberState.LEAVE) {
-			throw new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_ALREADY_LEAVED);
+			throw new MemberLeaveException(ExceptionInfo.ERR_MEMBER_ALREADY_LEAVED);
 		}
-		oauthId = null;
-		nickname = "탈퇴한 사용자";
+		state = MemberState.PENDING_LEAVE;
+		leaveRequestedAt = LocalDateTime.now();
+	}
+
+	public void cancelLeaveRequest() {
+		if (state != MemberState.PENDING_LEAVE) {
+			throw new MemberLeaveException(ExceptionInfo.ERR_MEMBER_NOT_IN_PENDING_LEAVE);
+		}
+		state = MemberState.NORMAL;
+		leaveRequestedAt = null;
+	}
+
+	public void completeLeave() {
+
+		if (state != MemberState.PENDING_LEAVE) {
+			throw new MemberLeaveException(ExceptionInfo.ERR_MEMBER_NOT_IN_PENDING_LEAVE);
+		}
 		state = MemberState.LEAVE;
+		oauthId = null;
+		accountEmail = "";
+		credential = "";
+		nickname = "탈퇴한 사용자";
+		character = null;
 	}
 }

@@ -1,9 +1,5 @@
 package com.fourdays.foodage.common.dto;
 
-import org.springframework.http.HttpStatus;
-
-import com.fourdays.foodage.common.exception.ExceptionInfo;
-
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,29 +9,24 @@ public class ResponseDto<T> {
 
 	private final int code;
 	private final String message;
-	private final HttpStatus httpStatus;
+	private final int httpStatus;
 	private final T data;
+
+	private static final int SUCCESS_CODE = 0;
+
+	private static final String SUCCESS_MESSAGE = "성공";
 
 	public static <T> ResponseDto<T> success() {
 		return ResponseDto.<T>builder()
-			.code(ExceptionInfo.SUCCESS.getCode())
-			.message(ExceptionInfo.SUCCESS.getMessage())
-			.httpStatus(ExceptionInfo.SUCCESS.getHttpStatus())
+			.code(SUCCESS_CODE)
+			.message(SUCCESS_MESSAGE)
 			.build();
 	}
 
-	public static <T> ResponseDto<T> success(ExceptionInfo code) {
+	public static <T> ResponseDto<T> success(T data) {
 		return ResponseDto.<T>builder()
-			.code(code.getCode())
-			.message(code.getMessage())
-			.httpStatus(code.getHttpStatus())
-			.build();
-	}
-
-	private static <T> ResponseDto<T> successData(ExceptionInfo code, T data) {
-		return ResponseDto.<T>builder()
-			.code(code.getCode())
-			.message(code.getMessage())
+			.code(SUCCESS_CODE)
+			.message(SUCCESS_MESSAGE)
 			.data(data)
 			.build();
 	}
