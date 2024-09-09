@@ -15,6 +15,7 @@ public enum OauthServerType {
 	NAVER,
 	GOOGLE;
 
+	// todo: fromName, from 둘 다 같은 동작을 하는 메소드 아닌가
 	public static OauthServerType fromName(String oauthServerName) {
 		return OauthServerType.valueOf(oauthServerName.toUpperCase(ENGLISH));
 	}

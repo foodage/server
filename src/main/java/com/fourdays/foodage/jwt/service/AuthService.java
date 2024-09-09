@@ -19,7 +19,10 @@ import com.fourdays.foodage.member.service.MemberQueryService;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.util.OauthServerType;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class AuthService {
 
 	private final ExpiredTokenRepository expiredTokenRepository;
@@ -41,8 +44,7 @@ public class AuthService {
 	@Transactional(readOnly = true)
 	public boolean isBlacklisted(String refreshToken) {
 
-		boolean isExist = expiredTokenRepository.findByKey(refreshToken) != null;
-		return isExist; // 존재하면 true
+		return expiredTokenRepository.find(refreshToken) != null;
 	}
 
 	@Transactional

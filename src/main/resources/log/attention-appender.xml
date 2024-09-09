@@ -1,0 +1,25 @@
+<included>
+    <variable name="DIR" value="./logs"/>
+    <variable name="BACKUP_DIR" value="./logs/backup"/>
+    <variable name="ATTENTION_FILE_NAME" value="foodage-attention.log"/>
+    <variable name="ATTENTION_FILE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level ${PID:-unknown} --- [%thread] %-45logger{45} : %msg%n"/>
+
+    <appender name="ATTENTION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${DIR}/${ATTENTION_FILE_NAME}</file>
+        <append>true</append>
+        <encoder>
+            <pattern>${ATTENTION_FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${BACKUP_DIR}/${ATTENTION_FILE_NAME}.%d{yyyy-MM-dd}.%i.gz
+            </fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>100</maxHistory> <!-- 100일이 경과하면 자동 삭제 -->
+        </rollingPolicy>
+    </appender>
+
+    <logger name="attentionLog" level="DEBUG">
+        <appender-ref ref="ATTENTION_FILE"/>
+    </logger>
+</included>

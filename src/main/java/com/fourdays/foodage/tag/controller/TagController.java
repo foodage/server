@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourdays.foodage.common.dto.ResponseDto;
 import com.fourdays.foodage.home.dto.TagUsageRankResponse;
 import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.vo.MemberId;
@@ -28,11 +29,12 @@ public class TagController {
 
 	@Operation(summary = "태그 사용 순위 조회")
 	@GetMapping("/tag/usage-rank")
-	public ResponseEntity<List<TagUsageRankResponse>> getTagUsageRank() {
+	public ResponseEntity<ResponseDto<List<TagUsageRankResponse>>> getTagUsageRank() {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 		List<TagUsageRankResponse> response = tagService.getTagUsageRank(memberId);
 
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.ok()
+			.body(ResponseDto.success(response));
 	}
 }

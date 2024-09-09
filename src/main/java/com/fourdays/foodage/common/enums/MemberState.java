@@ -11,10 +11,15 @@ import lombok.Getter;
 @Getter
 public enum MemberState {
 
-	TEMP_JOIN(-1),
 	NORMAL(0),
-	BLOCK(1),
-	LEAVE(2);
+
+	TEMP_JOIN(-1), // 임시 가입 상태
+
+	DORMANT(1), // 휴면
+	PENDING_LEAVE(2), // 탈퇴 후 30일이 지나지 않아 계정 복구 가능한 상태
+	LEAVE(3), // 탈퇴 완료
+	BLOCK(4), // 차단
+	;
 
 	private final int code;
 

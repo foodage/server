@@ -1,38 +1,37 @@
 package com.fourdays.foodage.jwt.domain;
 
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import com.fourdays.foodage.common.service.RedisService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class ExpiredTokenRepository {
-
-	private final RedisTemplate<String, Object> redisTemplate;
+public class ExpiredTokenRepository extends RedisService {
 
 	public ExpiredTokenRepository(RedisTemplate<String, Object> redisTemplate) {
-		this.redisTemplate = redisTemplate;
+		super(redisTemplate);
 	}
 
 	public void save(ExpiredToken expiredToken) {
-		long expirationDays = 60L; // 60일 뒤 redis db에서 삭제
 
-		redisTemplate.opsForValue().set(expiredToken.getRefreshToken(),
-			expiredToken.getRefreshTokenValues(),
-			Duration.ofDays(expirationDays));
+		String key = expiredToken.getRefreshToken();
+		Map<String, Object> value = expiredToken.getRefreshTokenValues();
+		long EXPIRATION_DAYS = 60L; // 60일 뒤 redis에서 삭제
+
+		this.save(key, value, EXPIRATION_DAYS, TimeUnit.DAYS);
 
 		log.debug(
 			"\n#--------- saved expired refreshToken ---------#\ntoken : {}\ncreatedAt : {}\nexpiredAt : {} days later\n#----------------------------------------------#",
 			expiredToken.getRefreshToken(),
 			expiredToken.getCreatedAt(),
-			Duration.ofDays(expirationDays).toDays()
+			Duration.ofDays(EXPIRATION_DAYS).toDays()
 		);
-	}
-
-	public Object findByKey(String key) {
-		return redisTemplate.opsForValue().get(key);
 	}
 }
