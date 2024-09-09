@@ -74,7 +74,6 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
 				attentionLog.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 				attentionLog.info("");
 			}
-
 		}
 	}
 }

@@ -120,6 +120,8 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public void updateProfile(final CharacterType character, final String nickname) {
+		// todo: 획득한 character로만 업데이트 가능하게 처리
+
 		if (character != null) {
 			this.character = character;
 		}
