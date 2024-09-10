@@ -249,6 +249,7 @@ public class MemberCommandService {
 		final MemberProfileUpdateRequestDto request) {
 
 		Member findMember = memberQueryService.findByMemberId(memberId);
+		// todo: 보유중인 캐릭터로만 업데이트 가능하도록 처리
 		findMember.updateProfile(request.characterType(), request.nickname());
 	}
 }

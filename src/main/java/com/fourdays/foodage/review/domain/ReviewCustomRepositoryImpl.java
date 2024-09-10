@@ -65,7 +65,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewImage.useThumbnail
 			)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.leftJoin(reviewMenu).on(review.id.eq(reviewMenu.reviewId))
 			.leftJoin(reviewImage).on(review.id.eq(reviewImage.reviewId))
@@ -139,7 +139,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewImage.useThumbnail
 			)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.leftJoin(reviewImage).on(
 				review.id.eq(reviewImage.reviewId)
@@ -198,7 +198,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				)
 			)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.where(
 				memberIdEq(memberId),
 				dateFilter(startDate, endDate)
@@ -228,7 +228,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewImage.useThumbnail
 			)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.leftJoin(reviewImage).on(
 				review.id.eq(reviewImage.reviewId)
@@ -287,7 +287,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				)
 			)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.innerJoin(reviewImage).on(
 				review.id.eq(reviewImage.reviewId),
 				review.thumbnailId.eq(reviewImage.id)
@@ -308,7 +308,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 		List<Long> reviewModel = query
 			.select(review.id)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.leftJoin(reviewImage).on(
 				review.id.eq(reviewImage.reviewId)
@@ -333,7 +333,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 		int totalCount = query
 			.select(review.id)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.where(
 				memberIdEq(memberId)
@@ -366,10 +366,10 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			: null;
 	}
 
-	private BooleanExpression reviewIdIn(List<Long> reviewId) {
+	private BooleanExpression reviewIdIn(List<Long> reviewIds) {
 
-		return reviewId != null
-			? review.id.in(reviewId)
+		return (reviewIds != null || reviewIds.size() != 0)
+			? review.id.in(reviewIds)
 			: null;
 	}
 
@@ -414,14 +414,16 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
 		List<OrderSpecifier> result = new ArrayList<>();
 
-		if (sort.isSorted()) {
-			if (sort.getOrderFor("rating").isDescending()) {
+		if (sort != null && sort.isSorted()) {
+			if (sort.getOrderFor("rating") != null
+				&& sort.getOrderFor("rating").isDescending()) {
 				result.add(new OrderSpecifier(Order.DESC, review.rating));
 			} else {
 				result.add(new OrderSpecifier(Order.ASC, review.rating));
 			}
 
-			if (sort.getOrderFor("created_at").isDescending()) {
+			if (sort.getOrderFor("created_at") != null
+				&& sort.getOrderFor("created_at").isDescending()) {
 				result.add(new OrderSpecifier(Order.DESC, review.createdAt));
 			} else {
 				result.add(new OrderSpecifier(Order.ASC, review.createdAt));

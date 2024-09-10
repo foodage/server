@@ -50,6 +50,11 @@ public enum ExceptionInfo {
 	// 1900~
 	ERR_THUMBNAIL_NOT_FOUND(-1900, "썸네일 정보가 없습니다.", HttpStatus.NOT_FOUND),
 
+	// NOTICE //////////////////////////////////////////////////////////////////////////////////////
+	// 2200~
+	ERR_NOTICE_NOT_FOUND(-2200, "일치하는 공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+	ERR_UNAUTHORIZED_DELETE_REQUEST(-2201, "삭제 요청이 거부되었습니다. 작성자와 삭제 요청자 정보가 일치하지 않습니다.", HttpStatus.FORBIDDEN),
+
 	;
 
 	@Getter
