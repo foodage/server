@@ -96,7 +96,7 @@ public class NoticeService {
 	private Notice getNoticeById(final Long id) {
 
 		Notice notice = noticeRepository.findById(id)
-			.orElseThrow(() -> new NoticeNotFoundException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new NoticeNotFoundException(ExceptionInfo.ERR_NOTICE_NOT_FOUND));
 
 		return notice;
 	}
