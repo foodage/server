@@ -55,12 +55,9 @@ public abstract class RedisService<T> {
 		}
 
 		log.info("---> redis save");
-		log.info(
-			"* key : {}\n* value : {}\n* expiredAt : {} days later",
-			key,
-			value,
-			Duration.ofDays(ttl).toDays()
-		);
+		log.info("* key       : {}", key);
+		log.info("* value     : {}", value);
+		log.info("* expiredAt : {} days later", Duration.ofDays(ttl).toDays());
 		log.info("<--- saved");
 	}
 

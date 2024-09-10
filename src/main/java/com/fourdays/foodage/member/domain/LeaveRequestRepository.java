@@ -41,7 +41,7 @@ public class LeaveRequestRepository extends RedisService {
 				":email:" + memberId.accountEmail() +
 				":leave:request";
 
-		log.debug("generateKey() => {}", key);
+		log.debug("* generateKey() => {}", key);
 		return key;
 	}
 }

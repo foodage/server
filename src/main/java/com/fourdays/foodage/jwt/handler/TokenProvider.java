@@ -119,11 +119,11 @@ public class TokenProvider implements InitializingBean {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-			log.info("JWT 서명이 잘못되었습니다.");
+			log.error("JWT 서명이 잘못되었습니다.");
 		} catch (ExpiredJwtException e) {
-			log.info("JWT가 만료되었습니다.");
+			log.error("JWT가 만료되었습니다.");
 		} catch (UnsupportedJwtException | IllegalArgumentException e) {
-			log.info("유효하지 않은 JWT입니다.");
+			log.error("유효하지 않은 JWT입니다.");
 		}
 		return false;
 	}

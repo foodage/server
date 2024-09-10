@@ -34,8 +34,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Transactional
 	public UserDetails loadUserByUsername(final String username) {
 
-		log.debug("# authenticate() --...--> loadUserByUsername() execute");
-		log.debug("# username : {}", username);
+		log.debug("* authenticate() --...--> loadUserByUsername() execute");
+		log.debug("* username : {}", username);
 
 		return memberRepository.findOneWithAuthoritiesByAccountEmail(username)
 			.map(member -> createUserDetails(member))
