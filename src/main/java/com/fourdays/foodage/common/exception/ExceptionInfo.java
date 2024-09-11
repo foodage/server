@@ -1,9 +1,9 @@
 package com.fourdays.foodage.common.exception;
 
-import java.util.Optional;
-import java.util.function.Predicate;
-
 import org.springframework.http.HttpStatus;
+
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 public enum ExceptionInfo {
 
@@ -52,27 +52,21 @@ public enum ExceptionInfo {
 
 	;
 
+	@Getter
+	@Accessors(fluent = true)
 	private final int code; // 에러 코드
+
+	@Getter
+	@Accessors(fluent = true)
 	private final String message; // 클라이언트 반환 메시지
+
+	@Getter
+	@Accessors(fluent = true)
 	private final HttpStatus httpStatus; // 반환 응답 코드
 
 	ExceptionInfo(int code, String message, HttpStatus httpStatus) {
 		this.code = code;
 		this.message = message;
 		this.httpStatus = httpStatus;
-	}
-
-	public int getCode() {
-		return code;
-	}
-
-	public String getMessage() {
-		return Optional.ofNullable(message)
-			.filter(Predicate.not(String::isBlank))
-			.orElse("");
-	}
-
-	public HttpStatus getHttpStatus() {
-		return httpStatus;
 	}
 }

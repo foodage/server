@@ -2,6 +2,7 @@ package com.fourdays.foodage.member.exception;
 
 import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
+import com.fourdays.foodage.common.exception.FoodageException;
 
 import lombok.Getter;
 
@@ -11,14 +12,12 @@ import lombok.Getter;
  * description    : 회원가입 진행중인 상태에 관련된 Exception  <br/>
  */
 @Getter
-public class MemberJoinInProgressException extends RuntimeException {
+public class MemberJoinInProgressException extends FoodageException {
 
-	private ExceptionInfo errCode;
 	private LoginResult loginResult;
 
 	public MemberJoinInProgressException(ExceptionInfo errCode, LoginResult loginResult) {
-		super(errCode.getMessage());
-		this.errCode = errCode;
+		super(errCode);
 		this.loginResult = loginResult;
 	}
 }

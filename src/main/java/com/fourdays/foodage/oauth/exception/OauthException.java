@@ -1,6 +1,7 @@
 package com.fourdays.foodage.oauth.exception;
 
 import com.fourdays.foodage.common.exception.ExceptionInfo;
+import com.fourdays.foodage.common.exception.FoodageException;
 
 import lombok.Getter;
 
@@ -10,12 +11,9 @@ import lombok.Getter;
  * description    : Kakao 로그인과 관련된 Exception  <br/>
  */
 @Getter
-public class OauthException extends RuntimeException {
-
-	private ExceptionInfo errCode;
+public class OauthException extends FoodageException {
 
 	public OauthException(ExceptionInfo errCode) {
-		super(errCode.getMessage());
-		this.errCode = errCode;
+		super(errCode);
 	}
 }

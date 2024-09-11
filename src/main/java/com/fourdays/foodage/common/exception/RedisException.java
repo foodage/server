@@ -7,12 +7,9 @@ import lombok.Getter;
  * date           : 2024/09/05 <br/>
  */
 @Getter
-public class RedisException extends RuntimeException {
-
-	private ExceptionInfo errCode;
+public class RedisException extends FoodageException {
 
 	public RedisException(ExceptionInfo errCode) {
-		super(errCode.getMessage());
-		this.errCode = errCode;
+		super(errCode);
 	}
 }

@@ -1,7 +1,6 @@
 package com.fourdays.foodage.review.domain;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
-import com.fourdays.foodage.review.dto.CreateReviewRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,12 +52,4 @@ public class Review extends BaseTimeEntity {
 		nullable = false
 	)
 	private Long creatorId; // memberId
-
-	public Review(CreateReviewRequest request, Long creatorId) {
-		this.restaurant = request.getRestaurant();
-		this.address = request.getAddress();
-		this.rating = request.getRating();
-		this.contents = request.getContents();
-		this.creatorId = creatorId;
-	}
 }

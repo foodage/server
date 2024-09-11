@@ -64,8 +64,8 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
 				attentionLog.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 				attentionLog.error("[attention!] completeLeave()에서 에러 발생");
 				attentionLog.error("@ 회원 탈퇴 처리 중 문제가 발생하였습니다. 매뉴얼에 따라 데이터를 수동으로 업데이트하세요.");
-				attentionLog.error("* errorCode: {}", e.getErrCode().getCode());
-				attentionLog.error("* errorMessage: {}", e.getErrCode().getMessage());
+				attentionLog.error("* errorCode: {}", e.getErrCode().code());
+				attentionLog.error("* errorMessage: {}", e.getErrCode().message());
 				attentionLog.info("");
 				attentionLog.info("--- [info] ---");
 				attentionLog.info("* redisKey        : {}", redisKey); // already deleted
