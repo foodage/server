@@ -1,5 +1,13 @@
 package com.fourdays.foodage.common.dto;
 
+import org.hibernate.validator.constraints.Length;
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,9 +15,39 @@ import lombok.Getter;
 @Builder
 public class ResponseDto<T> {
 
-	private final int code;
+	@Schema(
+		title = "api 응답 코드",
+		maxLength = 5,
+		type = "int",
+		requiredMode = Schema.RequiredMode.REQUIRED
+	)
+	@Length(min = 1, max = 6)
+	@NotNull
+	private final Integer code;
+
+	@Schema(
+		title = "api 응답 메시지",
+		maxLength = 255,
+		requiredMode = Schema.RequiredMode.NOT_REQUIRED
+	)
+	@Length(min = 1, max = 255)
+	@Nullable
 	private final String message;
-	private final int httpStatus;
+
+	@Schema(
+		title = "api 응답 HTTP 코드",
+		requiredMode = Schema.RequiredMode.REQUIRED
+	)
+	@NotNull
+	private final HttpStatus httpStatus;
+
+	@Schema(
+		title = "api 응답 데이터",
+		type = "object",
+		requiredMode = Schema.RequiredMode.NOT_REQUIRED
+	)
+	@Nullable
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private final T data;
 
 	private static final int SUCCESS_CODE = 0;

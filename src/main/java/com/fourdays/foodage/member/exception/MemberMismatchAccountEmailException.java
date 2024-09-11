@@ -1,6 +1,7 @@
 package com.fourdays.foodage.member.exception;
 
 import com.fourdays.foodage.common.exception.ExceptionInfo;
+import com.fourdays.foodage.common.exception.FoodageException;
 
 import lombok.Getter;
 
@@ -10,12 +11,9 @@ import lombok.Getter;
  * description    : 로그인 한 계정의 email과 가입 이메일이 다를 경우 <br/>
  */
 @Getter
-public class MemberMismatchAccountEmailException extends RuntimeException {
-
-	private ExceptionInfo errCode;
+public class MemberMismatchAccountEmailException extends FoodageException {
 
 	public MemberMismatchAccountEmailException(ExceptionInfo errCode) {
-		super(errCode.getMessage());
-		this.errCode = errCode;
+		super(errCode);
 	}
 }

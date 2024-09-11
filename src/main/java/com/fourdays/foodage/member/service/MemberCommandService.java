@@ -26,6 +26,7 @@ import com.fourdays.foodage.member.dto.MemberProfileUpdateRequestDto;
 import com.fourdays.foodage.member.exception.MemberDuplicateNicknameException;
 import com.fourdays.foodage.member.exception.MemberInvalidOauthServerTypeException;
 import com.fourdays.foodage.member.exception.MemberInvalidStateException;
+import com.fourdays.foodage.member.exception.MemberLeaveException;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
 import com.fourdays.foodage.oauth.domain.OauthMember;
@@ -209,7 +210,7 @@ public class MemberCommandService {
 		try {
 			findMember = memberQueryService.findByMemberId(memberId);
 		} catch (Exception e) {
-			throw new FoodageException(ExceptionInfo.ERR_MEMBER_LEAVE_FAILED);
+			throw new MemberLeaveException(ExceptionInfo.ERR_MEMBER_LEAVE_FAILED);
 		}
 		findMember.completeLeave();
 

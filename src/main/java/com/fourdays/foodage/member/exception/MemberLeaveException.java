@@ -1,6 +1,7 @@
 package com.fourdays.foodage.member.exception;
 
 import com.fourdays.foodage.common.exception.ExceptionInfo;
+import com.fourdays.foodage.common.exception.FoodageException;
 
 import lombok.Getter;
 
@@ -9,12 +10,9 @@ import lombok.Getter;
  * date           : 2024/09/05 <br/>
  */
 @Getter
-public class MemberLeaveException extends RuntimeException {
-
-	private ExceptionInfo errCode;
+public class MemberLeaveException extends FoodageException {
 
 	public MemberLeaveException(ExceptionInfo errCode) {
-		super(errCode.getMessage());
-		this.errCode = errCode;
+		super(errCode);
 	}
 }
