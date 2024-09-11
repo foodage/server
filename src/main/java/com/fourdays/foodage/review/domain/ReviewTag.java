@@ -1,4 +1,4 @@
-package com.fourdays.foodage.tag.domain;
+package com.fourdays.foodage.review.domain;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
 
@@ -8,15 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Table(name = "review_tag")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 @Getter
 public class ReviewTag extends BaseTimeEntity {
 
@@ -31,12 +29,12 @@ public class ReviewTag extends BaseTimeEntity {
 	@Column(name = "tag_id", nullable = false)
 	private Long tagId;
 
-	@Column(name = "bg_color", length = 128, nullable = false)
-	private String tagBgColor;
+	@Column(name = "name", length = 128)
+	private String tagName;
 
 	@Column(name = "text_color", length = 128, nullable = false)
 	private String tagTextColor;
 
-	@Column(name = "name", length = 128)
-	private String tagName;
+	@Column(name = "bg_color", length = 128, nullable = false)
+	private String tagBgColor;
 }
