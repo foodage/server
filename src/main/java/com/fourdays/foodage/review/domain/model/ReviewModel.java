@@ -20,7 +20,7 @@ public class ReviewModel {
 
 	private String address;
 
-	private String content;
+	private String contents;
 
 	private float rating;
 
@@ -33,16 +33,16 @@ public class ReviewModel {
 	private List<ReviewImageModel> images;
 
 	public ReviewModel(Long id, String restaurant, String address,
-		String content, Float rating, LocalDateTime createdAt,
-		List<TagModel> tags, List<ReviewMenuModel> menus, List<ReviewImageModel> images) {
+					   String contents, Float rating, LocalDateTime createdAt,
+					   List<TagModel> tags, List<ReviewMenuModel> menus, List<ReviewImageModel> images) {
 
 		this.id = id;
 		this.restaurant = restaurant;
 		this.address = address;
-		if (content != null && content.length() > 30) {
-			this.content = content.substring(0, CONTENT_PREVIEW_LENGTH);
+		if (contents != null && contents.length() > 30) {
+			this.contents = contents.substring(0, CONTENT_PREVIEW_LENGTH);
 		} else {
-			this.content = content;
+			this.contents = contents;
 		}
 		this.rating = rating;
 		this.createdAt = createdAt;

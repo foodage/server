@@ -1,39 +1,28 @@
 package com.fourdays.foodage.review.controller;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
+import com.fourdays.foodage.jwt.util.SecurityUtil;
+import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.domain.Review;
+import com.fourdays.foodage.review.domain.model.ReviewModel;
+import com.fourdays.foodage.review.dto.*;
+import com.fourdays.foodage.review.service.ReviewService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.fourdays.foodage.jwt.util.SecurityUtil;
-import com.fourdays.foodage.member.vo.MemberId;
-import com.fourdays.foodage.review.domain.Review;
-import com.fourdays.foodage.review.domain.model.ReviewModel;
-import com.fourdays.foodage.review.dto.DateReviewResponse;
-import com.fourdays.foodage.review.dto.PeriodReviewGroup;
-import com.fourdays.foodage.review.dto.PeriodReviewRequest;
-import com.fourdays.foodage.review.dto.RecentReviewResponse;
-import com.fourdays.foodage.review.dto.ReviewResponse;
-import com.fourdays.foodage.review.service.ReviewService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @Slf4j
@@ -112,9 +101,10 @@ public class ReviewController {
 
 	@Operation(summary = "리뷰 작성")
 	@PostMapping("/review")
-	public ResponseEntity<Review> addReview(@RequestBody Review review) {
-		Review addReview = reviewService.addReview(review);
+	public ResponseEntity<Review> createReview(@RequestBody CreateReviewRequestDto request) {
+		MemberId memberId = SecurityUtil.getCurrentMemberId();
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(addReview);
+		Review createdReview = reviewService.createReview(request, memberId);
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
 	}
 }

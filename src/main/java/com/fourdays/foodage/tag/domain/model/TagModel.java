@@ -20,4 +20,6 @@ public class TagModel {
 	private String bgColor;
 
 	private String textColor;
+
+	private Long reviewId;
 }

@@ -20,4 +20,6 @@ public class ReviewImageModel {
 	private String imageUrl;
 
 	private Boolean useThumbnail;
+
+	private Long reviewId;
 }

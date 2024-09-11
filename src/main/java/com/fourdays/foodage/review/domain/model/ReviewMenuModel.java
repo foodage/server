@@ -18,4 +18,6 @@ public class ReviewMenuModel {
 	private String menu;
 
 	private Integer price;
+
+	private Long reviewId;
 }

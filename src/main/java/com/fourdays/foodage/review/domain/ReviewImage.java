@@ -10,15 +10,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Table(name = "review_image")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 @Getter
 public class ReviewImage extends BaseTimeEntity {
 
@@ -47,9 +45,9 @@ public class ReviewImage extends BaseTimeEntity {
 	private int sequence; // 이미지 업로드 순서
 
 	@Column(
-		name = "use_thumbnail",
+		name = "is_thumbnail",
 		nullable = false,
 		columnDefinition = "TINYINT(1)"
 	)
-	private boolean useThumbnail;
+	private boolean isThumbnail;
 }

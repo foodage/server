@@ -8,15 +8,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Table(name = "review")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 @Getter
 public class Review extends BaseTimeEntity {
 
@@ -36,6 +36,9 @@ public class Review extends BaseTimeEntity {
 
 	@Column(name = "contents", nullable = false)
 	private String contents;
+
+	@Column(name = "date", nullable = false)
+	private LocalDateTime date;
 
 	@Column(name = "thumbnail_id")
 	private Long thumbnailId;
