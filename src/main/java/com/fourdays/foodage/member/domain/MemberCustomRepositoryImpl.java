@@ -27,7 +27,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 				review.id
 			)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.innerJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.where(
 				memberIdEq(memberId)

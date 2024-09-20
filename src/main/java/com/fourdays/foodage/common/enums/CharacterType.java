@@ -17,6 +17,7 @@ import lombok.Getter;
 @Getter
 public enum CharacterType {
 
+	// 기본 제공 캐릭터
 	PIGEON("비둘기", Type.DEFAULT, CollectionType.NONE),
 	SPARROW("참새", Type.DEFAULT, CollectionType.NONE),
 	CHICK("병아리", Type.DEFAULT, CollectionType.NONE),
@@ -26,6 +27,7 @@ public enum CharacterType {
 	OTTER("수달", Type.DEFAULT, CollectionType.NONE),
 	PANDA("팬더", Type.DEFAULT, CollectionType.NONE),
 
+	// complete 보상으로 획득 가능한 hidden 캐릭터
 	H_PIGEON("용감한 비둘기", Type.HIDDEN, CollectionType.BADGE),
 	H_SPARROW("새침한 참새", Type.HIDDEN, CollectionType.BADGE),
 	H_CHICK("초롱한 병아리", Type.HIDDEN, CollectionType.BADGE),
@@ -33,7 +35,11 @@ public enum CharacterType {
 	H_RACCOON("근면한 너구리", Type.HIDDEN, CollectionType.BADGE),
 	H_SEAL("인내심 있는 물개", Type.HIDDEN, CollectionType.BADGE),
 	H_OTTER("명랑한 수달", Type.HIDDEN, CollectionType.BADGE),
-	H_PANDA("행복한 팬더", Type.HIDDEN, CollectionType.BADGE);
+	H_PANDA("행복한 팬더", Type.HIDDEN, CollectionType.BADGE),
+
+	// 관리자 전용 캐릭터
+	R_OTTER("(관리자) 푸디", Type.HIDDEN, CollectionType.ADMIN_ONLY),
+	R_CHICK("(관리자) 피피", Type.HIDDEN, CollectionType.ADMIN_ONLY);
 
 	private final String krName;
 	private final Type type;
@@ -78,6 +84,7 @@ public enum CharacterType {
 	public enum CollectionType {
 		NONE,
 		BADGE,
-		EVENT
+		EVENT,
+		ADMIN_ONLY
 	}
 }

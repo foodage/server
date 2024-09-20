@@ -102,7 +102,7 @@ public class MemberCommandService {
 			.authorityName(Role.MEMBER.getRole())
 			.build();
 		String credential = authService.createCredential();
-		log.debug("# credential (plain) : {}", credential);
+		log.debug("* credential (plain) : {}", credential);
 
 		Member member = Member.builder()
 			.oauthId(oauthId)
@@ -151,22 +151,23 @@ public class MemberCommandService {
 
 		//////////////////// 회원가입 완료 처리 (update query) ////////////////////
 		String credential = authService.createCredential();
-		log.debug("# credential (plain) : {}", credential);
+		log.debug("* credential (plain) : {}", credential);
 
 		member.completedJoin(nickname, character,
 			passwordEncoder.encode(credential));
 
-		log.debug(
-			"\n#--------- updated member ---------#\nid : {}\naccountEmail : {}\nnickname : {}\n#--------------------------------#",
-			member.getId(),
-			member.getAccountEmail(),
-			nickname
-		);
+		log.debug("\n*--------- updated member ---------*");
+		log.debug("* id           : {}", member.getId());
+		log.debug("* accountEmail : {}", member.getAccountEmail());
+		log.debug("* nickname     : {}", nickname);
+		log.debug("*----------------------------------*");
 
 		// jwt 발행 (at & rt)
 		TokenDto jwt = authService.createToken(member.getOauthId().getOauthServerType(),
 			member.getAccountEmail(), credential);
-		log.debug("\n#--- accessToken : {}\n#--- refreshToken : {}", jwt.accessToken(), jwt.refreshToken());
+
+		log.debug("* accessToken  : {}", jwt.accessToken());
+		log.debug("* refreshToken : {}", jwt.refreshToken());
 
 		return new MemberJoinResponseDto(member, jwt);
 	}
@@ -249,6 +250,7 @@ public class MemberCommandService {
 		final MemberProfileUpdateRequestDto request) {
 
 		Member findMember = memberQueryService.findByMemberId(memberId);
+		// todo: 보유중인 캐릭터로만 업데이트 가능하도록 처리
 		findMember.updateProfile(request.characterType(), request.nickname());
 	}
 }

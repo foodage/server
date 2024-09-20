@@ -40,8 +40,9 @@ public class AuthUtilService {
 
 	public HttpHeaders createHeader(TokenDto jwt) {
 
-		log.debug("# createHeader\n[header] accessToken : {}\n[header] refreshToken : {})",
-			jwt.accessToken(), jwt.refreshToken());
+		log.debug("* createHeader()");
+		log.debug("* [header] accessToken  : {}", jwt.accessToken());
+		log.debug("* [header] refreshToken : {}", jwt.refreshToken());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, jwt.accessToken());
@@ -52,8 +53,9 @@ public class AuthUtilService {
 	//////////////////// cookie ////////////////////
 	private HttpHeaders createCookieHeader(TokenDto jwt) {
 
-		log.debug("# createCookieHeader\n[set-cookie] accessToken : {}\n[set-cookie] refreshToken : {})",
-			jwt.accessToken(), jwt.refreshToken());
+		log.debug("* createCookieHeader()");
+		log.debug("* [set-cookie] accessToken  : {}", jwt.accessToken());
+		log.debug("* [set-cookie] refreshToken : {}", jwt.refreshToken());
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("Set-Cookie",
@@ -66,8 +68,9 @@ public class AuthUtilService {
 
 	public HttpHeaders createCookieHeader(String oauthAccessToken, String oauthServerType) {
 
-		log.debug("# createCookieHeader\n[set-cookie] accessToken : {}\n[set-cookie] oauthServerName : {})",
-			oauthAccessToken, oauthServerType);
+		log.debug("* createCookieHeader()");
+		log.debug("* [set-cookie] accessToken     : {}", oauthAccessToken);
+		log.debug("* [set-cookie] oauthServerName : {}", oauthServerType);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("Set-Cookie",

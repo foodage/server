@@ -49,7 +49,7 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
 		log.info("================= [redis key expired] =================");
 		log.info("* event pattern : {}", new String(pattern)); // 이벤트를 구독할 때 사용한 패턴
 		log.info("* redis channel : {}", new String(message.getChannel())); // 이벤트가 발생한 Redis 채널(db)명
-		log.info("* redis key : [{}]", redisKey);
+		log.info("* redis key     : [{}]", redisKey);
 
 		if (message.toString().contains(RedisKeyType.LEAVE_REQUEST.getEventId())) {
 			String[] parts = redisKey.split(":");

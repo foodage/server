@@ -36,7 +36,7 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
 				)
 			)
 			.from(review)
-			.innerJoin(member).on(review.creatorId.eq(member.id))
+			.innerJoin(member).on(review.createdBy.eq(member.id))
 			.leftJoin(reviewTag).on(review.id.eq(reviewTag.reviewId))
 			.where(
 				memberIdEq(memberId)

@@ -16,10 +16,10 @@ public class RequestHandler implements HandlerInterceptor {
 
 		System.out.println();
 		// log.debug("==================== [new request] ====================");
-		log.debug(">>>>>>>>>>>>>>>>>>>> [new request] >>>>>>>>>>>>>>>>>>>>");
-		log.debug("@ Request URI : [{}] {}", request.getMethod(), request.getRequestURI());
-		log.debug("@ Client IP (remote) : {}", request.getRemoteAddr());
-		log.debug("@ Client IP (parse-header) : {}", getClientIpAddr(request));
+		log.info(">>>>>>>>>>>>>>>>>>>> [new request] >>>>>>>>>>>>>>>>>>>>");
+		log.info("@ Request URI : [{}] {}", request.getMethod(), request.getRequestURI());
+		log.info("@ Client IP (remote) : {}", request.getRemoteAddr());
+		log.info("@ Client IP (parse-header) : {}", getClientIpAddr(request));
 		System.out.println();
 
 		return HandlerInterceptor.super.preHandle(request, response, handler);
@@ -29,7 +29,7 @@ public class RequestHandler implements HandlerInterceptor {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 		ModelAndView modelAndView) throws Exception {
 		// log.debug("======================== [end] ========================");
-		log.debug("<<<<<<<<<<<<<<<<<<<<<<<< [end] <<<<<<<<<<<<<<<<<<<<<<<<");
+		log.info("<<<<<<<<<<<<<<<<<<<<<<<< [end] <<<<<<<<<<<<<<<<<<<<<<<<");
 		System.out.println();
 
 		HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);

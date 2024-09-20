@@ -24,7 +24,7 @@ public class OauthService {
 	public String getRequestUri(OauthServerType oauthServerType) {
 
 		String requestUri = requestUriProvider.getRequestUri(oauthServerType);
-		log.debug("# request uri : {}", requestUri);
+		log.debug("* request uri : {}", requestUri);
 		return requestUri;
 	}
 
@@ -32,23 +32,23 @@ public class OauthService {
 
 		// oauth 서버에 oauth access token, 사용자 정보(member info) 요청
 		OauthMember oauthMember = oauthClient.fetch(oauthServerType, authCode);
-		log.debug("# oauth access token : {}", oauthMember.getAccessToken());
-		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}",
-			oauthMember.getOauthId().getOauthServerId(),
-			oauthMember.getOauthId().getOauthServerType(),
-			oauthMember.getAccountEmail());
+		log.debug("* oauth access token : {}", oauthMember.getAccessToken());
+		log.debug("* oauthServerId      : {}", oauthMember.getOauthId().getOauthServerId());
+		log.debug("* oauthServerType    : {}", oauthMember.getOauthId().getOauthServerType());
+		log.debug("* accountEmail       : {}", oauthMember.getAccountEmail());
+
 		return oauthMember;
 	}
 
 	public OauthMember getOauthMemberByAccessToken(OauthServerType oauthServerType, String accessToken) {
 
-		log.debug("# oauth access token : {}", accessToken);
+		log.debug("* oauth access token : {}", accessToken);
 
 		OauthMember oauthMember = oauthClient.fetchMember(oauthServerType, accessToken);
-		log.debug("# oauthServerId : {}\noauthServerType : {}\naccountEmail : {}",
-			oauthMember.getOauthId().getOauthServerId(),
-			oauthMember.getOauthId().getOauthServerType(),
-			oauthMember.getAccountEmail());
+		log.debug("* oauthServerId      : {}", oauthMember.getOauthId().getOauthServerId());
+		log.debug("* oauthServerType    : {}", oauthMember.getOauthId().getOauthServerType());
+		log.debug("* accountEmail       : {}", oauthMember.getAccountEmail());
+
 		return oauthMember;
 	}
 }

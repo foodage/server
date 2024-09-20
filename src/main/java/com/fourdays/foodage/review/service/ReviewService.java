@@ -60,7 +60,7 @@ public class ReviewService {
 	public DateReviewResponse getReviewsByDate(final MemberId memberId,
 		final LocalDate date) {
 
-		log.debug("# getReviewsByDate() : {}", date);
+		log.debug("* getReviewsByDate() : {}", date);
 
 		List<ReviewModelWithThumbnail> reviewModels =
 			reviewCustomRepository.findReviewsByDate(memberId, date);
@@ -71,7 +71,7 @@ public class ReviewService {
 	public List<RecentReviewResponse> getRecentReviews(final MemberId memberId,
 		final int limit) {
 
-		log.debug("# getRecentReviews() limit : {}", limit);
+		log.debug("* getRecentReviews() limit : {}", limit);
 
 		return reviewCustomRepository.findRecentReviews(memberId, limit);
 	}
@@ -79,7 +79,7 @@ public class ReviewService {
 	public Map<LocalDate, PeriodReviewGroup> getReviewsByPeriod(final MemberId memberId,
 		final PeriodReviewRequest request) {
 
-		log.debug("# getReviewsByPeriod() : {} ~ {}", request.getStartDate(),
+		log.debug("* getReviewsByPeriod() : {} ~ {}", request.getStartDate(),
 			request.getEndDate());
 
 		List<PeriodReviewResponse> weeklyReviews =
@@ -112,7 +112,7 @@ public class ReviewService {
 
 		Review addReview = reviewRepository.save(review);
 
-		log.debug("\n# add review id : {}", addReview.getId());
+		log.debug("* add review id : {}", addReview.getId());
 
 		return addReview;
 	}

@@ -33,7 +33,7 @@ public class GoogleLoginProvider implements OauthLoginProvider {
 	@Override
 	public OauthMember getTokenAndMemberInfo(String authCode) {
 		GoogleToken googleToken = googleApiClient.fetchToken(tokenRequestParams(authCode));
-		log.debug("# google accessToken : {}", googleToken.accessToken());
+		log.debug("* google accessToken : {}", googleToken.accessToken());
 		GoogleMemberResponseDto googleMemberResponse = googleApiClient.fetchMember(
 				"Bearer " + googleToken.accessToken())
 			.withAccessToken(googleToken.accessToken());

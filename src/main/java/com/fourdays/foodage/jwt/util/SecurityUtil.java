@@ -31,7 +31,7 @@ public class SecurityUtil {
 
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication == null) {
-			log.debug("Security Context에 인증 정보가 없습니다.");
+			log.error("Security Context에 인증 정보가 없습니다.");
 			return null;
 		}
 
@@ -48,7 +48,7 @@ public class SecurityUtil {
 					claims.get(JwtClaim.OAUTH_SERVER_TYPE.getValue()).toString()
 				);
 			} catch (Exception e) {
-				log.debug("유효한 Jwt Claim을 찾을 수 없습니다.");
+				log.error("유효한 Jwt Claim을 찾을 수 없습니다.");
 			}
 		}
 
