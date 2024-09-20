@@ -43,6 +43,7 @@ public class NoticeController {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 
+		// todo: 최상단 고정 여부 추가
 		noticeService.addNotice(request, memberId);
 
 		return ResponseEntity.status(HttpStatus.CREATED)
@@ -63,7 +64,6 @@ public class NoticeController {
 	@GetMapping("/notice/{id}")
 	public ResponseEntity getNotice(@NotNull @PathVariable("id") Long id) {
 
-		// todo: 조회수 기능 추가
 		NoticeModel response = noticeService.getNoticeDetail(id);
 
 		return ResponseEntity.ok()
