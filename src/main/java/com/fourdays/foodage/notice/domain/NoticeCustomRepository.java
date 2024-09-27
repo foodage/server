@@ -9,7 +9,7 @@ import com.fourdays.foodage.notice.domain.model.NoticeModel;
 
 public interface NoticeCustomRepository {
 
-	NoticeModel findNoticeDetailById(final Long noticeId);
+	NoticeModel findNotice(final Long noticeId);
 
 	int countByNoticeId();
 

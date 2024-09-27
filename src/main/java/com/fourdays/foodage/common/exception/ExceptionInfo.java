@@ -59,7 +59,9 @@ public enum ExceptionInfo {
 	// 2250~
 	ERR_NON_MEMBER_INQUIRY_EMAIL_REQUIRED(-2250, "비회원 문의 시에는 이메일 주소를 필수로 입력해야 합니다.", HttpStatus.BAD_REQUEST),
 	ERR_NOT_SUPPORTED_INQUIRY_CATEGORY(-2251, "지원하지 않는 문의 카테고리 유형입니다.", HttpStatus.BAD_REQUEST),
-
+	ERR_INQUIRY_NOT_FOUND(-2252, "일치하는 문의 게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+	ERR_INQUIRY_ANSWER_CONTENTS_EMPTY(-2253, "답변 내용은 공백일 수 없습니다. 답변을 입력해주세요.", HttpStatus.BAD_REQUEST),
+	ERR_INQUIRY_ALREADY_ANSWERED(-2254, "답변이 완료된 상태에서는 문의 내용을 수정할 수 없습니다.", HttpStatus.BAD_REQUEST),
 	;
 
 	@Getter

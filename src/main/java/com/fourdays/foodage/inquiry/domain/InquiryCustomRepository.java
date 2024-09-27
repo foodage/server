@@ -14,4 +14,6 @@ public interface InquiryCustomRepository {
 	Slice<Long> findInquiryIds(final MemberId memberId, final Long idx, final Pageable pageable);
 
 	List<InquiryModel> findInquiries(final List<Long> ids, final Pageable pageable);
+
+	Inquiry findInquiry(final Long inquiryId, final MemberId memberId);
 }

@@ -1,5 +1,6 @@
 package com.fourdays.foodage.inquiry.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.domain.Slice;
@@ -16,6 +17,12 @@ public class InquiriesResponse {
 	private Paging paging;
 
 	private List<InquiryModel> inquiries;
+
+	public InquiriesResponse() {
+		this.totalCount = 0;
+		this.paging = null;
+		this.inquiries = Collections.emptyList();
+	}
 
 	public InquiriesResponse(Slice<Long> inquiryIds,
 		List<InquiryModel> inquiries, int totalCount) {

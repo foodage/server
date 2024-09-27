@@ -3,6 +3,7 @@ package com.fourdays.foodage.inquiry.domain;
 import java.time.LocalDateTime;
 
 import com.fourdays.foodage.common.enums.InquiryCategory;
+import com.fourdays.foodage.common.enums.InquiryState;
 
 import lombok.Getter;
 
@@ -22,16 +23,16 @@ public class InquiryModel {
 
 	private LocalDateTime updatedAt;
 
-	// answer
-	private Boolean isAnswered;
+	private InquiryState state;
 
+	// answer
 	private String answer;
 
 	private LocalDateTime answeredAt;
 
 	public InquiryModel(Long id, InquiryCategory category, String title,
 		String contents, LocalDateTime createdAt, LocalDateTime updatedAt,
-		Boolean isAnswered, String answer, LocalDateTime answeredAt) {
+		InquiryState state, String answer, LocalDateTime answeredAt) {
 
 		this.id = id;
 		this.category = category;
@@ -39,7 +40,7 @@ public class InquiryModel {
 		this.contents = contents;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
-		this.isAnswered = isAnswered;
+		this.state = state;
 		this.answer = answer;
 		this.answeredAt = answeredAt;
 	}

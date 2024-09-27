@@ -73,7 +73,7 @@ public class InquiryCustomRepositoryImpl implements InquiryCustomRepository {
 					inquiry.contents,
 					inquiry.createdAt,
 					inquiry.updatedAt,
-					inquiry.isAnswered,
+					inquiry.state,
 					inquiry.answer,
 					inquiry.answeredAt
 				)
@@ -88,6 +88,17 @@ public class InquiryCustomRepositoryImpl implements InquiryCustomRepository {
 			).fetch();
 	}
 
+	public Inquiry findInquiry(final Long inquiryId, final MemberId memberId) {
+
+		return query
+			.selectFrom(inquiry)
+			.innerJoin(member).on(inquiry.createdBy.eq(member.id))
+			.where(
+				inquiryIdEq(inquiryId),
+				memberIdEq(memberId)
+			).fetchFirst();
+	}
+
 	//////////////////////////////////////////////////////////////////
 
 	private BooleanExpression memberIdEq(final MemberId memberId) {
@@ -96,10 +107,10 @@ public class InquiryCustomRepositoryImpl implements InquiryCustomRepository {
 			.and(member.oauthId.oauthServerType.eq(memberId.oauthServerType()));
 	}
 
-	private BooleanExpression inquiryIdLt(final Long inquiryId) {
+	private BooleanExpression inquiryIdEq(final Long inquiryId) {
 
 		return inquiryId != null
-			? inquiry.id.lt(inquiryId)
+			? inquiry.id.eq(inquiryId)
 			: null;
 	}
 
@@ -107,6 +118,13 @@ public class InquiryCustomRepositoryImpl implements InquiryCustomRepository {
 
 		return (inquiryIds != null || inquiryIds.size() != 0)
 			? inquiry.id.in(inquiryIds)
+			: null;
+	}
+
+	private BooleanExpression inquiryIdLt(final Long inquiryId) {
+
+		return inquiryId != null
+			? inquiry.id.lt(inquiryId)
 			: null;
 	}
 

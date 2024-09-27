@@ -4,7 +4,11 @@ import java.time.LocalDateTime;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.common.enums.InquiryCategory;
+import com.fourdays.foodage.common.enums.InquiryState;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
+import com.fourdays.foodage.inquiry.exception.InquiryAnswerContentsException;
 
+import io.netty.util.internal.StringUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -65,10 +69,11 @@ public class Inquiry extends BaseTimeEntity {
 	private String notifyEmail;
 
 	@Column(
-		name = "is_answered",
+		name = "state",
 		nullable = false
 	)
-	private Boolean isAnswered;
+	@Enumerated(EnumType.STRING)
+	private InquiryState state;
 
 	@Column(
 		name = "answer",
@@ -81,4 +86,17 @@ public class Inquiry extends BaseTimeEntity {
 
 	@Column(name = "answered_at")
 	private LocalDateTime answeredAt;
+
+	public void modifyInquiry(final String title, final String contents) {
+		this.title = title;
+		this.answer = contents;
+	}
+
+	public void registAnswer(final String contents, final Long adminId) {
+		if (StringUtil.isNullOrEmpty(contents)) {
+			throw new InquiryAnswerContentsException(ExceptionInfo.ERR_INQUIRY_ANSWER_CONTENTS_EMPTY);
+		}
+		this.answer = contents;
+		this.answeredBy = adminId;
+	}
 }
