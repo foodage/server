@@ -55,6 +55,11 @@ public enum ExceptionInfo {
 	ERR_NOTICE_NOT_FOUND(-2200, "일치하는 공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	ERR_UNAUTHORIZED_DELETE_REQUEST(-2201, "삭제 요청이 거부되었습니다. 작성자와 삭제 요청자 정보가 일치하지 않습니다.", HttpStatus.FORBIDDEN),
 
+	// INQUIRY //////////////////////////////////////////////////////////////////////////////////////
+	// 2250~
+	ERR_NON_MEMBER_INQUIRY_EMAIL_REQUIRED(-2250, "비회원 문의 시에는 이메일 주소를 필수로 입력해야 합니다.", HttpStatus.BAD_REQUEST),
+	ERR_NOT_SUPPORTED_INQUIRY_CATEGORY(-2251, "지원하지 않는 문의 카테고리 유형입니다.", HttpStatus.BAD_REQUEST),
+
 	;
 
 	@Getter

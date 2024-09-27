@@ -32,9 +32,10 @@ public class SecurityConfig {
 		"/swagger-resources/**",
 		"/v3/api-docs/**", // swagger
 		"/oauth/**",
-		"/jwt/test-issue",
 		"/member/join",
-		"/review"
+		"/inquiry",
+
+		"/jwt/test-issue" // todo : 테스트 환경시에만 사용
 	};
 
 	public SecurityConfig(
