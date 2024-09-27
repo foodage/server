@@ -77,6 +77,7 @@ public class InquiryService {
 			.build();
 
 		inquiryRepository.save(entity);
+		// todo: 관리자에게 메일 발송
 	}
 
 	public void registerAnswer(final Long id, final RegisterAnswerRequest request) {
@@ -87,6 +88,7 @@ public class InquiryService {
 		final Inquiry entity = getInquiryById(id);
 
 		entity.registAnswer(request.contents(), member.getId());
+		// todo: 등록된 이메일로 답변 알림 발송
 	}
 
 	public InquiriesResponse getInquiries(final Long idx, final Pageable pageable) {
@@ -119,6 +121,7 @@ public class InquiryService {
 		final Inquiry inquiry = getInquiryByIdAndWriter(id, memberId);
 
 		validateIsSameMember(memberId, inquiry.getCreatedBy(), inquiry.getId());
+		// 답변이 완료된 상태에서는 문의 내용을 수정할 수 없음
 		if (inquiry.getState() == InquiryState.ANSWERED) {
 			throw new InquiryAlreadyAnsweredException(ExceptionInfo.ERR_INQUIRY_ALREADY_ANSWERED);
 		}

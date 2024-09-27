@@ -54,6 +54,7 @@ public enum ExceptionInfo {
 	// 2200~
 	ERR_NOTICE_NOT_FOUND(-2200, "일치하는 공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	ERR_UNAUTHORIZED_DELETE_REQUEST(-2201, "삭제 요청이 거부되었습니다. 작성자와 삭제 요청자 정보가 일치하지 않습니다.", HttpStatus.FORBIDDEN),
+	ERR_NOTICE_MODIFY(-2202, "공지사항 제목과 내용은 공백일 수 없습니다. 입력한 값을 다시 확인해주세요.", HttpStatus.BAD_REQUEST),
 
 	// INQUIRY //////////////////////////////////////////////////////////////////////////////////////
 	// 2250~

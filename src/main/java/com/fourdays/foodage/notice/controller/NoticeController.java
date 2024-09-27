@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,11 +20,12 @@ import com.fourdays.foodage.jwt.util.SecurityUtil;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.notice.domain.model.NoticeModel;
 import com.fourdays.foodage.notice.dto.CreateNoticeRequest;
+import com.fourdays.foodage.notice.dto.ModifyNoticeRequest;
 import com.fourdays.foodage.notice.dto.NoticeResponse;
 import com.fourdays.foodage.notice.service.NoticeService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -37,6 +39,7 @@ public class NoticeController {
 		this.noticeService = noticeService;
 	}
 
+	@Operation(summary = "공지사항 등록")
 	@PostMapping("/notice")
 	public ResponseEntity<ResponseDto<NoticeModel>> addNotice(
 		@RequestBody CreateNoticeRequest request) {
@@ -50,6 +53,7 @@ public class NoticeController {
 			.body(ResponseDto.success());
 	}
 
+	@Operation(summary = "공지사항 목록 조회")
 	@GetMapping("/notices")
 	public ResponseEntity<ResponseDto<NoticeResponse>> getNotices(
 		@RequestParam("idx") @Nullable Long lastNoticeId,
@@ -61,8 +65,9 @@ public class NoticeController {
 			.body(ResponseDto.success(response));
 	}
 
+	@Operation(summary = "공지사항 상세 조회")
 	@GetMapping("/notice/{id}")
-	public ResponseEntity getNotice(@NotNull @PathVariable("id") Long id) {
+	public ResponseEntity getNotice(@PathVariable("id") Long id) {
 
 		NoticeModel response = noticeService.getNoticeDetail(id);
 
@@ -70,8 +75,20 @@ public class NoticeController {
 			.body(ResponseDto.success(response));
 	}
 
+	@Operation(summary = "공지사항 수정")
+	@PatchMapping("/notice/{id}")
+	public ResponseEntity modifyNotice(@PathVariable("id") Long id,
+		@RequestBody ModifyNoticeRequest request) {
+
+		noticeService.modifyNotice(id, request);
+
+		return ResponseEntity.ok()
+			.body(ResponseDto.success());
+	}
+
+	@Operation(summary = "공지사항 삭제")
 	@DeleteMapping("/notice/{id}")
-	public ResponseEntity deleteNotice(@NotNull @PathVariable("id") Long id) {
+	public ResponseEntity deleteNotice(@PathVariable("id") Long id) {
 
 		MemberId memberId = SecurityUtil.getCurrentMemberId();
 

@@ -23,6 +23,7 @@ import com.fourdays.foodage.inquiry.dto.ModifyInquiryRequest;
 import com.fourdays.foodage.inquiry.dto.RegisterAnswerRequest;
 import com.fourdays.foodage.inquiry.service.InquiryService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class InquiryController {
 		this.inquiryService = inquiryService;
 	}
 
+	@Operation(summary = "1:1 문의 게시글 등록")
 	@PostMapping("/inquiry")
 	public ResponseEntity<ResponseDto> registerInquiry(
 		@RequestBody @Valid CreateInquiryRequest request) {
@@ -48,6 +50,7 @@ public class InquiryController {
 			.body(ResponseDto.success());
 	}
 
+	@Operation(summary = "1:1 문의 게시글 목록 조회")
 	@GetMapping("/inquiries")
 	public ResponseEntity<ResponseDto> getInquiries(
 		@RequestParam("idx") @Nullable Long lastNoticeId,
@@ -58,6 +61,7 @@ public class InquiryController {
 		return ResponseEntity.ok(ResponseDto.success(response));
 	}
 
+	@Operation(summary = "1:1 문의 게시글 상세 조회")
 	@GetMapping("/inquiry/{id}")
 	public ResponseEntity getInquiry(@PathVariable("id") Long id) {
 
@@ -67,6 +71,7 @@ public class InquiryController {
 			.body(ResponseDto.success(response));
 	}
 
+	@Operation(summary = "1:1 문의 게시글 수정")
 	@PatchMapping("/inquiry/{id}")
 	public ResponseEntity modifyInquiry(@PathVariable("id") Long id,
 		@RequestBody @Valid ModifyInquiryRequest request) {
@@ -77,6 +82,7 @@ public class InquiryController {
 			.body(ResponseDto.success());
 	}
 
+	@Operation(summary = "1:1 문의 게시글 삭제")
 	@DeleteMapping("/inquiry/{id}")
 	public ResponseEntity deleteInquiry(@PathVariable("id") Long id) {
 
@@ -87,6 +93,7 @@ public class InquiryController {
 	}
 
 	//////////////////// answer ////////////////////
+	@Operation(summary = "1:1 문의 게시글 답변 등록")
 	@PostMapping("/inquiry/{id}/answer")
 	public ResponseEntity<ResponseDto> registerAnswer(
 		@PathVariable("id") Long id,
