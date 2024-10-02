@@ -32,11 +32,21 @@ class JasyptTest {
 		String password1 = "plain";
 		String password2 = "plain";
 
-		System.out.println("### Encode Password1 : " + jasyptEncoding(password1));
-		System.out.println("### Encode Password2 : " + jasyptEncoding(password2));
+		System.out.println("### Encode Password1 : " + jasyptEncoding(password1, true));
+		System.out.println("### Encode Password2 : " + jasyptEncoding(password2, true));
 	}
 
-	private String jasyptEncoding(String value) {
+	@Test
+	void 복호화() {
+
+		String password1 = "cipher";
+		String password2 = "cipher";
+
+		System.out.println("### Decode Password1 : " + jasyptEncoding(password1, false));
+		System.out.println("### Decode Password2 : " + jasyptEncoding(password2, false));
+	}
+
+	private String jasyptEncoding(String value, boolean isEncode) {
 
 		String key = "Vnelwl@1!";
 
@@ -44,7 +54,7 @@ class JasyptTest {
 		SimpleStringPBEConfig config = new SimpleStringPBEConfig();
 
 		config.setPassword(key);                       // 암호화 키
-		config.setAlgorithm("PBEWITHHMACSHA512ANDAES_256"); // 암호화 알고리즘
+		config.setAlgorithm("PBEWithMD5AndDES"); // 암호화 알고리즘
 		config.setKeyObtentionIterations(1000);           // 해싱 횟수
 		config.setPoolSize(1);                            // 인스턴스 pool
 		config.setProviderName("SunJCE");
@@ -53,6 +63,10 @@ class JasyptTest {
 		config.setStringOutputType("base64");               // 인코딩 방식
 		encryptor.setConfig(config);
 
-		return encryptor.encrypt(value);
+		if (isEncode) {
+			return encryptor.encrypt(value);
+
+		}
+		return encryptor.decrypt(value);
 	}
 }

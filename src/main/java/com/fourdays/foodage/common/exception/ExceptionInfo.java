@@ -63,7 +63,7 @@ public enum ExceptionInfo {
 	ERR_INQUIRY_NOT_FOUND(-2252, "일치하는 문의 게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	ERR_INQUIRY_ANSWER_CONTENTS_EMPTY(-2253, "답변 내용은 공백일 수 없습니다. 답변을 입력해주세요.", HttpStatus.BAD_REQUEST),
 	ERR_INQUIRY_ALREADY_ANSWERED(-2254, "답변이 완료된 상태에서는 문의 내용을 수정할 수 없습니다.", HttpStatus.BAD_REQUEST),
-	;
+	ERR_INQUIRY_SEND_MAIL(-2255, "답변 알림 메일 발송 중 문제가 발생했습니다.", HttpStatus.BAD_GATEWAY);
 
 	@Getter
 	@Accessors(fluent = true)

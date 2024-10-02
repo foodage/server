@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.fourdays.foodage.common.enums.InquiryState;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.common.exception.InvalidRequestException;
+import com.fourdays.foodage.common.service.MailService;
 import com.fourdays.foodage.inquiry.domain.InquiriesResponse;
 import com.fourdays.foodage.inquiry.domain.Inquiry;
 import com.fourdays.foodage.inquiry.domain.InquiryCustomRepository;
@@ -40,11 +41,14 @@ public class InquiryService {
 
 	private final MemberQueryService memberQueryService;
 
+	private final MailService mailService;
+
 	public InquiryService(InquiryRepository inquiryRepository, InquiryCustomRepository inquiryCustomRepository,
-		MemberQueryService memberQueryService) {
+		MemberQueryService memberQueryService, MailService mailService) {
 		this.inquiryRepository = inquiryRepository;
 		this.inquiryCustomRepository = inquiryCustomRepository;
 		this.memberQueryService = memberQueryService;
+		this.mailService = mailService;
 	}
 
 	public void registerInquiry(CreateInquiryRequest request) {
@@ -84,11 +88,18 @@ public class InquiryService {
 
 		final MemberId memberId = SecurityUtil.getCurrentMemberId();
 		final Member member = memberQueryService.findByMemberId(memberId);
+		final Inquiry inquiry = getInquiryById(id);
 
-		final Inquiry entity = getInquiryById(id);
+		final boolean isFirstAnswer = inquiry.getState() == InquiryState.ANSWERED;
 
-		entity.registAnswer(request.contents(), member.getId());
-		// todo: 등록된 이메일로 답변 알림 발송
+		// 답변 등록
+		inquiry.registAnswer(request.contents(), member.getId());
+
+		if (isFirstAnswer) {
+			final boolean isMemberInquiry = inquiry.getCreatedBy() != null;
+			mailService.sendInquiryAnswerEmail(inquiry.getId(), inquiry.getNotifyEmail(),
+				inquiry.getTitle(), inquiry.getAnswer(), isMemberInquiry);
+		}
 	}
 
 	public InquiriesResponse getInquiries(final Long idx, final Pageable pageable) {

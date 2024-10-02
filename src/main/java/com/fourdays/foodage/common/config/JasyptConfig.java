@@ -22,7 +22,7 @@ public class JasyptConfig {
 		SimpleStringPBEConfig config = new SimpleStringPBEConfig();
 
 		config.setPassword(password);                       // 암호화 키
-		config.setAlgorithm("PBEWITHHMACSHA512ANDAES_256"); // 암호화 알고리즘
+		config.setAlgorithm("PBEWithMD5AndDES"); // 암호화 알고리즘
 		config.setKeyObtentionIterations("1000");           // 해싱 횟수
 		config.setPoolSize("1");                            // 인스턴스 pool
 		config.setProviderName("SunJCE");

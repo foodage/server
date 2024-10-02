@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Foodage 1:1 문의 답변 안내</title>
+</head>
+<body>
+<h1>Foodage 1:1 문의 답변 안내</h1>
+<p th:text="'&#91;' + ${title} + '&#93;에 대한 답변이 완료되었습니다.'"></p>
+
+<div>
+    <p th:each="line : ${answerLine}" th:text="${line}"></p>
+</div>
+
+<!-- redirectUrl이 null이 아닐 때만 버튼 표시 -->
+<div th:if="${redirectUrl != null}">
+    <a th:href="${redirectUrl}"
+       style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none;">
+        앱에서 확인하기
+    </a>
+</div>
+</body>
+</html>
