@@ -1,8 +1,8 @@
 <configuration>
-    <include resource="./log/default-appender.xml"/>
-    <include resource="./log/attention-appender.xml"/>
+    <include resource="log/default-appender.xml"/>
+    <include resource="log/attention-appender.xml"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <springProfile name="!prod">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
