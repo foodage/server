@@ -92,11 +92,13 @@ public class Inquiry extends BaseTimeEntity {
 		this.answer = contents;
 	}
 
-	public void registAnswer(final String contents, final Long adminId) {
+	public void registerAnswer(final String contents, final Long adminId) {
 		if (StringUtil.isNullOrEmpty(contents)) {
 			throw new InquiryAnswerContentsException(ExceptionInfo.ERR_INQUIRY_ANSWER_CONTENTS_EMPTY);
 		}
 		this.answer = contents;
 		this.answeredBy = adminId;
+		this.answeredAt = LocalDateTime.now();
+		this.state = InquiryState.ANSWERED;
 	}
 }

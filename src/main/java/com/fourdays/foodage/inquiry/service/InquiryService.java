@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fourdays.foodage.common.enums.InquiryState;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
@@ -53,20 +54,15 @@ public class InquiryService {
 
 	public void registerInquiry(CreateInquiryRequest request) {
 
-		Member member = null;
 		Optional<MemberId> memberId = SecurityUtil.getOptionalMemberId();
-
-		if (memberId.isPresent()) {
-			// 회원인 경우
-			member = memberQueryService.findByMemberId(memberId.get());
-		} else {
-			// 비회원인 경우
-			if (StringUtil.isNullOrEmpty(request.notifyEmail())) {
-				log.debug("@ Email is required for non-member inquiries.");
-				throw new InvalidRequestException(ExceptionInfo.ERR_NON_MEMBER_INQUIRY_EMAIL_REQUIRED);
-			}
+		if (memberId.isEmpty() &&
+			StringUtil.isNullOrEmpty(request.notifyEmail())) {
+			// 비회원인데 알림받을 이메일 주소를 입력하지 않았을 경우
+			log.debug("@ Email is required for non-member inquiries.");
+			throw new InvalidRequestException(ExceptionInfo.ERR_NON_MEMBER_INQUIRY_EMAIL_REQUIRED);
 		}
 
+		Member member = memberQueryService.findByMemberId(memberId.get());
 		Inquiry entity = Inquiry.builder()
 			.category(request.category())
 			.title(request.title())
@@ -85,16 +81,17 @@ public class InquiryService {
 		mailService.sendInquiryNotiMail(entity.getTitle(), entity.getContents());
 	}
 
+	@Transactional
 	public void registerAnswer(final Long id, final RegisterAnswerRequest request) {
 
 		final MemberId memberId = SecurityUtil.getCurrentMemberId();
 		final Member member = memberQueryService.findByMemberId(memberId);
 		final Inquiry inquiry = getInquiryById(id);
 
-		final boolean isFirstAnswer = inquiry.getState() == InquiryState.ANSWERED;
+		final boolean isFirstAnswer = inquiry.getState() == InquiryState.PENDING;
 
 		// 답변 등록
-		inquiry.registAnswer(request.contents(), member.getId());
+		inquiry.registerAnswer(request.contents(), member.getId());
 
 		if (isFirstAnswer) {
 			final boolean isMemberInquiry = inquiry.getCreatedBy() != null;

@@ -41,6 +41,7 @@ public class MailService {
 		this.engine = engine;
 	}
 
+	@Async
 	public void sendInquiryNotiMail(final String title, final String contents) {
 
 		sendInquiryNotiMail(InquiryForm.builder()
@@ -85,6 +86,7 @@ public class MailService {
 
 	//////////////////////////////////////////////////////////////////
 
+	@Async
 	public void sendAnswerNotiMail(final long id, final String notifyEmail, final String title,
 		final String answer, final boolean isMemberInquiry) {
 
