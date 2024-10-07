@@ -81,7 +81,8 @@ public class InquiryService {
 			.build();
 
 		inquiryRepository.save(entity);
-		// todo: 관리자에게 메일 발송
+
+		mailService.sendInquiryNotiMail(entity.getTitle(), entity.getContents());
 	}
 
 	public void registerAnswer(final Long id, final RegisterAnswerRequest request) {
@@ -97,7 +98,7 @@ public class InquiryService {
 
 		if (isFirstAnswer) {
 			final boolean isMemberInquiry = inquiry.getCreatedBy() != null;
-			mailService.sendInquiryAnswerEmail(inquiry.getId(), inquiry.getNotifyEmail(),
+			mailService.sendAnswerNotiMail(inquiry.getId(), inquiry.getNotifyEmail(),
 				inquiry.getTitle(), inquiry.getAnswer(), isMemberInquiry);
 		}
 	}

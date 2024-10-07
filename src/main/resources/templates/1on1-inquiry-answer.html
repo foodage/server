@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Foodage 1:1 문의 답변 안내</h1>
-<p th:text="'&#91;' + ${title} + '&#93;에 대한 답변이 완료되었습니다.'"></p>
+<h2 th:text="'&#91;' + ${title} + '&#93;에 대한 답변이 완료되었습니다.'"></h2>
 
 <div>
     <p th:each="line : ${answerLine}" th:text="${line}"></p>

@@ -16,6 +16,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.common.exception.SendMailException;
 import com.fourdays.foodage.inquiry.dto.InquiryAnswerForm;
+import com.fourdays.foodage.inquiry.dto.InquiryForm;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -40,14 +41,58 @@ public class MailService {
 		this.engine = engine;
 	}
 
-	public void sendInquiryAnswerEmail(final long id, final String notifyEmail, final String title,
+	public void sendInquiryNotiMail(final String title, final String contents) {
+
+		sendInquiryNotiMail(InquiryForm.builder()
+			.title(title)
+			.contents(contents)
+			.build());
+	}
+
+	@Async
+	public void sendInquiryNotiMail(final InquiryForm form) {
+
+		log.info("\nsend mail start ----->>>");
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		try {
+			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+			mimeMessageHelper.setSubject("[Foodage] 1:1 문의 등록 - " + form.getTitle()); // 제목
+			mimeMessageHelper.setFrom(sender);
+			mimeMessageHelper.setTo(sender); // 수신인
+			mimeMessageHelper.setText(setContext(form), true); // 본문
+			javaMailSender.send(mimeMessage);
+
+			log.debug("send() succeeded");
+
+		} catch (Exception e) {
+			log.error("send() Exception : {}", e.getMessage());
+			throw new SendMailException(ExceptionInfo.ERR_INQUIRY_SEND_MAIL);
+		}
+		log.info("\n<<<----- send mail finished");
+	}
+
+	private String setContext(final InquiryForm form) {
+
+		Context context = new Context(Locale.getDefault());
+		List<String> contentsLine = Arrays.asList(form.getContents().split("\\n"));
+
+		context.setVariable("title", form.getTitle());
+		context.setVariable("contents", contentsLine);
+
+		return engine.process("1on1-inquiry.html", context);
+	}
+
+	//////////////////////////////////////////////////////////////////
+
+	public void sendAnswerNotiMail(final long id, final String notifyEmail, final String title,
 		final String answer, final boolean isMemberInquiry) {
 
 		String redirectUrl = isMemberInquiry
 			? client + "/inquiry/" + id // 회원의 경우 redirect
 			: null; // 비회원의 경우 redirect X
 
-		sendInquiryAnswerEmail(InquiryAnswerForm.builder()
+		sendAnswerNotiMail(InquiryAnswerForm.builder()
 			.notifyEmail(notifyEmail)
 			.title(title)
 			.contents(answer)
@@ -56,7 +101,7 @@ public class MailService {
 	}
 
 	@Async
-	public void sendInquiryAnswerEmail(final InquiryAnswerForm form) {
+	public void sendAnswerNotiMail(final InquiryAnswerForm form) {
 
 		log.info("\nsend mail start ----->>>");
 
@@ -72,7 +117,7 @@ public class MailService {
 			log.debug("send() succeeded to recipient: {}", form.getNotifyEmail());
 
 		} catch (Exception e) {
-			log.debug("send() Exception : {}", e.getMessage());
+			log.error("send() Exception : {}", e.getMessage());
 			throw new SendMailException(ExceptionInfo.ERR_INQUIRY_SEND_MAIL);
 		}
 		log.info("\n<<<----- send mail finished");
