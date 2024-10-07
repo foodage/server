@@ -1,23 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Foodage 1:1 문의 답변 안내</title>
 </head>
-<body>
-<h1>Foodage 1:1 문의 답변 안내</h1>
-<h2 th:text="'&#91;' + ${title} + '&#93;에 대한 답변이 완료되었습니다.'"></h2>
-
-<div>
-    <p th:each="line : ${answerLine}" th:text="${line}"></p>
+<body
+        style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;"
+>
+<div style="text-align: center; margin-bottom: 20px;">
+    <img src="https://placeholder.com/wp-content/uploads/2018/10/placeholder.com-logo1.png"
+         alt="Foodage Logo"
+         style="max-width: 200px; height: auto;">
 </div>
 
-<!-- redirectUrl이 null이 아닐 때만 버튼 표시 -->
-<div th:if="${redirectUrl != null}">
-    <a th:href="${redirectUrl}"
-       style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none;">
-        앱에서 확인하기
-    </a>
+<h1 style="color: #FF954D; text-align: center; font-size: 24px; margin-bottom: 20px;">
+    Foodage 1:1 문의 답변 안내
+</h1>
+<div style="background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; padding: 20px; margin-bottom: 20px;">
+    <h2 style="font-size: 20px; margin-top: 0;" th:text="${title}"></h2>
+    <p style="margin-bottom: 0;" th:each="line : ${answerLine}" th:text="${line}"></p>
+</div>
+
+<div style="text-align: center;">
+    <div th:if="${redirectUrl != null}">
+        <a th:href="${redirectUrl}"
+           style="display: inline-block; background-color: #FF954D; color: white; text-decoration: none; padding: 12px 24px; border-radius: 5px; font-weight: bold;">
+            앱에서 확인하기
+        </a>
+    </div>
+</div>
+
+<div style="margin-top: 30px; text-align: center; font-size: 12px; color: #777;">
+    <p>이 메일은 자동 발송됩니다.</p>
+    <p>&copy; 2024 Foodage. All rights reserved.</p>
 </div>
 </body>
 </html>
