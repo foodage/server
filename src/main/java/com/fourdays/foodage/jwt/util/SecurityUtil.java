@@ -1,5 +1,7 @@
 package com.fourdays.foodage.jwt.util;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,6 +58,37 @@ public class SecurityUtil {
 			throw new InvalidArgsException(ExceptionInfo.ERR_MEMBER_ID_CREATE_FAILED);
 		}
 		return new MemberId(oauthServerType, accountEmail);
+	}
+
+	public static Optional<MemberId> getOptionalMemberId() {
+
+		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null) {
+			log.error("Security Context에 인증 정보가 없습니다.");
+			return null;
+		}
+
+		OauthServerType oauthServerType = null;
+		String accountEmail = null;
+		if (authentication.getPrincipal() instanceof UserDetails) {
+			UserDetails springSecurityUser = (UserDetails)authentication.getPrincipal();
+			accountEmail = springSecurityUser.getUsername();
+
+			// parse claim
+			try {
+				Claims claims = getClaims(authentication.getCredentials().toString());
+				oauthServerType = OauthServerType.fromName(
+					claims.get(JwtClaim.OAUTH_SERVER_TYPE.getValue()).toString()
+				);
+			} catch (Exception e) {
+				log.error("유효한 Jwt Claim을 찾을 수 없습니다.");
+			}
+		}
+
+		if (oauthServerType == null || accountEmail == null) {
+			return Optional.empty();
+		}
+		return Optional.of(new MemberId(oauthServerType, accountEmail));
 	}
 
 	public static Claims getClaims(String token) {

@@ -15,6 +15,7 @@ import com.fourdays.foodage.notice.domain.NoticeCustomRepository;
 import com.fourdays.foodage.notice.domain.NoticeRepository;
 import com.fourdays.foodage.notice.domain.model.NoticeModel;
 import com.fourdays.foodage.notice.dto.CreateNoticeRequest;
+import com.fourdays.foodage.notice.dto.ModifyNoticeRequest;
 import com.fourdays.foodage.notice.dto.NoticeResponse;
 import com.fourdays.foodage.notice.exception.NoticeDeleteException;
 import com.fourdays.foodage.notice.exception.NoticeNotFoundException;
@@ -63,7 +64,13 @@ public class NoticeService {
 		Notice notice = getNoticeById(id);
 		notice.addViews();
 
-		return noticeCustomRepository.findNoticeDetailById(id);
+		return noticeCustomRepository.findNotice(id);
+	}
+
+	public void modifyNotice(final Long id, final ModifyNoticeRequest request) {
+
+		Notice notice = getNoticeById(id);
+		notice.modify(request.category(), request.title(), request.contents());
 	}
 
 	public void deleteNotice(final Long id, final MemberId memberId) {

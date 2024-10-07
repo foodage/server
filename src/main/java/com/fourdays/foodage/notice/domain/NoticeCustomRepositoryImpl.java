@@ -30,7 +30,7 @@ public class NoticeCustomRepositoryImpl implements NoticeCustomRepository {
 	}
 
 	@Override
-	public NoticeModel findNoticeDetailById(final Long noticeId) {
+	public NoticeModel findNotice(final Long noticeId) {
 
 		NoticeModel noticeModel = query
 			.select(Projections.constructor(

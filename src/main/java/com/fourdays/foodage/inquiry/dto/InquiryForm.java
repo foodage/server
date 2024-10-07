@@ -1,0 +1,15 @@
+package com.fourdays.foodage.inquiry.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Builder
+@AllArgsConstructor
+@Getter
+public class InquiryForm {
+
+	private String title;
+
+	private String contents;
+}

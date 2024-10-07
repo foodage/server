@@ -2,7 +2,10 @@ package com.fourdays.foodage.notice.domain;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.common.enums.NoticeCategory;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.notice.dto.CreateNoticeRequest;
+import com.fourdays.foodage.notice.exception.NoticeModifyException;
+import com.querydsl.core.util.StringUtils;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -66,5 +69,17 @@ public class Notice extends BaseTimeEntity {
 
 	public void addViews() {
 		views++;
+	}
+
+	public void modify(final NoticeCategory category, final String title,
+		final String contents) {
+
+		if (StringUtils.isNullOrEmpty(title) ||
+			StringUtils.isNullOrEmpty(contents)) {
+			throw new NoticeModifyException(ExceptionInfo.ERR_NOTICE_MODIFY);
+		}
+		this.category = category;
+		this.title = title;
+		this.contents = contents;
 	}
 }
