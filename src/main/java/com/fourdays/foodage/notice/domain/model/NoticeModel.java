@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.common.enums.CharacterType;
-import com.fourdays.foodage.common.enums.NoticeCategory;
+import com.fourdays.foodage.notice.domain.NoticeCategory;
 import com.fourdays.foodage.notice.dto.CreateNoticeRequest;
 
 import lombok.AccessLevel;

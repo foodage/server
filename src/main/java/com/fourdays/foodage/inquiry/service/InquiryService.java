@@ -8,7 +8,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fourdays.foodage.common.enums.InquiryState;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.common.exception.InvalidRequestException;
 import com.fourdays.foodage.common.service.MailService;
@@ -18,6 +17,7 @@ import com.fourdays.foodage.inquiry.domain.InquiryCustomRepository;
 import com.fourdays.foodage.inquiry.domain.InquiryModel;
 import com.fourdays.foodage.inquiry.domain.InquiryRepository;
 import com.fourdays.foodage.inquiry.domain.InquiryResponse;
+import com.fourdays.foodage.inquiry.domain.InquiryState;
 import com.fourdays.foodage.inquiry.dto.CreateInquiryRequest;
 import com.fourdays.foodage.inquiry.dto.ModifyInquiryRequest;
 import com.fourdays.foodage.inquiry.dto.RegisterAnswerRequest;

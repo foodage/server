@@ -8,8 +8,6 @@ import org.springframework.util.StringUtils;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
 import com.fourdays.foodage.common.enums.CharacterType;
-import com.fourdays.foodage.common.enums.LoginResult;
-import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.member.exception.MemberJoinedException;

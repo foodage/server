@@ -1,8 +1,8 @@
 package com.fourdays.foodage.member.exception;
 
-import com.fourdays.foodage.common.enums.LoginResult;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.common.exception.FoodageException;
+import com.fourdays.foodage.member.domain.LoginResult;
 
 import lombok.Getter;
 

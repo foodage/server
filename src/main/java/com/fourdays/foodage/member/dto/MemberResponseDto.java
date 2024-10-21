@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fourdays.foodage.common.enums.CharacterType;
-import com.fourdays.foodage.common.enums.MemberState;
 import com.fourdays.foodage.jwt.domain.Authority;
 import com.fourdays.foodage.member.domain.Member;
+import com.fourdays.foodage.member.domain.MemberState;
 import com.fourdays.foodage.oauth.domain.OauthId;
 
 public record MemberResponseDto(

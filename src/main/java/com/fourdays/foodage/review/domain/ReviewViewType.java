@@ -1,4 +1,4 @@
-package com.fourdays.foodage.common.enums;
+package com.fourdays.foodage.review.domain;
 
 import java.util.Locale;
 
