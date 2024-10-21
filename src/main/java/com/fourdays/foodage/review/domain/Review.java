@@ -13,8 +13,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Table(name = "review")
 @Entity
+@Table(name = "review")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
