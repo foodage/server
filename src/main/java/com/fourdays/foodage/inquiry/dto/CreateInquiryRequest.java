@@ -2,7 +2,7 @@ package com.fourdays.foodage.inquiry.dto;
 
 import org.springframework.lang.Nullable;
 
-import com.fourdays.foodage.common.enums.InquiryCategory;
+import com.fourdays.foodage.inquiry.domain.InquiryCategory;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

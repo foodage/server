@@ -2,9 +2,6 @@ package com.fourdays.foodage.inquiry.domain;
 
 import java.time.LocalDateTime;
 
-import com.fourdays.foodage.common.enums.InquiryCategory;
-import com.fourdays.foodage.common.enums.InquiryState;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

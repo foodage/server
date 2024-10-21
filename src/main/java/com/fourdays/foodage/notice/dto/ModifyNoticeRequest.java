@@ -1,6 +1,6 @@
 package com.fourdays.foodage.notice.dto;
 
-import com.fourdays.foodage.common.enums.NoticeCategory;
+import com.fourdays.foodage.notice.domain.NoticeCategory;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

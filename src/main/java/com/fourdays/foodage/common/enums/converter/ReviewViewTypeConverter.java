@@ -3,7 +3,7 @@ package com.fourdays.foodage.common.enums.converter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import com.fourdays.foodage.common.enums.ReviewViewType;
+import com.fourdays.foodage.review.domain.ReviewViewType;
 
 @Component
 public class ReviewViewTypeConverter implements Converter<String, ReviewViewType> {

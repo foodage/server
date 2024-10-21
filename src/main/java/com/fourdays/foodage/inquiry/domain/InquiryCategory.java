@@ -1,4 +1,4 @@
-package com.fourdays.foodage.common.enums;
+package com.fourdays.foodage.inquiry.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fourdays.foodage.common.exception.ExceptionInfo;

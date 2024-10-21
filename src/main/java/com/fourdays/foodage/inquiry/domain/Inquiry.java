@@ -3,8 +3,6 @@ package com.fourdays.foodage.inquiry.domain;
 import java.time.LocalDateTime;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
-import com.fourdays.foodage.common.enums.InquiryCategory;
-import com.fourdays.foodage.common.enums.InquiryState;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.inquiry.exception.InquiryAnswerContentsException;
 

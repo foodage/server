@@ -1,7 +1,6 @@
 package com.fourdays.foodage.notice.domain;
 
 import com.fourdays.foodage.common.domain.BaseTimeEntity;
-import com.fourdays.foodage.common.enums.NoticeCategory;
 import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.notice.dto.CreateNoticeRequest;
 import com.fourdays.foodage.notice.exception.NoticeModifyException;
