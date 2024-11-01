@@ -12,6 +12,7 @@ import com.fourdays.foodage.member.exception.MemberNotFoundException;
 import com.fourdays.foodage.member.exception.MemberNotJoinedException;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.oauth.domain.OauthId;
+import com.fourdays.foodage.tag.domain.TagCategory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -111,8 +112,26 @@ public class MemberQueryService {
 		Member findMember = memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
 				memberId.oauthServerType(), memberId.accountEmail())
 			.orElseThrow(() -> new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
-		int foodageCount = memberCustomRepository.findReviewCountByMemberId(memberId);
+		int reviewCount = memberCustomRepository.findReviewCountByMemberId(memberId);
 
-		return new MemberProfileResponseDto(findMember, foodageCount);
+		return new MemberProfileResponseDto(findMember, reviewCount);
+	}
+
+	public int getReviewCount(final MemberId memberId) {
+
+		memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
+				memberId.oauthServerType(), memberId.accountEmail())
+			.orElseThrow(() -> new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
+
+		return memberCustomRepository.findReviewCountByMemberId(memberId);
+	}
+
+	public int getTagCount(final MemberId memberId, final TagCategory tagCategory) {
+
+		memberRepository.findByOauthIdOauthServerTypeAndAccountEmail(
+				memberId.oauthServerType(), memberId.accountEmail())
+			.orElseThrow(() -> new MemberNotJoinedException(ExceptionInfo.ERR_MEMBER_NOT_FOUND));
+
+		return memberCustomRepository.findTagCountByMemberId(memberId, tagCategory);
 	}
 }

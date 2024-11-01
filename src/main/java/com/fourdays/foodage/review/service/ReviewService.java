@@ -6,38 +6,25 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.fourdays.foodage.common.exception.ExceptionInfo;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberQueryService;
-import com.fourdays.foodage.member.vo.MemberId;
-import com.fourdays.foodage.review.domain.Review;
-import com.fourdays.foodage.review.domain.ReviewCustomRepository;
-import com.fourdays.foodage.review.domain.ReviewImage;
-import com.fourdays.foodage.review.domain.ReviewImageRepository;
-import com.fourdays.foodage.review.domain.ReviewMenu;
-import com.fourdays.foodage.review.domain.ReviewMenuRepository;
-import com.fourdays.foodage.review.domain.ReviewRepository;
-import com.fourdays.foodage.review.domain.ReviewTag;
-import com.fourdays.foodage.review.domain.ReviewTagRepository;
-import com.fourdays.foodage.review.domain.model.ReviewModel;
-import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
-import com.fourdays.foodage.review.dto.CreateReviewRequestDto;
-import com.fourdays.foodage.review.dto.DateReviewResponse;
-import com.fourdays.foodage.review.dto.PeriodReviewGroup;
-import com.fourdays.foodage.review.dto.PeriodReviewRequest;
-import com.fourdays.foodage.review.dto.PeriodReviewResponse;
-import com.fourdays.foodage.review.dto.RecentReviewResponse;
-import com.fourdays.foodage.review.dto.ReviewResponse;
+import com.fourdays.foodage.review.domain.*;
+import com.fourdays.foodage.review.dto.*;
 import com.fourdays.foodage.review.exception.TagNotFoundException;
 import com.fourdays.foodage.tag.domain.Tag;
 import com.fourdays.foodage.tag.domain.TagRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Service;
+
+import com.fourdays.foodage.collection.annotation.AchievementTrigger;
+import com.fourdays.foodage.collection.domain.ConditionType;
+import com.fourdays.foodage.member.vo.MemberId;
+import com.fourdays.foodage.review.domain.model.ReviewModel;
+import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -53,22 +40,22 @@ public class ReviewService {
 	private final S3ImageService s3ImageService;
 
 	public ReviewService(ReviewCustomRepository reviewCustomRepository,
-		ReviewRepository reviewRepository,
-		ReviewTagRepository reviewTagRepository,
-		ReviewMenuRepository reviewMenuRepository,
-		ReviewImageRepository reviewImageRepository,
-		TagRepository tagRepository,
-		MemberQueryService memberQueryService,
-		S3ImageService s3ImageService) {
+						 ReviewRepository reviewRepository,
+						 ReviewTagRepository reviewTagRepository,
+						 ReviewMenuRepository reviewMenuRepository,
+						 ReviewImageRepository reviewImageRepository,
+						 TagRepository tagRepository,
+						 MemberQueryService memberQueryService,
+						 S3ImageService s3ImageService) {
 		this.reviewCustomRepository = reviewCustomRepository;
 		this.reviewRepository = reviewRepository;
-		this.reviewTagRepository = reviewTagRepository;
-		this.reviewMenuRepository = reviewMenuRepository;
-		this.reviewImageRepository = reviewImageRepository;
-		this.tagRepository = tagRepository;
-		this.memberQueryService = memberQueryService;
+        this.reviewTagRepository = reviewTagRepository;
+        this.reviewMenuRepository = reviewMenuRepository;
+        this.reviewImageRepository = reviewImageRepository;
+        this.tagRepository = tagRepository;
+        this.memberQueryService = memberQueryService;
 		this.s3ImageService = s3ImageService;
-	}
+    }
 
 	public ReviewModel getReview(final MemberId memberId,
 		final Long reviewId) {
@@ -142,58 +129,64 @@ public class ReviewService {
 	}
 
 	@Transactional
+	@AchievementTrigger(conditionType = ConditionType.REVIEW_COUNT, conditionValue = "10")
+	// @AchievementTrigger(
+	// 	conditionType = ConditionType.TAG_USAGE,
+	// 	conditionDetailType = {TagCategory.ALL, TagCategory.ASIAN},
+	// 	conditionValue = "10"
+	// )
 	public Review createReview(CreateReviewRequestDto request, MemberId memberId) {
 		Member findMember = memberQueryService.findByMemberId(memberId);
 
 		Review review = Review.builder()
-			.restaurant(request.getRestaurant())
-			.address(request.getAddress())
-			.rating(request.getRating())
-			.contents(request.getContents())
-			.date(request.getDate())
-			.createdBy(findMember.getId())
-			.build();
+				.restaurant(request.getRestaurant())
+				.address(request.getAddress())
+				.rating(request.getRating())
+				.contents(request.getContents())
+				.date(request.getDate())
+				.createdBy(findMember.getId())
+				.build();
 
 		Review savedReview = reviewRepository.save(review);
 		Long reviewId = savedReview.getId();
 
 		for (Long tagId : request.getTagIds()) {
-			Tag tag = tagRepository.findById(tagId).orElseThrow(()
-				-> new TagNotFoundException(ExceptionInfo.ERR_TAG_NOT_FOUND));
+			Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new TagNotFoundException(ResultCode.ERR_TAG_NOT_FOUND));
 			ReviewTag reviewTag = ReviewTag.builder()
-				.reviewId(reviewId)
-				.tagId(tag.getId())
-				.tagName(tag.getName())
-				.tagTextColor(tag.getTextColor())
-				.tagBgColor(tag.getBgColor())
-				.build();
+					.reviewId(reviewId)
+					.tagId(tag.getId())
+					.tagName(tag.getName())
+					.tagTextColor(tag.getTextColor())
+					.tagBgColor(tag.getBgColor())
+					.build();
 			reviewTagRepository.save(reviewTag);
 		}
 
 		if (request.getMenus() != null) {
 			for (CreateReviewRequestDto.ReviewMenuModel menu : request.getMenus()) {
 				ReviewMenu reviewMenu = ReviewMenu.builder()
-					.reviewId(reviewId)
-					.menu(menu.getMenu())
-					.price(menu.getPrice())
-					.sequence(menu.getSequence())
-					.build();
+						.reviewId(reviewId)
+						.menu(menu.getMenu())
+						.price(menu.getPrice())
+						.sequence(menu.getSequence())
+						.build();
 				reviewMenuRepository.save(reviewMenu);
 			}
 		}
 
-		if (request.getImages() != null) {
+		if (request.getImages() != null){
 			for (CreateReviewRequestDto.ReviewImageModel image : request.getImages()) {
 				ReviewImage reviewImage = ReviewImage.builder()
-					.reviewId(reviewId)
-					.imageUrl(image.getImageUrl())
-					.sequence(image.getSequence())
-					.useThumbnail(image.getIsThumbnail())
-					.build();
+						.reviewId(reviewId)
+						.imageUrl(image.getImageUrl())
+						.sequence(image.getSequence())
+						.useThumbnail(image.getIsThumbnail())
+						.build();
 				reviewImageRepository.save(reviewImage);
 			}
 		}
 
+		log.debug("* add review id : {}", review.getId());
 		return review;
 	}
 }
