@@ -67,7 +67,7 @@ public class Achievement extends BaseTimeEntity {
 	// 	this.updatedAt = LocalDateTime.now();
 	// }
 
-	public Object getConditionValue() {
+	public Object getFormattedConditionValue() {
 		switch (conditionType) {
 			case REVIEW_COUNT, TAG_USAGE -> {
 				return Integer.parseInt(conditionValue);

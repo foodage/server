@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.collection.annotation.AchievementTrigger;
 import com.fourdays.foodage.collection.domain.ConditionType;
+import com.fourdays.foodage.member.service.MemberQueryService;
 import com.fourdays.foodage.member.vo.MemberId;
 import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
@@ -38,6 +39,7 @@ public class ReviewService {
 	private final TagRepository tagRepository;
 	private final MemberQueryService memberQueryService;
 	private final S3ImageService s3ImageService;
+	private final MemberQueryService memberQueryService;
 
 	public ReviewService(ReviewCustomRepository reviewCustomRepository,
 						 ReviewRepository reviewRepository,

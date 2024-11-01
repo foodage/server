@@ -45,6 +45,9 @@ public class AchievementService {
 		Member member = null;
 		Review review = null;
 		for (Object arg : args) {
+			if (arg instanceof MemberId) {
+				member = memberQueryService.findByMemberId((MemberId)arg);
+			}
 			if (arg instanceof Member) {
 				member = (Member)arg;
 			}
@@ -80,14 +83,14 @@ public class AchievementService {
 		// 업적 조건 확인
 		return switch (achievement.getConditionType()) {
 			case REVIEW_COUNT -> memberQueryService.getReviewCount(memberId) >=
-				(int)achievement.getConditionValue();
+				(Integer)achievement.getFormattedConditionValue();
 
 			case TAG_USAGE -> {
 				boolean allConditionsMet = false;
 				// tag의 경우, category 확인하고 해당 tag에 대한 것만 확인
 				for (TagCategory tagCategory : conditionDetailType) {
 					if (memberQueryService.getTagCount(memberId, tagCategory) >=
-						(int)achievement.getConditionValue()) {
+						(int)achievement.getFormattedConditionValue()) {
 						allConditionsMet = true;
 					}
 				}
