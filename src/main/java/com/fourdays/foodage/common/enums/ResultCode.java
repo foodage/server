@@ -41,6 +41,16 @@ public enum ResultCode {
 	// REVIEW //////////////////////////////////////////////////////////////////////////////////////
 	// 11000~
 	ERR_THUMBNAIL_NOT_FOUND(-11000, "썸네일 정보가 없습니다.", HttpStatus.NOT_FOUND),
+	ERR_TAG_NOT_FOUND(-11001, "태그 정보가 없습니다.", HttpStatus.NOT_FOUND),
+
+	// S3 //////////////////////////////////////////////////////////////////////////////////////
+	// 12000~
+	ERR_S3_EMPTY_FILE_EXCEPTION(-12000, "파일 내용이 없습니다.", HttpStatus.NOT_FOUND),
+	ERR_S3_IO_EXCEPTION_ON_FILE_UPLOAD(-12001, "파일 업로드 에러입니다.", HttpStatus.BAD_REQUEST),
+	ERR_S3_NO_FILE_EXTENTION(-12002, "파일 확장자가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+	ERR_S3_INVALID_FILE_EXTENTION(-12003, "유효하지 않은 파일 확장자입니다.", HttpStatus.BAD_REQUEST),
+	ERR_S3_PUT_OBJECT_EXCEPTION(-12004, "S3 이미지 업로드 오류입니다.", HttpStatus.BAD_REQUEST),
+	ERR_S3_IMAGE_DELETE_EXCEPTION(-12005, "S3 이미지 삭제 오류입니다.", HttpStatus.BAD_REQUEST),
 
 	// OAUTH //////////////////////////////////////////////////////////////////////////////////////////
 	// 10100~

@@ -12,8 +12,17 @@ application:
   version: '1.0.4'
 
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      maxFileSize: 10MB # 파일 하나의 최대 크기
+      maxRequestSize: 30MB  # 한 번에 최대 업로드 가능 용량
   profiles:
-    default: dev
+    group:
+      "local": "local, aws"
+      "dev": "dev, aws"
+      "prod": "prod, aws"
+    active: local #활성 프로필 설정
 
 springdoc:
   swagger-ui:

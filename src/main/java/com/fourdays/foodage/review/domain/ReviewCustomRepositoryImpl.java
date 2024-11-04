@@ -4,7 +4,7 @@ import static com.fourdays.foodage.member.domain.QMember.*;
 import static com.fourdays.foodage.review.domain.QReview.*;
 import static com.fourdays.foodage.review.domain.QReviewImage.*;
 import static com.fourdays.foodage.review.domain.QReviewMenu.*;
-import static com.fourdays.foodage.tag.domain.QReviewTag.*;
+import static com.fourdays.foodage.review.domain.QReviewTag.*;
 import static com.querydsl.core.group.GroupBy.*;
 
 import java.time.LocalDate;
@@ -62,7 +62,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewMenu.price,
 				reviewImage.sequence,
 				reviewImage.imageUrl,
-				reviewImage.useThumbnail
+				reviewImage.isThumbnail
 			)
 			.from(review)
 			.innerJoin(member).on(review.creatorId.eq(member.id))
@@ -110,7 +110,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 									reviewImage.id,
 									reviewImage.sequence,
 									reviewImage.imageUrl,
-									reviewImage.useThumbnail
+									reviewImage.isThumbnail
 								).skipNulls()
 							)
 						)
@@ -136,7 +136,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewTag.tagTextColor,
 				reviewImage.sequence,
 				reviewImage.imageUrl,
-				reviewImage.useThumbnail
+				reviewImage.isThumbnail
 			)
 			.from(review)
 			.innerJoin(member).on(review.creatorId.eq(member.id))
@@ -176,7 +176,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 									reviewImage.id,
 									reviewImage.sequence,
 									reviewImage.imageUrl,
-									reviewImage.useThumbnail
+									reviewImage.isThumbnail
 								).skipNulls()
 							)
 						)
@@ -225,7 +225,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewTag.tagTextColor,
 				reviewImage.sequence,
 				reviewImage.imageUrl,
-				reviewImage.useThumbnail
+				reviewImage.isThumbnail
 			)
 			.from(review)
 			.innerJoin(member).on(review.creatorId.eq(member.id))
@@ -263,7 +263,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 									reviewImage.id,
 									reviewImage.sequence,
 									reviewImage.imageUrl,
-									reviewImage.useThumbnail
+									reviewImage.isThumbnail
 								).skipNulls()
 							)
 						)

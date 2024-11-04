@@ -1,17 +1,12 @@
 package com.fourdays.foodage.review.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fourdays.foodage.review.domain.Review;
-import com.fourdays.foodage.review.domain.model.ReviewImageModel;
-import com.fourdays.foodage.review.domain.model.ReviewMenuModel;
-import com.fourdays.foodage.tag.domain.model.TagModel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,8 +25,10 @@ public class CreateReviewRequestDto {
 
 	private List<Long> tagIds;
 
+	@Nullable
 	private List<ReviewMenuModel> menus;
 
+	@Nullable
 	private List<ReviewImageModel> images;
 
 	@NoArgsConstructor

@@ -3,17 +3,18 @@ package com.fourdays.foodage.review.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import com.fourdays.foodage.common.enums.ResultCode;
 import com.fourdays.foodage.member.domain.Member;
 import com.fourdays.foodage.member.service.MemberQueryService;
 import com.fourdays.foodage.review.domain.*;
 import com.fourdays.foodage.review.dto.*;
+import com.fourdays.foodage.review.exception.TagNotFoundException;
 import com.fourdays.foodage.tag.domain.Tag;
 import com.fourdays.foodage.tag.domain.TagRepository;
-import org.apache.catalina.core.PropertiesRoleMappingListener;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -36,8 +38,16 @@ public class ReviewService {
 	private final ReviewImageRepository reviewImageRepository;
 	private final TagRepository tagRepository;
 	private final MemberQueryService memberQueryService;
+	private final S3ImageService s3ImageService;
 
-	public ReviewService(ReviewCustomRepository reviewCustomRepository, ReviewRepository reviewRepository, ReviewTagRepository reviewTagRepository, ReviewMenuRepository reviewMenuRepository, ReviewImageRepository reviewImageRepository, TagRepository tagRepository, MemberQueryService memberQueryService) {
+	public ReviewService(ReviewCustomRepository reviewCustomRepository,
+						 ReviewRepository reviewRepository,
+						 ReviewTagRepository reviewTagRepository,
+						 ReviewMenuRepository reviewMenuRepository,
+						 ReviewImageRepository reviewImageRepository,
+						 TagRepository tagRepository,
+						 MemberQueryService memberQueryService,
+						 S3ImageService s3ImageService) {
 		this.reviewCustomRepository = reviewCustomRepository;
 		this.reviewRepository = reviewRepository;
         this.reviewTagRepository = reviewTagRepository;
@@ -45,6 +55,7 @@ public class ReviewService {
         this.reviewImageRepository = reviewImageRepository;
         this.tagRepository = tagRepository;
         this.memberQueryService = memberQueryService;
+		this.s3ImageService = s3ImageService;
     }
 
 	public ReviewModel getReview(final MemberId memberId,
@@ -135,7 +146,7 @@ public class ReviewService {
 		Long reviewId = savedReview.getId();
 
 		for (Long tagId : request.getTagIds()) {
-			Tag tag = tagRepository.findById(tagId).get();	//optional
+			Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new TagNotFoundException(ResultCode.ERR_TAG_NOT_FOUND));
 			ReviewTag reviewTag = ReviewTag.builder()
 					.reviewId(reviewId)
 					.tagId(tag.getId())
@@ -146,24 +157,28 @@ public class ReviewService {
 			reviewTagRepository.save(reviewTag);
 		}
 
-		for (CreateReviewRequestDto.ReviewMenuModel menu : request.getMenus()) {
-			ReviewMenu reviewMenu = ReviewMenu.builder()
-					.reviewId(reviewId)
-					.menu(menu.getMenu())
-					.price(menu.getPrice())
-					.sequence(menu.getSequence())
-					.build();
-			reviewMenuRepository.save(reviewMenu);
+		if (request.getMenus() != null) {
+			for (CreateReviewRequestDto.ReviewMenuModel menu : request.getMenus()) {
+				ReviewMenu reviewMenu = ReviewMenu.builder()
+						.reviewId(reviewId)
+						.menu(menu.getMenu())
+						.price(menu.getPrice())
+						.sequence(menu.getSequence())
+						.build();
+				reviewMenuRepository.save(reviewMenu);
+			}
 		}
 
-		for (CreateReviewRequestDto.ReviewImageModel image : request.getImages()) {
-			ReviewImage reviewImage = ReviewImage.builder()
-					.reviewId(reviewId)
-					.imageUrl(image.getImageUrl())
-					.sequence(image.getSequence())
-					.isThumbnail(image.getIsThumbnail())
-					.build();
-			reviewImageRepository.save(reviewImage);
+		if (request.getImages() != null){
+			for (CreateReviewRequestDto.ReviewImageModel image : request.getImages()) {
+				ReviewImage reviewImage = ReviewImage.builder()
+						.reviewId(reviewId)
+						.imageUrl(image.getImageUrl())
+						.sequence(image.getSequence())
+						.isThumbnail(image.getIsThumbnail())
+						.build();
+				reviewImageRepository.save(reviewImage);
+			}
 		}
 
 		return review;

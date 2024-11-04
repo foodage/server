@@ -33,8 +33,7 @@ public class SecurityConfig {
 		"/v3/api-docs/**", // swagger
 		"/oauth/**",
 		"/jwt/test-issue",
-		"/member/join",
-		"/review"
+		"/member/join"
 	};
 
 	public SecurityConfig(
