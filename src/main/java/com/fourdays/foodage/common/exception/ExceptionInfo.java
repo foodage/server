@@ -49,6 +49,7 @@ public enum ExceptionInfo {
 	// REVIEW //////////////////////////////////////////////////////////////////////////////////////
 	// 1900~
 	ERR_THUMBNAIL_NOT_FOUND(-1900, "썸네일 정보가 없습니다.", HttpStatus.NOT_FOUND),
+	ERR_TAG_NOT_FOUND(-1901, "태그 정보가 없습니다.", HttpStatus.NOT_FOUND),
 
 	// NOTICE //////////////////////////////////////////////////////////////////////////////////////
 	// 2200~
@@ -63,7 +64,16 @@ public enum ExceptionInfo {
 	ERR_INQUIRY_NOT_FOUND(-2252, "일치하는 문의 게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	ERR_INQUIRY_ANSWER_CONTENTS_EMPTY(-2253, "답변 내용은 공백일 수 없습니다. 답변을 입력해주세요.", HttpStatus.BAD_REQUEST),
 	ERR_INQUIRY_ALREADY_ANSWERED(-2254, "답변이 완료된 상태에서는 문의 내용을 수정할 수 없습니다.", HttpStatus.BAD_REQUEST),
-	ERR_INQUIRY_SEND_MAIL(-2255, "답변 알림 메일 발송 중 문제가 발생했습니다.", HttpStatus.BAD_GATEWAY);
+	ERR_INQUIRY_SEND_MAIL(-2255, "답변 알림 메일 발송 중 문제가 발생했습니다.", HttpStatus.BAD_GATEWAY),
+
+	// S3 //////////////////////////////////////////////////////////////////////////////////////
+	// 10000~
+	ERR_S3_EMPTY_FILE_EXCEPTION(-10000, "파일 내용이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
+	ERR_S3_IO_EXCEPTION_ON_FILE_UPLOAD(-10001, "파일 업로드 중 오류가 발생했습니다.", HttpStatus.BAD_GATEWAY),
+	ERR_S3_NO_FILE_EXTENTION(-10002, "파일 확장자가 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
+	ERR_S3_INVALID_FILE_EXTENTION(-10003, "유효하지 않은 파일 확장자입니다.", HttpStatus.BAD_REQUEST),
+	ERR_S3_PUT_OBJECT_EXCEPTION(-10004, "S3 이미지 업로드 중 오류가 발생했습니다.", HttpStatus.BAD_GATEWAY),
+	ERR_S3_IMAGE_DELETE_EXCEPTION(-10005, "S3 이미지 삭제 작업 중 오류가 발생했습니다.", HttpStatus.BAD_GATEWAY);
 
 	@Getter
 	@Accessors(fluent = true)
