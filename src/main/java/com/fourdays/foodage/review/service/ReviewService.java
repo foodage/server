@@ -6,24 +6,23 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import com.fourdays.foodage.member.domain.Member;
+import com.fourdays.foodage.member.service.MemberQueryService;
+import com.fourdays.foodage.review.domain.*;
+import com.fourdays.foodage.review.dto.*;
+import com.fourdays.foodage.review.exception.TagNotFoundException;
+import com.fourdays.foodage.tag.domain.Tag;
+import com.fourdays.foodage.tag.domain.TagRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.fourdays.foodage.member.vo.MemberId;
-import com.fourdays.foodage.review.domain.Review;
-import com.fourdays.foodage.review.domain.ReviewCustomRepository;
-import com.fourdays.foodage.review.domain.ReviewRepository;
 import com.fourdays.foodage.review.domain.model.ReviewModel;
 import com.fourdays.foodage.review.domain.model.ReviewModelWithThumbnail;
-import com.fourdays.foodage.review.dto.DateReviewResponse;
-import com.fourdays.foodage.review.dto.PeriodReviewGroup;
-import com.fourdays.foodage.review.dto.PeriodReviewRequest;
-import com.fourdays.foodage.review.dto.PeriodReviewResponse;
-import com.fourdays.foodage.review.dto.RecentReviewResponse;
-import com.fourdays.foodage.review.dto.ReviewResponse;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -31,11 +30,30 @@ public class ReviewService {
 
 	private final ReviewCustomRepository reviewCustomRepository;
 	private final ReviewRepository reviewRepository;
+	private final ReviewTagRepository reviewTagRepository;
+	private final ReviewMenuRepository reviewMenuRepository;
+	private final ReviewImageRepository reviewImageRepository;
+	private final TagRepository tagRepository;
+	private final MemberQueryService memberQueryService;
+	private final S3ImageService s3ImageService;
 
-	public ReviewService(ReviewCustomRepository reviewCustomRepository, ReviewRepository reviewRepository) {
+	public ReviewService(ReviewCustomRepository reviewCustomRepository,
+						 ReviewRepository reviewRepository,
+						 ReviewTagRepository reviewTagRepository,
+						 ReviewMenuRepository reviewMenuRepository,
+						 ReviewImageRepository reviewImageRepository,
+						 TagRepository tagRepository,
+						 MemberQueryService memberQueryService,
+						 S3ImageService s3ImageService) {
 		this.reviewCustomRepository = reviewCustomRepository;
 		this.reviewRepository = reviewRepository;
-	}
+        this.reviewTagRepository = reviewTagRepository;
+        this.reviewMenuRepository = reviewMenuRepository;
+        this.reviewImageRepository = reviewImageRepository;
+        this.tagRepository = tagRepository;
+        this.memberQueryService = memberQueryService;
+		this.s3ImageService = s3ImageService;
+    }
 
 	public ReviewModel getReview(final MemberId memberId,
 		final Long reviewId) {
@@ -108,12 +126,58 @@ public class ReviewService {
 		return response;
 	}
 
-	public Review addReview(Review review) {
+	@Transactional
+	public Review createReview(CreateReviewRequestDto request, MemberId memberId) {
+		Member findMember = memberQueryService.findByMemberId(memberId);
 
-		Review addReview = reviewRepository.save(review);
+		Review review = Review.builder()
+				.restaurant(request.getRestaurant())
+				.address(request.getAddress())
+				.rating(request.getRating())
+				.contents(request.getContents())
+				.date(request.getDate())
+				.createdBy(findMember.getId())
+				.build();
 
-		log.debug("* add review id : {}", addReview.getId());
+		Review savedReview = reviewRepository.save(review);
+		Long reviewId = savedReview.getId();
 
-		return addReview;
+		for (Long tagId : request.getTagIds()) {
+			Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new TagNotFoundException(ResultCode.ERR_TAG_NOT_FOUND));
+			ReviewTag reviewTag = ReviewTag.builder()
+					.reviewId(reviewId)
+					.tagId(tag.getId())
+					.tagName(tag.getName())
+					.tagTextColor(tag.getTextColor())
+					.tagBgColor(tag.getBgColor())
+					.build();
+			reviewTagRepository.save(reviewTag);
+		}
+
+		if (request.getMenus() != null) {
+			for (CreateReviewRequestDto.ReviewMenuModel menu : request.getMenus()) {
+				ReviewMenu reviewMenu = ReviewMenu.builder()
+						.reviewId(reviewId)
+						.menu(menu.getMenu())
+						.price(menu.getPrice())
+						.sequence(menu.getSequence())
+						.build();
+				reviewMenuRepository.save(reviewMenu);
+			}
+		}
+
+		if (request.getImages() != null){
+			for (CreateReviewRequestDto.ReviewImageModel image : request.getImages()) {
+				ReviewImage reviewImage = ReviewImage.builder()
+						.reviewId(reviewId)
+						.imageUrl(image.getImageUrl())
+						.sequence(image.getSequence())
+						.useThumbnail(image.getIsThumbnail())
+						.build();
+				reviewImageRepository.save(reviewImage);
+			}
+		}
+
+		return review;
 	}
 }

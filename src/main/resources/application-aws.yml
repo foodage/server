@@ -1,0 +1,10 @@
+cloud:
+  aws:
+    s3:
+      bucket: s3-foodage
+    stack.auto: false
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: ENC(P6+hrxkL7tqsTTrxy+JIpHW7wkkiWXNKaJ/VVJ7P+jEoxC9E8MTD4ks6bOr7YJ52LI5LW8FmhBMWeofAFaWHVg==)
+      secret-key: ENC(e+3YYEOY8kGNCqvB2W0PX5ooZODmU/h/A3vLaqPIiNiR+w1mWgcKbsztyHfkNKUEXVSsTI40S0ZS6BEmPPRrWwm1FQfgUIaPE+gysC+PXvs=)
