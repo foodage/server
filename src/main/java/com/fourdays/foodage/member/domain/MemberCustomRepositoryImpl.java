@@ -2,7 +2,7 @@ package com.fourdays.foodage.member.domain;
 
 import static com.fourdays.foodage.member.domain.QMember.*;
 import static com.fourdays.foodage.review.domain.QReview.*;
-import static com.fourdays.foodage.tag.domain.QReviewTag.*;
+import static com.fourdays.foodage.review.domain.QReviewTag.*;
 
 import org.springframework.stereotype.Repository;
 

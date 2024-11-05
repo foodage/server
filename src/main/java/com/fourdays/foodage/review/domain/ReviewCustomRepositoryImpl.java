@@ -62,7 +62,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewMenu.price,
 				reviewImage.sequence,
 				reviewImage.imageUrl,
-				reviewImage.isThumbnail
+				reviewImage.useThumbnail
 			)
 			.from(review)
 			.innerJoin(member).on(review.createdBy.eq(member.id))
@@ -110,7 +110,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 									reviewImage.id,
 									reviewImage.sequence,
 									reviewImage.imageUrl,
-									reviewImage.isThumbnail
+									reviewImage.useThumbnail
 								).skipNulls()
 							)
 						)
@@ -136,7 +136,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewTag.tagTextColor,
 				reviewImage.sequence,
 				reviewImage.imageUrl,
-				reviewImage.isThumbnail
+				reviewImage.useThumbnail
 			)
 			.from(review)
 			.innerJoin(member).on(review.createdBy.eq(member.id))
@@ -176,7 +176,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 									reviewImage.id,
 									reviewImage.sequence,
 									reviewImage.imageUrl,
-									reviewImage.isThumbnail
+									reviewImage.useThumbnail
 								).skipNulls()
 							)
 						)
@@ -225,7 +225,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 				reviewTag.tagTextColor,
 				reviewImage.sequence,
 				reviewImage.imageUrl,
-				reviewImage.isThumbnail
+				reviewImage.useThumbnail
 			)
 			.from(review)
 			.innerJoin(member).on(review.createdBy.eq(member.id))
@@ -263,7 +263,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 									reviewImage.id,
 									reviewImage.sequence,
 									reviewImage.imageUrl,
-									reviewImage.isThumbnail
+									reviewImage.useThumbnail
 								).skipNulls()
 							)
 						)

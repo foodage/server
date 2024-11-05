@@ -1,13 +1,11 @@
 package com.fourdays.foodage.review.exception;
 
-import com.fourdays.foodage.common.enums.ResultCode;
+import com.fourdays.foodage.common.exception.ExceptionInfo;
+import com.fourdays.foodage.common.exception.FoodageException;
 
-public class S3Exception extends RuntimeException {
+public class S3Exception extends FoodageException {
 
-    private final ResultCode errCode;
-
-    public S3Exception(ResultCode errCode) {
-        super(errCode.getMessage());
-        this.errCode = errCode;
-    }
+	public S3Exception(ExceptionInfo errCode) {
+		super(errCode);
+	}
 }
