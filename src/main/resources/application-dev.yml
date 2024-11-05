@@ -9,10 +9,22 @@ spring:
     url: jdbc:mariadb://localhost:3306/foodage_database
     username: root
     password: ENC(P9e4T6LWe/YjgSDOp47HlOyukMcijCpDF+uWD/iGIHbOlx/PANpsNdx5CbFtg9b/)
+
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: create
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: foodage.service
+    password: # 관리자에게 문의
+    properties:
+      mail.smtp.debug: true
+      mail.smtp.connectiontimeout: 1000 # 1s
+      mail.starttls.enable: true
+      mail.smtp.auth: true
 
 jwt:
   header: Authorization
@@ -50,3 +62,5 @@ application:
   domain: 3.36.239.143
   client:
     base-url: http://3.36.239.143
+  mail:
+    sender: foodage.service@gmail.com
