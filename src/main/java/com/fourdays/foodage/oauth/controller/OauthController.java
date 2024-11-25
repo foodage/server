@@ -68,7 +68,8 @@ public class OauthController {
 		switch (loginResult.loginResult()) {
 			case SUCCESS -> { // 이미 가입된 상태. 정상 로그인 처리
 				httpHeaders = authUtilService.createJwtHeader(loginResult.oauthId().getOauthServerType(),
-					loginResult.accountEmail(), loginResult.credential(), true);
+					loginResult.accountEmail(), loginResult.nickname(),
+					loginResult.credential(), true);
 				redirectUrl = clientBaseUrl + "/";
 			}
 			case JOIN_IN_PROGRESS -> { // 가입 진행중인 상태로 로그인 불가. 회원가입을 위한 추가 정보 입력 요청

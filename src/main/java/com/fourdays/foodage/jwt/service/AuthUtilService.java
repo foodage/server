@@ -28,17 +28,17 @@ public class AuthUtilService {
 	}
 
 	//////////////////// header ////////////////////
-	public HttpHeaders createJwtHeader(OauthServerType oauthServerType, String accountEmail,
-		String plainCredential, boolean useCookie) {
+	public HttpHeaders createJwtHeader(final OauthServerType oauthServerType, final String accountEmail,
+		final String nickname, final String plainCredential, final boolean useCookie) {
 
 		TokenDto jwt = authService.createToken(oauthServerType, accountEmail, plainCredential);
 		if (useCookie) {
-			return createCookieHeader(jwt);
+			return createCookieHeader(jwt, accountEmail, nickname);
 		}
 		return createHeader(jwt);
 	}
 
-	public HttpHeaders createHeader(TokenDto jwt) {
+	public HttpHeaders createHeader(final TokenDto jwt) {
 
 		log.debug("* createHeader()");
 		log.debug("* [header] accessToken  : {}", jwt.accessToken());
@@ -51,7 +51,8 @@ public class AuthUtilService {
 	}
 
 	//////////////////// cookie ////////////////////
-	private HttpHeaders createCookieHeader(TokenDto jwt) {
+	private HttpHeaders createCookieHeader(final TokenDto jwt,
+		final String acocuntEmail, final String nickname) {
 
 		log.debug("* createCookieHeader()");
 		log.debug("* [set-cookie] accessToken  : {}", jwt.accessToken());
@@ -62,11 +63,15 @@ public class AuthUtilService {
 			createCookie(JwtFilter.AUTHORIZATION_HEADER, jwt.accessToken()));
 		httpHeaders.add("Set-Cookie",
 			createCookie(JwtType.REFRESH_TOKEN.getHeaderName(), jwt.refreshToken()));
+		httpHeaders.add("Set-Cookie",
+			createCookie("Account-Email", acocuntEmail));
+		httpHeaders.add("Set-Cookie",
+			createCookie("Nickname", nickname));
 
 		return httpHeaders;
 	}
 
-	public HttpHeaders createCookieHeader(String oauthAccessToken, String oauthServerType) {
+	public HttpHeaders createCookieHeader(final String oauthAccessToken, final String oauthServerType) {
 
 		log.debug("* createCookieHeader()");
 		log.debug("* [set-cookie] accessToken     : {}", oauthAccessToken);
@@ -82,7 +87,8 @@ public class AuthUtilService {
 	}
 
 	////////////////////////////////////////////////////
-	private String createCookie(String name, String value) {
+	private String createCookie(final String name, final String value) {
+
 		ResponseCookie cookie = ResponseCookie.from(name, value)
 			.path("/")
 			.domain(domain)
